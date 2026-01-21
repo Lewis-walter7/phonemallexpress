@@ -48,26 +48,26 @@ const faqs = [
 
 export default function FAQPage() {
     return (
-        <div className="container section-py">
+        <div className="container" style={{ paddingTop: 'var(--spacing-md)', paddingBottom: 'var(--spacing-lg)' }}>
             <Breadcrumbs items={[{ label: 'FAQ', href: '/faq' }]} />
 
-            <div className="info-page-header" style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-4xl)', fontWeight: 800, marginBottom: 'var(--spacing-md)' }}>Frequently Asked Questions</h1>
-                <p style={{ fontSize: 'var(--font-size-lg)', color: 'var(--muted-foreground)', maxWidth: '800px', lineHeight: 1.6 }}>
+            <div className="info-page-header" style={{ marginBottom: 'var(--spacing-lg)' }}>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Frequently Asked Questions</h1>
+                <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--muted-foreground)', maxWidth: '800px', lineHeight: 1.6 }}>
                     Find quick answers to common questions about our products and services.
                 </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--spacing-xl)', maxWidth: '900px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--spacing-lg)', maxWidth: '900px' }}>
                 {faqs.map((cat, idx) => (
                     <section key={idx}>
-                        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 700, marginBottom: 'var(--spacing-lg)', color: 'var(--accent)' }}>
+                        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 700, marginBottom: 'var(--spacing-md)', color: 'var(--accent)' }}>
                             {cat.category}
                         </h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
                             {cat.questions.map((item, i) => (
-                                <div key={i} style={{ paddingBottom: 'var(--spacing-md)', borderBottom: '1px solid var(--border)' }}>
-                                    <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600, marginBottom: 'var(--spacing-xs)', color: 'var(--foreground)' }}>
+                                <div key={i} style={{ paddingBottom: 'var(--spacing-sm)', borderBottom: '1px solid var(--border)' }}>
+                                    <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600, marginBottom: '4px', color: 'var(--foreground)' }}>
                                         {item.q}
                                     </h3>
                                     <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--muted-foreground)', lineHeight: 1.6 }}>

@@ -2,17 +2,17 @@ import Breadcrumbs from "@/components/common/Breadcrumbs";
 
 export default function PrivacyPage() {
     return (
-        <div className="container section-py">
+        <div className="container" style={{ paddingTop: 'var(--spacing-md)', paddingBottom: 'var(--spacing-lg)' }}>
             <Breadcrumbs items={[{ label: 'Privacy Policy', href: '/privacy' }]} />
 
-            <div className="info-page-header" style={{ marginBottom: 'var(--spacing-xl)' }}>
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-4xl)', fontWeight: 800, marginBottom: 'var(--spacing-md)' }}>Privacy Policy</h1>
-                <p style={{ fontSize: 'var(--font-size-lg)', color: 'var(--muted-foreground)', maxWidth: '800px', lineHeight: 1.6 }}>
+            <div className="info-page-header" style={{ marginBottom: 'var(--spacing-lg)' }}>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Privacy Policy</h1>
+                <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--muted-foreground)', maxWidth: '800px', lineHeight: 1.6 }}>
                     Your privacy is important to us. This policy outlines how we handle your personal information.
                 </p>
             </div>
 
-            <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)', color: 'var(--muted-foreground)', lineHeight: 1.8 }}>
+            <div style={{ maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)', color: 'var(--muted-foreground)', lineHeight: 1.8 }}>
                 <section>
                     <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-xl)', fontWeight: 700, marginBottom: 'var(--spacing-sm)', color: 'var(--foreground)' }}>1. Information We Collect</h2>
                     <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact our customer support. This may include your name, email address, shipping address, and payment information.</p>

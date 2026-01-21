@@ -1,13 +1,13 @@
 .footer {
     background-color: #0c0c0c;
-    padding: var(--spacing-md) 0 var(--spacing-xs);
+    padding: var(--spacing-sm) 0 var(--spacing-xs);
     margin-top: auto;
     border-top: 1px solid var(--border);
 }
 
 @media (min-width: 768px) {
     .footer {
-        padding: var(--spacing-xl) 0 var(--spacing-lg);
+        padding: var(--spacing-md) 0 var(--spacing-sm);
     }
 }
 
@@ -19,8 +19,8 @@
 
 @media (min-width: 768px) {
     .footer-grid {
-        grid-template-columns: 2fr 1fr 1fr 2fr;
-        gap: var(--spacing-xl);
+        grid-template-columns: 2fr 1.2fr 1.2fr 1.8fr;
+        gap: var(--spacing-md);
     }
 }
 
@@ -40,7 +40,7 @@
 
 @media (min-width: 768px) {
     .footer-title {
-        margin-bottom: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
     }
 }
 
@@ -70,7 +70,8 @@
 
 .newsletter-form {
     display: flex;
-    gap: var(--spacing-xs);
+    gap: 8px;
+    /* Tightened */
     width: 100%;
 }
 
@@ -87,32 +88,40 @@
 }
 
 .newsletter-btn {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
+    background-color: var(--foreground);
+    /* White in our theme */
+    color: var(--background);
+    /* Black in our theme */
     padding: 0 var(--spacing-md);
     border-radius: var(--radius-sm);
-    font-weight: 700;
+    font-weight: 800;
     font-size: var(--font-size-sm);
     height: 44px;
     white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.newsletter-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
 }
 
 .footer-bottom {
-    margin-top: var(--spacing-md);
-    padding-top: var(--spacing-sm);
+    margin-top: 1.5rem;
+    padding-top: 1rem;
     border-top: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 12px;
     color: var(--muted-foreground);
     font-size: var(--font-size-xs);
 }
 
 @media (min-width: 768px) {
     .footer-bottom {
-        margin-top: var(--spacing-2xl);
-        padding-top: var(--spacing-lg);
+        margin-top: 2rem;
+        padding-top: 1rem;
         flex-direction: row;
         justify-content: space-between;
     }

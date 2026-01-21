@@ -22,8 +22,25 @@ async function getFeaturedProducts() {
   return JSON.parse(JSON.stringify(featuredProducts));
 }
 
+async function getSpecialOffers() {
+  await dbConnect();
+  // Fetch products that are explicitly marked as special offer OR have a valid compareAtPrice > price
+  const specialOffers = await Product.find({
+    status: 'published',
+    $or: [
+      { isOnSpecialOffer: true },
+      { compareAtPrice: { $gt: 0 } }
+    ]
+  })
+    .limit(4) // Keep it small for high impact
+    .sort({ discountPercentage: -1 })
+    .lean();
+  return JSON.parse(JSON.stringify(specialOffers));
+}
+
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts();
+  const specialOffers = await getSpecialOffers();
 
   return (
     <div className="home-page">
@@ -65,6 +82,27 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Special Offers Section */}
+      {specialOffers.length > 0 && (
+        <section className="section-py" style={{ paddingTop: '0', paddingBottom: '2rem' }}>
+          <div className="container">
+            <div className="text-center" style={{ marginBottom: 'var(--spacing-md)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>
+              <div className="flex items-center justify-center gap-sm" style={{ marginBottom: '4px' }}>
+                <span className="badge-pulse"></span>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Special Offers</h2>
+              </div>
+              <p style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>Limited time deals on your favorite tech.</p>
+            </div>
+
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
+              {specialOffers.map((product: any) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Products Section */}
       <section className="section-py" style={{ paddingTop: '0' }}>
