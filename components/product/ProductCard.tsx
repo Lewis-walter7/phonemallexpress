@@ -24,8 +24,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const { addToCart } = useCart();
 
     // Determine the product image, prioritizing images[0] then imageUrl
-    const productImage = product.images?.[0]?.url || product.imageUrl;
+    let productImage = product.images?.[0]?.url || product.imageUrl;
     const productAlt = product.images?.[0]?.alt || product.name;
+
+    // Validate image URL to prevent next/image errors with unconfigured hosts
+    if (productImage?.startsWith('http')) {
+        const allowedDomains = ['utfs.io', 'uploadthing.com'];
+        const isAllowed = allowedDomains.some(domain => productImage!.includes(domain));
+        if (!isAllowed) {
+            productImage = undefined; // Fallback to placeholder
+        }
+    }
 
     // Support both salePrice (jelectronics) and compareAtPrice
     const originalPrice = product.compareAtPrice || product.salePrice;

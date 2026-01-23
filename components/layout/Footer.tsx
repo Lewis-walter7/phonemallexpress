@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import './Footer.css';
 
 const Footer = () => {
@@ -10,7 +11,7 @@ const Footer = () => {
                 <div className="footer-grid">
                     <div className="footer-info">
                         <Link href="/" className="logo">
-                            PHONEMALL<span>EXPRESS</span>
+                            <Image src="/logo.png" alt="Phone Mall Express" width={150} height={40} className="logo-image" style={{ width: 'auto', height: '40px' }} />
                         </Link>
                         <p className="footer-desc">
                             Premium phone accessories delivered with speed and quality. Elevate your mobile experience with our curated collection.

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, User, Search, Menu, X, ChevronRight, ChevronDown, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
@@ -162,14 +163,14 @@ const Navbar = () => {
                         </div>
 
                         <Link href="/" className="logo desktop-only">
-                            PHONEMALL<span>EXPRESS</span>
+                            <Image src="/logo.png" alt="Phone Mall Express" width={150} height={40} className="logo-image" style={{ width: 'auto', height: '40px' }} priority />
                         </Link>
                     </div>
 
                     {/* CENTER: Logo (Mobile) or Search (Desktop) */}
                     <div className="navbar-center">
                         <Link href="/" className="logo mobile-only">
-                            PHONEMALL<span>EXPRESS</span>
+                            <Image src="/logo.png" alt="Phone Mall Express" width={120} height={32} className="logo-image" style={{ width: 'auto', height: '32px' }} priority />
                         </Link>
 
                         <form onSubmit={handleSearch} className="search-form desktop-only">
@@ -219,7 +220,7 @@ const Navbar = () => {
                 <div className="drawer-header">
                     <div className="drawer-top-actions">
                         <Link href="/" className="drawer-logo" onClick={() => setIsMobileMenuOpen(false)}>
-                            PHONEMALL<span>EXPRESS</span>
+                            <Image src="/logo.png" alt="Phone Mall Express" width={140} height={36} className="logo-image" style={{ width: 'auto', height: '36px' }} />
                         </Link>
                         <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
                             <X size={24} />

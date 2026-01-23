@@ -10,9 +10,10 @@ const CATEGORIES = [
   { name: 'Audio', slug: 'audio', image: '/audio.png' },
   { name: 'Wearables', slug: 'wearables', image: '/wearables.png' },
   { name: 'Gaming', slug: 'gaming', image: '/gaming.png' },
-  { name: 'Laptops', slug: 'accessories', image: '/laptops.png' },
+  { name: 'Laptops', slug: 'laptops', image: '/laptops.png' },
   { name: 'Accessories', slug: 'accessories', image: '/accessories.png' }
 ];
+
 
 async function getFeaturedProducts() {
   await dbConnect();
@@ -24,7 +25,6 @@ async function getFeaturedProducts() {
 
 async function getSpecialOffers() {
   await dbConnect();
-  // Fetch products that are explicitly marked as special offer OR have a valid compareAtPrice > price
   const specialOffers = await Product.find({
     status: 'published',
     $or: [
@@ -32,19 +32,114 @@ async function getSpecialOffers() {
       { compareAtPrice: { $gt: 0 } }
     ]
   })
-    .limit(4) // Keep it small for high impact
+    .limit(4)
     .sort({ discountPercentage: -1 })
     .lean();
   return JSON.parse(JSON.stringify(specialOffers));
 }
 
+async function getAppleProducts() {
+  await dbConnect();
+  const products = await Product.find({
+    status: 'published',
+    brand: { $regex: 'Apple', $options: 'i' }
+  })
+    .limit(10)
+    .lean();
+  return JSON.parse(JSON.stringify(products));
+}
+
+async function getSamsungProducts() {
+  await dbConnect();
+  const products = await Product.find({
+    status: 'published',
+    brand: { $regex: 'Samsung', $options: 'i' }
+  })
+    .limit(10)
+    .lean();
+  return JSON.parse(JSON.stringify(products));
+}
+
+async function getGamingProducts() {
+  await dbConnect();
+  const products = await Product.find({
+    status: 'published',
+    category: 'gaming'
+  })
+    .limit(10)
+    .lean();
+  return JSON.parse(JSON.stringify(products));
+}
+
+async function getFlashSales() {
+  await dbConnect();
+  const products = await Product.find({
+    status: 'published',
+    isOnSpecialOffer: true
+  })
+    .limit(10)
+    .sort({ discountPercentage: -1 })
+    .lean();
+  return JSON.parse(JSON.stringify(products));
+}
+
+async function getPocketFriendlyProducts() {
+  await dbConnect();
+  const products = await Product.find({
+    status: 'published'
+  })
+    .limit(10)
+    .sort({ price: 1 })
+    .lean();
+  return JSON.parse(JSON.stringify(products));
+}
+
+interface SectionHeaderProps {
+  title: string;
+  subtitle: string;
+  viewMoreLink: string;
+}
+
+const SectionHeader = ({ title, subtitle, viewMoreLink }: SectionHeaderProps) => (
+  <div className="flex items-end justify-between" style={{ marginBottom: 'var(--spacing-lg)', borderBottom: '1px solid var(--border)', paddingBottom: 'var(--spacing-sm)' }}>
+    <div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, lineHeight: 1.1 }}>{title}</h2>
+      <p style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem', marginTop: '4px' }}>{subtitle}</p>
+    </div>
+    <Link href={viewMoreLink} className="btn-link" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', whiteSpace: 'nowrap' }}>
+      View More &rarr;
+    </Link>
+  </div>
+);
+
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts();
   const specialOffers = await getSpecialOffers();
+  const appleProducts = await getAppleProducts();
+  const samsungProducts = await getSamsungProducts();
+  const gamingProducts = await getGamingProducts();
+  const flashSales = await getFlashSales();
+  const pocketFriendly = await getPocketFriendlyProducts();
+
+  const renderProductSection = (title: string, subtitle: string, link: string, products: any[]) => {
+    if (products.length === 0) return null;
+    return (
+      <section className="section-py" style={{ paddingTop: '0' }}>
+        <div className="container">
+          <SectionHeader title={title} subtitle={subtitle} viewMoreLink={link} />
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--spacing-md)' }}>
+            {products.map((product: any) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  };
 
   return (
     <div className="home-page">
-      {/* New Shop by Category Section (Replaces Hero) */}
+      {/* Shop by Category Section */}
       <section className="section-py" style={{ paddingTop: '0.25rem' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: 'var(--spacing-sm)' }}>
@@ -95,7 +190,7 @@ export default async function Home() {
               <p style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>Limited time deals on your favorite tech.</p>
             </div>
 
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--spacing-md)' }}>
               {specialOffers.map((product: any) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -103,6 +198,21 @@ export default async function Home() {
           </div>
         </section>
       )}
+
+      {/* Apple Ecosystem */}
+      {renderProductSection("The Apple Ecosystem", "Designed for iPhone, iPad, and Mac.", "/search?q=Apple", appleProducts)}
+
+      {/* Samsung Galaxy */}
+      {renderProductSection("Galaxy of Innovation", "Enhance your Samsung experience.", "/search?q=Samsung", samsungProducts)}
+
+      {/* Gaming */}
+      {renderProductSection("Level Up Your Gear", "Pro-grade peripherals for victory.", "/accessories/gaming", gamingProducts)}
+
+      {/* Flash Sales */}
+      {renderProductSection("Lightning Deals", "Grab them before they're gone.", "/search?q=deal", flashSales)}
+
+      {/* Pocket Friendly */}
+      {renderProductSection("Smart Savings", "Top tech that won't break the bank.", "/search?sort=price_asc", pocketFriendly)}
 
       {/* Featured Products Section */}
       <section className="section-py" style={{ paddingTop: '0' }}>
