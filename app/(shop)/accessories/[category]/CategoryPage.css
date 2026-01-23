@@ -140,6 +140,32 @@
     .mobile-filter-toggle {
         display: none !important;
     }
+
+    .mobile-close-btn {
+        display: none !important;
+    }
+}
+
+.mobile-close-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--foreground);
+    /* Or accent, contrasting with background */
+    color: var(--background);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.mobile-close-btn:active {
+    opacity: 0.9;
 }
 
 /* Custom Scrollbar for Sidebar */

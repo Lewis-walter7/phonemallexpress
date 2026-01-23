@@ -211,8 +211,18 @@ export default function CategoryFilters() {
                 </div>
 
                 <button
+                    className="mobile-close-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(false);
+                    }}
+                >
+                    Filter
+                </button>
+
+                <button
                     onClick={() => router.push(window.location.pathname)}
-                    style={{ marginTop: '20px', fontSize: '12px', textDecoration: 'underline', color: 'var(--muted-foreground)' }}
+                    style={{ marginTop: '12px', fontSize: '12px', textDecoration: 'underline', color: 'var(--muted-foreground)', display: 'block', width: '100%' }}
                 >
                     Clear all filters
                 </button>
