@@ -67,14 +67,59 @@
 }
 
 .shop-sidebar {
+    display: none;
+    transition: all 0.3s ease;
+}
+
+.shop-sidebar.open {
     display: block;
-    position: sticky;
-    top: 180px;
-    /* Below Navbar (70px) + Category Header (~100px) */
-    max-height: calc(100vh - 200px);
+    position: fixed;
+    /* Or absolute, testing fixed for overlay effect */
+    top: 70px;
+    /* Below navbar */
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    z-index: 99;
+    padding: 10px;
+    background: var(--background);
     overflow-y: auto;
-    padding-right: 5px;
-    /* Space for scrollbar */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-filter-toggle {
+    display: flex !important;
+}
+
+@media (min-width: 1024px) {
+    .shop-sidebar {
+        display: block !important;
+        position: sticky;
+        top: 180px;
+        /* Below Navbar (70px) + Category Header (~100px) */
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        padding-right: 5px;
+        /* Space for scrollbar */
+        width: auto;
+        background: transparent;
+        box-shadow: none;
+        z-index: 10;
+        padding: 0;
+    }
+
+    .shop-sidebar.open {
+        /* Reset mobile open styles if screen resized */
+        position: sticky;
+        width: auto;
+        height: auto;
+        box-shadow: none;
+    }
+
+    .mobile-filter-toggle {
+        display: none !important;
+    }
 }
 
 /* Custom Scrollbar for Sidebar */
