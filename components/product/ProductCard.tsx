@@ -7,6 +7,7 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import './ProductCard.css';
+import CompareButton from './CompareButton';
 
 interface ProductCardProps {
     product: {
@@ -16,6 +17,8 @@ interface ProductCardProps {
         price: number;
         compareAtPrice?: number;
         salePrice?: number;
+        isOnSpecialOffer?: boolean;
+        discountPercentage?: number;
         imageUrl?: string;
         images?: { url: string; alt: string }[];
         category: string | { name: string; slug: string };
@@ -31,17 +34,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
     let productImage = product.images?.[0]?.url || product.imageUrl;
     const productAlt = product.images?.[0]?.alt || product.name;
 
-    // Validate image URL to prevent next/image errors with unconfigured hosts
-    // Allowed all domains in next.config.ts, so strict check removed.
-    // if (productImage?.startsWith('http')) { ... }
+    // Price Logic
+    let currentPrice = product.price;
+    let oldPrice = product.compareAtPrice;
+    let discount = null;
 
-    // Support both salePrice (jelectronics) and compareAtPrice
-    const originalPrice = product.compareAtPrice || product.salePrice;
+    if (product.isOnSpecialOffer && product.salePrice) {
+        currentPrice = product.salePrice;
+        oldPrice = product.price;
+        discount = product.discountPercentage || Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+    } else if (oldPrice && oldPrice > currentPrice) {
+        discount = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+    }
 
-    // Calculate discount if originalPrice > current price
-    const discount = (originalPrice && originalPrice > product.price)
-        ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
-        : null;
+    // Fallback: if jelectronics style "salePrice as standard" was used before, keeping safe
+    // But aligning with new "isOnSpecialOffer" flag for explicit sales.
 
     // Handle category name and link slug
     const catName = typeof product.category === 'string' ? product.category : product.category.name;
@@ -57,7 +64,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         addToCart({
             id: product._id,
             name: product.name,
-            price: product.price,
+            price: currentPrice, // Use current display price
             quantity: 1,
             image: productImage || '',
             slug: product.slug,
@@ -74,7 +81,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             addToWishlist({
                 id: product._id,
                 name: product.name,
-                price: product.price,
+                price: currentPrice,
                 image: productImage || '',
                 slug: product.slug,
                 category: catName
@@ -100,6 +107,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
                         <div className="product-image-placeholder" />
                     )}
                     {discount && <span className="discount-badge">-{discount}%</span>}
+                    {product.isOnSpecialOffer && <span className="special-offer-badge">SALE</span>}
+
+
+                    // ...
 
                     <button
                         className={`wishlist-btn ${inWishlist ? 'active' : ''}`}
@@ -108,6 +119,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     >
                         <Heart size={18} fill={inWishlist ? "currentColor" : "none"} />
                     </button>
+
+                    <div className="card-compare-btn-wrapper">
+                        <CompareButton product={product} />
+                    </div>
                 </div>
             </Link>
 
@@ -121,9 +136,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
                 <div className="product-footer-row">
                     <div className="product-price-container">
-                        <span className="product-price">KSh {product.price.toLocaleString()}</span>
-                        {originalPrice && originalPrice > product.price && (
-                            <span className="product-old-price">KSh {originalPrice.toLocaleString()}</span>
+                        <span className="product-price">KSh {currentPrice.toLocaleString()}</span>
+                        {oldPrice && oldPrice > currentPrice && (
+                            <span className="product-old-price">KSh {oldPrice.toLocaleString()}</span>
                         )}
                     </div>
 

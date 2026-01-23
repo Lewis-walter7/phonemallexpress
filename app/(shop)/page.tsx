@@ -6,13 +6,49 @@ import ProductCard from "@/components/product/ProductCard";
 import './Home.css';
 
 const CATEGORIES = [
-  { name: 'Smartphones', slug: 'phones', image: '/phones.png' },
-  { name: 'Audio', slug: 'audio', image: '/audio.png' },
-  { name: 'Wearables', slug: 'wearables', image: '/wearables.png' },
-  { name: 'Gaming', slug: 'gaming', image: '/gaming.png' },
-  { name: 'Laptops', slug: 'laptops', image: '/laptops.png' },
-  { name: 'Accessories', slug: 'accessories', image: '/accessories.png' }
+  {
+    name: 'Smartphones',
+    slug: 'phones',
+    image: '/phones.png',
+    subcategories: ['Samsung Phones', 'iPhone', 'Tecno Phones', 'Google Pixel Phones']
+  },
+  {
+    name: 'Gaming',
+    slug: 'gaming',
+    image: '/gaming.png',
+    subcategories: ['Accessories', 'Gaming Console', 'Controllers', 'Headsets']
+  },
+  {
+    name: 'Audio',
+    slug: 'audio',
+    image: '/audio.png',
+    subcategories: ['Buds', 'Headphones', 'Speakers', 'Soundbar']
+  },
+  {
+    name: 'Smartwatch',
+    slug: 'wearables',
+    image: '/wearables.png',
+    subcategories: ['Smartwatches', 'Apple Watch', 'Galaxy Watch', 'Smart Bands']
+  },
+  {
+    name: 'Accessories',
+    slug: 'accessories',
+    image: '/accessories.png',
+    subcategories: ['Apple Accessories', 'Samsung Accessories', 'Chargers', 'Powerbank']
+  },
+  {
+    name: 'Storage',
+    slug: 'storage',
+    image: '/laptops.png',
+    subcategories: ['Flash Drives', 'Hard Drives', 'Memory Cards', 'USB Hubs']
+  }
 ];
+
+// ... (functions remain same)
+
+// ... inside JSX ...
+
+
 
 
 async function getFeaturedProducts() {
@@ -127,7 +163,7 @@ export default async function Home() {
       <section className="section-py" style={{ paddingTop: '0' }}>
         <div className="container">
           <SectionHeader title={title} subtitle={subtitle} viewMoreLink={link} />
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
+          <div className="product-grid">
             {products.map((product: any) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -142,37 +178,48 @@ export default async function Home() {
       {/* Shop by Category Section */}
       <section className="section-py" style={{ paddingTop: '0.25rem' }}>
         <div className="container">
-          <div className="text-center" style={{ marginBottom: 'var(--spacing-sm)' }}>
+          <div className="text-center" style={{ marginBottom: 'var(--spacing-md)', marginTop: '1rem' }}>
             <h1 style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              fontSize: '1.75rem',
               fontWeight: 900,
               lineHeight: 1,
-              letterSpacing: '-0.04em',
-              marginBottom: '4px'
+              letterSpacing: '-0.02em',
+              marginBottom: '4px',
+              textTransform: 'uppercase'
             }}>
-              PREMIUM <span className="text-accent">ACCESSORIES</span>
+              Premium <span className="text-accent">Accessories</span>
             </h1>
-            <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem', fontWeight: 500 }}>
+            <p style={{ color: 'var(--muted-foreground)', fontSize: '1.1rem', fontWeight: 500 }}>
               Shop by Category
             </p>
           </div>
 
-          <div className="category-grid">
+          <div className="category-grid-mobi">
             {CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/accessories/${cat.slug}`} className="category-card-premium">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="category-card-image"
-                />
-                <div className="category-card-overlay">
-                  <span className="category-card-explore">Explore</span>
-                  <h3 className="category-card-name">{cat.name}</h3>
+              <div key={cat.slug} className="mobi-card">
+                <div className="mobi-card-image-wrap">
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    width={100}
+                    height={100}
+                    className="mobi-card-image"
+                    style={{ objectFit: 'contain' }}
+                  />
                 </div>
-              </Link>
+                <div className="mobi-card-content">
+                  <h3 className="mobi-card-title">{cat.name}</h3>
+                  <ul className="mobi-card-list">
+                    {cat.subcategories.map(sub => (
+                      <li key={sub}>{sub}</li>
+                    ))}
+                  </ul>
+                  <Link href={`/accessories/${cat.slug}`} className="mobi-card-link">
+                    Shop More &gt;&gt;
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -190,7 +237,7 @@ export default async function Home() {
           </div>
 
           {featuredProducts.length > 0 ? (
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
+            <div className="product-grid">
               {featuredProducts.map((product: any) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -218,7 +265,7 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
+            <div className="product-grid">
               {specialOffers.map((product: any) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -241,6 +288,39 @@ export default async function Home() {
 
       {/* Pocket Friendly */}
       {renderProductSection("Smart Savings", "Top tech that won't break the bank.", "/search?sort=price_asc", pocketFriendly)}
+
+      {/* Partners Section */}
+      <section className="section-gz" style={{ borderTop: '1px solid var(--border)', backgroundColor: '#080808' }}>
+        <div className="container">
+          <div className="text-center" style={{ marginBottom: 'var(--spacing-lg)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              Our Official Partners
+            </h2>
+          </div>
+          <div className="partners-marquee">
+            <div className="marquee-track">
+              {/* Duplicated for seamless loop */}
+              {[
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL',
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL',
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL'
+              ].map((brand, i) => (
+                <h3 key={i} style={{
+                  fontSize: '24px',
+                  fontWeight: 900,
+                  fontFamily: 'var(--font-display)',
+                  color: 'var(--foreground)',
+                  margin: 0,
+                  opacity: 0.5,
+                  whiteSpace: 'nowrap'
+                }}>
+                  {brand}
+                </h3>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   );

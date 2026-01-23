@@ -81,6 +81,13 @@
     color: #e31b23;
 }
 
+.card-compare-btn-wrapper {
+    position: absolute;
+    top: 48px;
+    right: var(--spacing-sm);
+    z-index: 2;
+}
+
 .product-info {
     padding: 6px;
     display: flex;
@@ -173,4 +180,35 @@
 
 .add-to-cart-btn:hover {
     background-color: var(--accent);
+}
+
+@media (max-width: 380px) {
+    .product-info {
+        padding: 4px;
+    }
+
+    .product-name {
+        font-size: 11px;
+        min-height: 2rem;
+        margin-bottom: 2px;
+    }
+
+    .product-price {
+        font-size: 12px;
+    }
+
+    .product-old-price {
+        font-size: 10px;
+    }
+
+    .add-to-cart-action-btn {
+        height: 30px;
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    .discount-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
 }

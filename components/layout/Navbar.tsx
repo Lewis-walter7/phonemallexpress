@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { ShoppingCart, User, Search, Menu, X, ChevronRight, ChevronDown, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import './Navbar.css';
 
 const categories = [
@@ -78,11 +79,40 @@ const categories = [
             { name: 'Mouse', slug: 'accessories?type=mouse' },
             { name: 'Phone Covers', slug: 'accessories?type=covers' },
         ]
+    },
+    {
+        name: 'Computing',
+        slug: 'computing',
+        subItems: [
+            { name: 'Laptops', slug: 'laptops' },
+            { name: 'Desktops', slug: 'computing?type=desktop' },
+            { name: 'Monitors', slug: 'computing?type=monitor' },
+            { name: 'Printers', slug: 'computing?type=printer' },
+        ]
+    },
+    {
+        name: 'TVs',
+        slug: 'tvs',
+        subItems: [
+            { name: 'Smart TVs', slug: 'tvs?type=smart' },
+            { name: 'Android TVs', slug: 'tvs?type=android' },
+            { name: '4K UHD TVs', slug: 'tvs?type=4k' },
+        ]
+    },
+    {
+        name: 'Cameras',
+        slug: 'cameras',
+        subItems: [
+            { name: 'Digital Cameras', slug: 'cameras?type=digital' },
+            { name: 'Security Cameras', slug: 'cameras?type=security' },
+            { name: 'Camera Accessories', slug: 'cameras?type=accessories' },
+        ]
     }
 ];
 
 const Navbar = () => {
     const { totalItems } = useCart();
+    const { wishlist } = useWishlist();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'categories' | 'menu'>('categories');
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -156,21 +186,21 @@ const Navbar = () => {
                                     ))}
 
                                     <hr className="menu-divider" />
+                                    <Link href="/repairs" className="menu-item-link">Repairs & Services</Link>
                                     <Link href="/about" className="menu-item-link">About Us</Link>
-                                    <Link href="/support" className="menu-item-link">Support</Link>
                                 </div>
                             </div>
                         </div>
 
                         <Link href="/" className="logo desktop-only">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={150} height={40} className="logo-image" style={{ width: 'auto', height: '40px' }} priority />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={180} height={50} className="logo-image" style={{ width: 'auto', height: '50px' }} priority />
                         </Link>
                     </div>
 
                     {/* CENTER: Logo (Mobile) or Search (Desktop) */}
                     <div className="navbar-center">
                         <Link href="/" className="logo mobile-only">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={120} height={32} className="logo-image" style={{ width: 'auto', height: '32px' }} priority />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={140} height={40} className="logo-image" style={{ width: 'auto', height: '40px' }} priority />
                         </Link>
 
                         <form onSubmit={handleSearch} className="search-form desktop-only">
@@ -190,7 +220,10 @@ const Navbar = () => {
                     {/* RIGHT: Actions */}
                     <div className="navbar-right">
                         <Link href="/wishlist" className="action-btn-with-label desktop-only" aria-label="Wishlist">
-                            <Heart size={22} />
+                            <div className="cart-icon-wrapper">
+                                <Heart size={22} />
+                                {wishlist.length > 0 && <span className="badge">{wishlist.length}</span>}
+                            </div>
                             <span className="action-label">Saved</span>
                         </Link>
 

@@ -22,6 +22,7 @@ const Footer = () => {
                         <h4 className="footer-title">Shop</h4>
                         <ul>
                             <li><Link href="/accessories/phones">Smartphones</Link></li>
+                            <li><Link href="/repairs">Repairs & Services</Link></li>
                             <li><Link href="/accessories/tablets">Tablets & iPads</Link></li>
                             <li><Link href="/accessories/audio">Audio Gear</Link></li>
                             <li><Link href="/accessories/gaming">Gaming</Link></li>

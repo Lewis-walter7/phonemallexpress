@@ -125,20 +125,20 @@
 .product-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
+    gap: var(--spacing-xs);
 }
 
 @media (min-width: 640px) {
     .product-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: var(--spacing-sm);
+        gap: var(--spacing-md);
     }
 }
 
 @media (min-width: 1280px) {
     .product-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: var(--spacing-md);
+        gap: var(--spacing-lg);
     }
 }
 

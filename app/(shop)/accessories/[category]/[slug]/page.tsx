@@ -184,7 +184,7 @@ const ProductPage = async ({ params }: PageProps) => {
             {relatedProducts.length > 0 && (
                 <div className="related-products-section" style={{ marginTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>
                     <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800, marginBottom: 'var(--spacing-md)' }}>Related Products</h2>
-                    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-sm)' }}>
+                    <div className="product-grid">
                         {relatedProducts.map((p) => (
                             <ProductCard key={p._id.toString()} product={JSON.parse(JSON.stringify(p))} />
                         ))}

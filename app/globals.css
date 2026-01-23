@@ -192,6 +192,11 @@ button {
   padding-bottom: var(--spacing-lg);
 }
 
+.section-gz {
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+}
+
 @media (min-width: 768px) {
   .section-py {
     padding-top: var(--spacing-2xl);
