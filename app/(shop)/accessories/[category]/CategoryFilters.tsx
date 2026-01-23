@@ -33,24 +33,35 @@ export default function CategoryFilters() {
     const storage = ['64GB', '128GB', '256GB', '512GB', '1TB'];
 
     const [isOpen, setIsOpen] = useState(false);
+    const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    // Auto-close timer
+    const startTimer = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+            setIsOpen(false);
+        }, 8000); // 8 seconds of inactivity
+    };
+
+    // Initial open timer
     useEffect(() => {
-        let timer: NodeJS.Timeout;
         if (isOpen) {
-            timer = setTimeout(() => {
-                setIsOpen(false);
-            }, 5000);
+            startTimer();
+        } else {
+            if (timerRef.current) clearTimeout(timerRef.current);
         }
-        return () => clearTimeout(timer);
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
     }, [isOpen]);
+
+    const handleInteraction = () => {
+        if (isOpen) startTimer();
+    };
 
     const handleToggle = (key: string, value: string) => {
         const current = searchParams.get(key);
         updateParams({ [key]: current === value ? null : value });
-        // Reset timer on interaction if we wanted to keep it open, but requirements said "closes after 5 seconds", likely implies pure visibility timer or inactivity. 
-        // I will interpret as strict 5s for now, or maybe reset on interaction? 
-        // User said "closes after 5 seconds". I'll stick to the effect above.
+        handleInteraction();
     };
 
     return (
@@ -76,17 +87,24 @@ export default function CategoryFilters() {
                 <span>{isOpen ? 'Hide Filters' : 'Show Filters'}</span>
             </button>
 
-            <aside className={`filters-card ${isOpen ? 'open' : ''}`} style={{
-                backgroundColor: 'var(--secondary)',
-                border: '1px solid var(--border)',
-                borderRadius: '16px',
-                padding: '24px',
-                position: 'sticky',
-                top: '160px',
-                // Mobile styles will be handled by CSS class 'open' or media queries ideally, 
-                // but since we are using inline styles for some parts, we need to be careful.
-                // I will add a className helper.
-            }}>
+            <aside
+                className={`filters-card ${isOpen ? 'open' : ''}`}
+                onClick={handleInteraction}
+                onChange={handleInteraction}
+                onKeyDown={handleInteraction}
+                onTouchStart={handleInteraction}
+                style={{
+                    backgroundColor: 'var(--secondary)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    position: 'sticky',
+                    top: '160px',
+                    // Mobile styles will be handled by CSS class 'open' or media queries ideally, 
+                    // but since we are using inline styles for some parts, we need to be careful.
+                    // I will add a className helper.
+                }}
+            >
                 <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px', fontFamily: 'var(--font-display)' }}>Filters</h2>
 
                 {/* Brands */}
