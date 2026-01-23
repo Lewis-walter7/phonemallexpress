@@ -10,6 +10,8 @@ export interface CartItem {
     image: string;
     slug: string;
     category: string;
+    variant?: string;
+    color?: string;
 }
 
 interface CartContextType {
