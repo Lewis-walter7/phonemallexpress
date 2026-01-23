@@ -54,7 +54,7 @@ export default function RepairsPage() {
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--spacing-lg)', marginBottom: 'var(--spacing-xl)' }}>
                 {services.map((s, i) => (
                     <div key={i} style={{
-                        background: '#0c0c0c',
+                        background: 'var(--secondary)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-lg)',
                         padding: 'var(--spacing-md)',
@@ -72,7 +72,7 @@ export default function RepairsPage() {
             </div>
 
             <div style={{
-                background: 'linear-gradient(to right, #111, #0c0c0c)',
+                background: 'var(--secondary)',
                 border: '1px solid var(--border)',
                 borderRadius: 'var(--radius-lg)',
                 padding: 'var(--spacing-lg)',

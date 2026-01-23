@@ -8,6 +8,7 @@ import { ShoppingCart, User, Search, Menu, X, ChevronRight, ChevronDown, Heart }
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import './Navbar.css';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 const categories = [
     {
@@ -219,18 +220,22 @@ const Navbar = () => {
 
                     {/* RIGHT: Actions */}
                     <div className="navbar-right">
-                        <Link href="/wishlist" className="action-btn-with-label desktop-only" aria-label="Wishlist">
+                        <Link href="/wishlist" className="action-btn-with-label" aria-label="Wishlist">
                             <div className="cart-icon-wrapper">
                                 <Heart size={22} />
                                 {wishlist.length > 0 && <span className="badge">{wishlist.length}</span>}
                             </div>
-                            <span className="action-label">Saved</span>
+                            <span className="action-label desktop-only">Saved</span>
                         </Link>
 
                         <Link href="/account" className="action-btn-with-label desktop-only" aria-label="Account">
                             <User size={22} />
                             <span className="action-label">Account</span>
                         </Link>
+
+                        <div className="mr-2">
+                            <ThemeToggle />
+                        </div>
 
                         <Link href="/checkout" className="action-btn-with-label" aria-label="Cart">
                             <div className="cart-icon-wrapper">
@@ -288,6 +293,9 @@ const Navbar = () => {
                         >
                             MENU
                         </button>
+                    </div>
+                    <div className="flex justify-end px-4 py-2 border-b border-border">
+                        <ThemeToggle />
                     </div>
                 </div>
 

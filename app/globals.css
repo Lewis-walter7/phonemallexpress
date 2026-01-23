@@ -10,7 +10,9 @@
   --primary-sat: 80%;
   --primary-light: 60%;
 
-  /* Colors mapped to existing names */
+  /* Default Dark Theme Colors */
+  --background: #050505;
+  --foreground: #ffffff;
   --primary: #ffffff;
   --primary-foreground: #050505;
   --secondary: #121212;
@@ -22,9 +24,6 @@
   --border: #262626;
   --input: #121212;
   --ring: var(--accent);
-  --background: #050505;
-  /* True Black from jelectronics */
-  --foreground: #ffffff;
 
   /* Spacing (Refined) */
   --spacing-xs: 0.5rem;
@@ -63,12 +62,36 @@
   --shadow-accent: 0 0 20px hsla(var(--primary-hue), var(--primary-sat), var(--primary-light), 0.3);
 }
 
+[data-theme='light'] {
+  --background: #ffffff;
+  --foreground: #050505;
+  --primary: #050505;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #050505;
+  --accent: hsl(var(--primary-hue), var(--primary-sat), 50%);
+  /* Slightly darker for better visibility against white */
+  --accent-foreground: #ffffff;
+  --muted: #f4f4f5;
+  --muted-foreground: #737373;
+  --border: #e5e5e5;
+  --input: #f4f4f5;
+  --ring: var(--accent);
+
+  /* Shadows (Adjusted for Light Mode) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-accent: 0 0 15px hsla(var(--primary-hue), var(--primary-sat), var(--primary-light), 0.2);
+}
+
 /* Base Styles Update */
 html,
 body {
   background-color: var(--background);
   color: var(--foreground);
   scroll-behavior: smooth;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 img,

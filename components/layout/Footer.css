@@ -1,5 +1,5 @@
 .footer {
-    background-color: #0c0c0c;
+    background-color: var(--secondary);
     padding: var(--spacing-sm) 0 var(--spacing-xs);
     margin-top: auto;
     border-top: 1px solid var(--border);
@@ -82,7 +82,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     height: 44px;
-    background-color: var(--background);
+    background-color: var(--input);
     color: var(--foreground);
     font-size: var(--font-size-sm);
 }

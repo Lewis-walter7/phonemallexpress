@@ -7,11 +7,15 @@ import ProductCard from '@/components/product/ProductCard';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import { Search } from 'lucide-react';
 
+import Pagination from '@/components/ui/Pagination';
+
 function SearchContent() {
     const searchParams = useSearchParams();
     const query = searchParams.get('q') || '';
+    const page = Number(searchParams.get('page')) || 1;
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pagination, setPagination] = useState({ totalPages: 0, totalCount: 0 });
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -23,9 +27,13 @@ function SearchContent() {
 
             setLoading(true);
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&page=${page}`);
                 const data = await res.json();
                 setProducts(data.products || []);
+                setPagination({
+                    totalPages: data.totalPages || 0,
+                    totalCount: data.totalCount || 0
+                });
             } catch (error) {
                 console.error('Search error:', error);
                 setProducts([]);
@@ -35,7 +43,7 @@ function SearchContent() {
         };
 
         fetchResults();
-    }, [query]);
+    }, [query, page]);
 
     return (
         <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
@@ -62,13 +70,17 @@ function SearchContent() {
             ) : products.length > 0 ? (
                 <>
                     <p style={{ color: 'var(--muted-foreground)', fontSize: 'var(--font-size-xs)', marginBottom: '0.75rem' }}>
-                        Found {products.length} {products.length === 1 ? 'product' : 'products'}
+                        Found {pagination.totalCount} {pagination.totalCount === 1 ? 'product' : 'products'}
                     </p>
                     <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
                         {products.map((product: any) => (
                             <ProductCard key={product._id} product={product} />
                         ))}
                     </div>
+                    <Pagination
+                        currentPage={page}
+                        totalPages={pagination.totalPages}
+                    />
                 </>
             ) : query ? (
                 <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--muted-foreground)' }}>

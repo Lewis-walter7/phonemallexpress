@@ -24,15 +24,15 @@ export default function AboutPage() {
                 </section>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-md)' }}>
-                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: '#0c0c0c', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: 'var(--secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
                         <h3 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: 'var(--spacing-xs)' }}>Quality First</h3>
                         <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--muted-foreground)' }}>We only stock products from trusted brands and manufacturers, ensuring durability and reliability.</p>
                     </div>
-                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: '#0c0c0c', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: 'var(--secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
                         <h3 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Fast Shipping</h3>
                         <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--muted-foreground)' }}>Your time is valuable. We optimize our logistics to deliver your essentials in record time.</p>
                     </div>
-                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: '#0c0c0c', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
+                    <div style={{ padding: 'var(--spacing-md)', backgroundColor: 'var(--secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)' }}>
                         <h3 style={{ color: 'var(--accent)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Expert Support</h3>
                         <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--muted-foreground)' }}>Our team of tech enthusiasts is always ready to help you find the perfect match for your device.</p>
                     </div>

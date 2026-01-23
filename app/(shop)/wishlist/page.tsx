@@ -26,7 +26,7 @@ export default function WishlistPage() {
 
     if (wishlist.length === 0) {
         return (
-            <div className="container section-py" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <div className="container" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
                 <Heart size={64} style={{ color: 'var(--border)', marginBottom: 'var(--spacing-md)' }} />
                 <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Your Wishlist is Empty</h1>
                 <p style={{ color: 'var(--muted-foreground)', marginBottom: 'var(--spacing-lg)' }}>Save items you love so you can easily find them later.</p>
@@ -38,7 +38,7 @@ export default function WishlistPage() {
     }
 
     return (
-        <div className="container section-py">
+        <div className="container" style={{ marginBottom: 'var(--spacing-lg)' }}>
             <Breadcrumbs items={[{ label: 'Wishlist', href: '/wishlist' }]} />
 
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800, marginBottom: 'var(--spacing-lg)' }}>
@@ -47,9 +47,9 @@ export default function WishlistPage() {
 
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--spacing-md)' }}>
                 {wishlist.map((item) => (
-                    <div key={item.id} className="product-card" style={{ position: 'relative' }}>
+                    <div key={item.id} className="product-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
                         <Link href={`/accessories/${item.category?.toLowerCase() || 'products'}/${item.slug}`} className="product-image-link">
-                            <div className="product-image-container">
+                            <div className="product-image-container" style={{ position: 'relative', aspectRatio: '1/1', overflow: 'hidden', backgroundColor: 'var(--input)' }}>
                                 {item.image ? (
                                     <Image
                                         src={item.image}

@@ -73,7 +73,7 @@ export default function ComparePage() {
             <div className="container" style={{ padding: '4rem 0', textAlign: 'center' }}>
                 <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Compare Products</h1>
                 <p>No products selected for comparison.</p>
-                <Link href="/" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
+                <Link href="/" className="btn btn-primary" style={{ marginTop: '1rem', alignItems: 'center', display: 'inline-block' }}>
                     Browse Products
                 </Link>
             </div>

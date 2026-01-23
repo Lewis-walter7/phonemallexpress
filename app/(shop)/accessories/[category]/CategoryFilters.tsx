@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function CategoryFilters() {
@@ -39,18 +39,18 @@ export default function CategoryFilters() {
 
     return (
         <aside className="filters-card" style={{
-            backgroundColor: '#0c0c0c',
-            border: '1px solid #222',
+            backgroundColor: 'var(--secondary)',
+            border: '1px solid var(--border)',
             borderRadius: '16px',
             padding: '24px',
             position: 'sticky',
-            top: '160px' // Adjust based on sticky header
+            top: '160px'
         }}>
             <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px', fontFamily: 'var(--font-display)' }}>Filters</h2>
 
             {/* Brands */}
             <div className="filter-group" style={{ marginBottom: '24px' }}>
-                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: '#666', marginBottom: '12px', textTransform: 'uppercase' }}>Brand</h3>
+                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Brand</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     {brands.map(brand => {
                         const isSelected = searchParams.get('brand') === brand;
@@ -62,9 +62,9 @@ export default function CategoryFilters() {
                                     padding: '8px 12px',
                                     fontSize: '13px',
                                     borderRadius: '8px',
-                                    border: isSelected ? '1px solid var(--accent)' : '1px solid #262626',
+                                    border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
                                     backgroundColor: isSelected ? 'var(--accent)' : 'transparent',
-                                    color: isSelected ? '#fff' : '#aaa',
+                                    color: isSelected ? 'var(--accent-foreground)' : 'var(--muted-foreground)',
                                     textAlign: 'center',
                                     transition: 'all 0.2s'
                                 }}
@@ -78,29 +78,29 @@ export default function CategoryFilters() {
 
             {/* Price Range */}
             <div className="filter-group" style={{ marginBottom: '24px' }}>
-                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: '#666', marginBottom: '12px', textTransform: 'uppercase' }}>Price Range (KES)</h3>
+                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Price Range (KES)</h3>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input
                         type="number"
                         placeholder="Min"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
-                        style={{ flex: 1, padding: '10px', background: '#1a1a1a', border: '1px solid #262626', color: '#fff', borderRadius: '8px', fontSize: '13px' }}
+                        style={{ flex: 1, padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
                     />
-                    <span style={{ color: '#444' }}>-</span>
+                    <span style={{ color: 'var(--muted-foreground)' }}>-</span>
                     <input
                         type="number"
                         placeholder="Max"
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
-                        style={{ flex: 1, padding: '10px', background: '#1a1a1a', border: '1px solid #262626', color: '#fff', borderRadius: '8px', fontSize: '13px' }}
+                        style={{ flex: 1, padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
                     />
                 </div>
             </div>
 
             {/* Colors */}
             <div className="filter-group" style={{ marginBottom: '24px' }}>
-                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: '#666', marginBottom: '12px', textTransform: 'uppercase' }}>Color</h3>
+                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Color</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                     {colors.map(color => {
                         const isSelected = searchParams.get('color') === color;
@@ -112,9 +112,9 @@ export default function CategoryFilters() {
                                     padding: '6px',
                                     fontSize: '11px',
                                     borderRadius: '6px',
-                                    border: isSelected ? '1px solid var(--accent)' : '1px solid #262626',
-                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.1)' : 'transparent',
-                                    color: isSelected ? '#fff' : '#888',
+                                    border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    backgroundColor: isSelected ? 'var(--muted)' : 'transparent',
+                                    color: isSelected ? 'var(--foreground)' : 'var(--muted-foreground)',
                                     textAlign: 'center'
                                 }}
                             >
@@ -127,7 +127,7 @@ export default function CategoryFilters() {
 
             {/* Storage */}
             <div className="filter-group">
-                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: '#666', marginBottom: '12px', textTransform: 'uppercase' }}>Storage</h3>
+                <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Storage</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {storage.map(opt => {
                         const isSelected = searchParams.get('storage') === opt;
@@ -139,9 +139,9 @@ export default function CategoryFilters() {
                                     padding: '6px 10px',
                                     fontSize: '11px',
                                     borderRadius: '6px',
-                                    border: isSelected ? '1px solid var(--accent)' : '1px solid #262626',
-                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.1)' : 'transparent',
-                                    color: isSelected ? '#fff' : '#888'
+                                    border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    backgroundColor: isSelected ? 'var(--muted)' : 'transparent',
+                                    color: isSelected ? 'var(--foreground)' : 'var(--muted-foreground)'
                                 }}
                             >
                                 {opt}
@@ -153,7 +153,7 @@ export default function CategoryFilters() {
 
             <button
                 onClick={() => router.push(window.location.pathname)}
-                style={{ marginTop: '20px', fontSize: '12px', textDecoration: 'underline', color: '#666' }}
+                style={{ marginTop: '20px', fontSize: '12px', textDecoration: 'underline', color: 'var(--muted-foreground)' }}
             >
                 Clear all filters
             </button>

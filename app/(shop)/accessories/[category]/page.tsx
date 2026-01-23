@@ -1,17 +1,19 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import Breadcrumbs from '@/components/common/Breadcrumbs';
 import ProductCard from '@/components/product/ProductCard';
 import connectDB from '@/lib/db';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
 import { generateSEOMetadata } from '@/lib/seo';
 import CategoryFilters from './CategoryFilters';
+import Pagination from '@/components/ui/Pagination';
 import './CategoryPage.css';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
     params: Promise<{ category: string }>;
-    searchParams: Promise<{ brand?: string; minPrice?: string; maxPrice?: string; search?: string }>;
+    searchParams: Promise<{ brand?: string; minPrice?: string; maxPrice?: string; search?: string; page?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: PageProps) {
     });
 }
 
-async function getCategoryProducts(categorySlug: string, search?: string, brand?: string) {
+async function getCategoryProducts(categorySlug: string, search?: string, brand?: string, page: number = 1, limit: number = 20) {
     await connectDB();
     let query: any = { status: 'published' };
 
@@ -58,32 +60,43 @@ async function getCategoryProducts(categorySlug: string, search?: string, brand?
         }
     }
 
-    const products = await Product.find(query).lean();
-    return JSON.parse(JSON.stringify(products));
+    const skip = (page - 1) * limit;
+
+    const [products, totalCount] = await Promise.all([
+        Product.find(query).sort({ createdAt: 1 }).skip(skip).limit(limit).lean(),
+        Product.countDocuments(query)
+    ]);
+
+    return {
+        products: JSON.parse(JSON.stringify(products)),
+        totalPages: Math.ceil(totalCount / limit),
+        totalCount
+    };
 }
 
 const CategoryPage = async ({ params, searchParams }: PageProps) => {
     const { category: slug } = await params;
-    const { search, brand } = await searchParams;
+    const { search, brand, page } = await searchParams;
+    const currentPage = Number(page) || 1;
+    const limit = 20;
 
     await connectDB();
-    let categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
-    let categoryDesc = `Browse our wide selection of ${slug} accessories.`;
 
-    const category = await Category.findOne({ slug }).lean();
-    if (category) {
-        categoryName = category.name;
-        categoryDesc = (category as any).description || categoryDesc;
+    // Check if category exists (logic simplified for brevity as we need fallback for 'all')
+    let categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
+    if (slug !== 'all') {
+        const category = await Category.findOne({ slug }).lean();
+        if (category) {
+            categoryName = category.name;
+        }
+    } else {
+        categoryName = 'All Accessories';
     }
 
-    const products = await getCategoryProducts(slug, search, brand);
+    const { products, totalPages, totalCount } = await getCategoryProducts(slug, search, brand, currentPage, limit);
 
     return (
         <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
-            {/* <Breadcrumbs items={[{ label: categoryName, href: `/accessories/${slug}` }]} /> */}
-
-            {/* <Breadcrumbs items={[{ label: categoryName, href: `/accessories/${slug}` }]} /> */}
-
             <div className="shop-layout">
                 {/* Mobile Filters Toggle would go here */}
                 <aside className="shop-sidebar">
@@ -91,24 +104,29 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
                 </aside>
 
                 <main className="shop-content">
-                    {/* <div className="category-header">
-                        <h1 className="category-title">{categoryName}</h1>
-                    </div> */}
-
                     <div className="shop-controls">
-                        {/* Sort Dropdown */}
+                        {/* Sort Dropdown or results count */}
+                        <p className="product-count">
+                            Showing {(currentPage - 1) * limit + 1}-{Math.min(currentPage * limit, totalCount)} of {totalCount} products
+                        </p>
                     </div>
 
                     <div className="product-grid">
                         {products.map((product: any) => (
                             <ProductCard key={product._id} product={product} />
                         ))}
-                        {products.length === 0 && (
-                            <div className="no-products">
-                                <p>No products found in this category.</p>
-                            </div>
-                        )}
                     </div>
+
+                    {products.length === 0 ? (
+                        <div className="no-products">
+                            <p>No products found in this category.</p>
+                        </div>
+                    ) : (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                        />
+                    )}
                 </main>
             </div>
         </div>

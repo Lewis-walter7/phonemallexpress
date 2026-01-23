@@ -290,7 +290,7 @@ export default async function Home() {
       {renderProductSection("Smart Savings", "Top tech that won't break the bank.", "/search?sort=price_asc", pocketFriendly)}
 
       {/* Partners Section */}
-      <section className="section-gz" style={{ borderTop: '1px solid var(--border)', backgroundColor: '#080808' }}>
+      <section className="section-gz" style={{ borderTop: '1px solid var(--border)', backgroundColor: 'var(--secondary)' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: 'var(--spacing-lg)' }}>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>

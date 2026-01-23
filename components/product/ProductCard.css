@@ -1,5 +1,5 @@
 .product-card {
-    background-color: #0c0c0c;
+    background-color: var(--secondary);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -20,7 +20,7 @@
 .product-image-container {
     position: relative;
     aspect-ratio: 1 / 1;
-    background-color: #1a1a1a;
+    background-color: var(--input);
     overflow: hidden;
 }
 
@@ -108,12 +108,9 @@
     font-weight: 600;
     color: var(--foreground);
     margin-bottom: var(--spacing-xs);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    margin-bottom: var(--spacing-xs);
     min-height: 2.4rem;
+    line-height: 1.2;
     line-height: 1.2;
 }
 

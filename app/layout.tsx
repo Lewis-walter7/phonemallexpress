@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -78,14 +79,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: 'var(--font-sans)' }} suppressHydrationWarning>
-        <CartProvider>
-          <WishlistProvider>
-            <div className="site-wrapper flex flex-col min-h-screen">
-              {children}
-            </div>
-            <Toaster position="bottom-right" />
-          </WishlistProvider>
-        </CartProvider>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CartProvider>
+            <WishlistProvider>
+              <div className="site-wrapper flex flex-col min-h-screen">
+                {children}
+              </div>
+              <Toaster position="bottom-right" />
+            </WishlistProvider>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
