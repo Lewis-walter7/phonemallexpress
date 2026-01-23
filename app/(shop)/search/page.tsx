@@ -38,11 +38,11 @@ export default function SearchPage() {
     }, [query]);
 
     return (
-        <div className="container" style={{ paddingTop: '0.5rem', paddingBottom: 'var(--spacing-lg)' }}>
+        <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
             <Breadcrumbs items={[{ label: 'Search', href: '/search' }]} />
 
-            <div style={{ marginTop: '0.75rem', marginBottom: products.length > 0 ? '0.5rem' : 'var(--spacing-md)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <div style={{ marginTop: '0.125rem', marginBottom: products.length > 0 ? '0.5rem' : 'var(--spacing-md)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0' }}>
                     <Search size={24} style={{ color: 'var(--accent)' }} />
                     <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>
                         Search Results

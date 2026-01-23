@@ -10,6 +10,11 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ images, name }: ProductGalleryProps) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+
+    const handleImageError = () => {
+        setImageErrors(prev => ({ ...prev, [activeIndex]: true }));
+    };
 
     // Fallback if no images
     if (!images || images.length === 0) {
@@ -23,14 +28,20 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
     return (
         <div className="product-media">
             <div className="main-image-container">
-                <Image
-                    src={images[activeIndex]?.url}
-                    alt={images[activeIndex]?.alt || name}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="main-image"
-                />
+                {!imageErrors[activeIndex] && images[activeIndex]?.url ? (
+                    <Image
+                        src={images[activeIndex]?.url}
+                        alt={images[activeIndex]?.alt || name}
+                        fill
+                        priority
+                        unoptimized
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="main-image"
+                        onError={handleImageError}
+                    />
+                ) : (
+                    <div className="product-image-placeholder" />
+                )}
             </div>
 
             {images.length > 1 && (
@@ -41,7 +52,18 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                             className={`thumbnail-container ${activeIndex === i ? 'active' : ''}`}
                             onClick={() => setActiveIndex(i)}
                         >
-                            <Image src={img.url} alt={img.alt || `${name} thumbnail ${i + 1}`} fill sizes="60px" />
+                            {!imageErrors[i] && img.url ? (
+                                <Image
+                                    src={img.url}
+                                    alt={img.alt || `${name} thumbnail ${i + 1}`}
+                                    fill
+                                    unoptimized
+                                    sizes="60px"
+                                    onError={() => setImageErrors(prev => ({ ...prev, [i]: true }))}
+                                />
+                            ) : (
+                                <div className="product-image-placeholder" style={{ opacity: 0.5 }} />
+                            )}
                         </div>
                     ))}
                 </div>

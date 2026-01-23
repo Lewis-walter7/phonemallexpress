@@ -6,6 +6,7 @@ import connectDB from '@/lib/db';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
 import { generateSEOMetadata } from '@/lib/seo';
+import CategoryFilters from './CategoryFilters';
 import './CategoryPage.css';
 
 interface PageProps {
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: PageProps) {
     });
 }
 
-async function getCategoryProducts(categorySlug: string, search?: string) {
+async function getCategoryProducts(categorySlug: string, search?: string, brand?: string) {
     await connectDB();
     let query: any = { status: 'published' };
 
@@ -38,6 +39,11 @@ async function getCategoryProducts(categorySlug: string, search?: string) {
             { name: { $regex: search, $options: 'i' } },
             { description: { $regex: search, $options: 'i' } }
         ];
+    }
+
+    // Handle Brand
+    if (brand) {
+        query.brand = { $regex: brand, $options: 'i' };
     }
 
     // Handle Category
@@ -58,7 +64,7 @@ async function getCategoryProducts(categorySlug: string, search?: string) {
 
 const CategoryPage = async ({ params, searchParams }: PageProps) => {
     const { category: slug } = await params;
-    const { search } = await searchParams;
+    const { search, brand } = await searchParams;
 
     await connectDB();
     let categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
@@ -70,33 +76,26 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
         categoryDesc = (category as any).description || categoryDesc;
     }
 
-    const products = await getCategoryProducts(slug, search);
+    const products = await getCategoryProducts(slug, search, brand);
 
     return (
-        <div className="container section-py">
-            <Breadcrumbs items={[{ label: categoryName, href: `/accessories/${slug}` }]} />
+        <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
+            {/* <Breadcrumbs items={[{ label: categoryName, href: `/accessories/${slug}` }]} /> */}
 
-            <div className="category-header">
-                <h1 className="category-title">{categoryName}</h1>
-                <p className="category-desc">{categoryDesc}</p>
-            </div>
+            {/* <Breadcrumbs items={[{ label: categoryName, href: `/accessories/${slug}` }]} /> */}
 
             <div className="shop-layout">
                 {/* Mobile Filters Toggle would go here */}
                 <aside className="shop-sidebar">
-                    <div className="filter-group">
-                        <h3 className="filter-title">Price Range</h3>
-                        {/* Filter UI */}
-                    </div>
-                    <div className="filter-group">
-                        <h3 className="filter-title">Brands</h3>
-                        {/* Brands UI */}
-                    </div>
+                    <CategoryFilters />
                 </aside>
 
                 <main className="shop-content">
+                    {/* <div className="category-header">
+                        <h1 className="category-title">{categoryName}</h1>
+                    </div> */}
+
                     <div className="shop-controls">
-                        <p className="product-count">{products.length} Products</p>
                         {/* Sort Dropdown */}
                     </div>
 

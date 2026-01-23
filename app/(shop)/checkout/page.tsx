@@ -164,7 +164,7 @@ const CheckoutPage = () => {
 
                 <div className="checkout-sidebar">
                     <div className="order-summary-card">
-                        <div className="flex justify-between items-center mb-md">
+                        <div className="flex justify-between items-center" style={{ marginBottom: '32px' }}>
                             <h3 className="card-title" style={{ margin: 0, border: 0, padding: 0 }}>Order Summary</h3>
                             <span className="text-muted-foreground" style={{ fontSize: '12px' }}>{totalItems} items</span>
                         </div>

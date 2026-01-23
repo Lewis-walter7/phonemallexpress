@@ -33,7 +33,23 @@ const ProductPage = async ({ params }: PageProps) => {
     const { category: catSlug, slug } = await params;
     await connectDB();
 
-    const product = await Product.findOne({ slug }).lean();
+    let product = null;
+
+    // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
+    const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
+    if (idMatch) {
+        product = await Product.findById(idMatch[1]).lean();
+    }
+
+    // 2. If not found, try exact slug match (legacy)
+    if (!product) {
+        product = await Product.findOne({ slug }).lean();
+    }
+
+    // 3. Last resort: if slug IS just an ID
+    if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
+        product = await Product.findById(slug).lean();
+    }
 
     if (!product) {
         notFound();
@@ -46,10 +62,18 @@ const ProductPage = async ({ params }: PageProps) => {
         status: 'published'
     }).limit(4).lean() as any[];
 
-    const productImages = product.images?.length > 0
+    const rawImages = (product.images && product.images.length > 0)
         ? product.images
-        : [{ url: product.imageUrl || '', alt: product.name }];
+        : (product.imageUrl ? [product.imageUrl] : []);
 
+    const productImages = rawImages.map((img: any) => {
+        if (typeof img === 'string') {
+            return { url: img, alt: product.name };
+        }
+        return { url: img.url, alt: img.alt || product.name };
+    }).filter((img: any) => img.url && typeof img.url === 'string' && img.url.trim() !== '');
+
+    console.log(productImages);
     const originalPrice = product.compareAtPrice || product.salePrice;
     const discountPercentage = product.discountPercentage || (originalPrice && originalPrice > product.price
         ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
@@ -88,7 +112,7 @@ const ProductPage = async ({ params }: PageProps) => {
             ]} />
 
             <div className="product-layout">
-                <ProductGallery images={productImages as any} name={product.name} />
+                <ProductGallery images={productImages} name={product.name} />
 
                 <div className="product-details">
                     <div className="product-header">
@@ -135,6 +159,8 @@ const ProductPage = async ({ params }: PageProps) => {
                             category: catName,
                             image: productImages[0]?.url || ''
                         }}
+                        variants={product.variants || []}
+                        colors={product.colors || []}
                     />
                 </div>
             </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { ShoppingCart, User, Search, Menu, X, ChevronRight, ChevronDown, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import './Navbar.css';
@@ -206,6 +206,21 @@ const Navbar = () => {
                             </div>
                             <span className="action-label desktop-only">Cart</span>
                         </Link>
+                    </div>
+                </div>
+
+                {/* SUB NAVBAR (Desktop) */}
+                <div className="sub-navbar desktop-only">
+                    <div className="container sub-navbar-container">
+                        <Link href="/search?q=Samsung" className="sub-nav-link">Samsung</Link>
+                        <Link href="/search?q=Apple" className="sub-nav-link">Apple</Link>
+                        <Link href="/accessories/phones" className="sub-nav-link">Smartphones</Link>
+                        <Link href="/accessories" className="sub-nav-link">Mobile Accessories</Link>
+                        <Link href="/accessories/audio" className="sub-nav-link text-accent">Audio</Link>
+                        <Link href="/accessories/gaming" className="sub-nav-link">Gaming</Link>
+                        <Link href="/accessories?type=storage" className="sub-nav-link">Storage</Link>
+                        <Link href="/accessories/tablets" className="sub-nav-link">Tablets</Link>
+                        <Link href="/search?q=Content+Creator" className="sub-nav-link">Content Creator Kit</Link>
                     </div>
                 </div>
             </header>

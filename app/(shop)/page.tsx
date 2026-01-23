@@ -32,7 +32,7 @@ async function getSpecialOffers() {
       { compareAtPrice: { $gt: 0 } }
     ]
   })
-    .limit(4)
+    .limit(12)
     .sort({ discountPercentage: -1 })
     .lean();
   return JSON.parse(JSON.stringify(specialOffers));
@@ -127,7 +127,7 @@ export default async function Home() {
       <section className="section-py" style={{ paddingTop: '0' }}>
         <div className="container">
           <SectionHeader title={title} subtitle={subtitle} viewMoreLink={link} />
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--spacing-md)' }}>
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
             {products.map((product: any) => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -178,6 +178,31 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Featured Products Section (Moved Here) */}
+      <section className="section-py" style={{ paddingTop: '0' }}>
+        <div className="container">
+          <div className="text-center" style={{ marginBottom: 'var(--spacing-xl)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Featured Products</h2>
+            <p style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginTop: '4px' }}>Handpicked essentials for your mobile device.</p>
+            <div style={{ marginTop: 'var(--spacing-sm)' }}>
+              <Link href="/accessories" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
+            </div>
+          </div>
+
+          {featuredProducts.length > 0 ? (
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
+              {featuredProducts.map((product: any) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-xl" style={{ padding: 'var(--spacing-3xl) 0', color: 'var(--muted-foreground)' }}>
+              <p>No featured products found. Check back soon!</p>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Special Offers Section */}
       {specialOffers.length > 0 && (
         <section className="section-py" style={{ paddingTop: '0', paddingBottom: '2rem' }}>
@@ -188,9 +213,12 @@ export default async function Home() {
                 <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Special Offers</h2>
               </div>
               <p style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>Limited time deals on your favorite tech.</p>
+              <div style={{ marginTop: 'var(--spacing-sm)' }}>
+                <Link href="/search?q=deal" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View More Special Offers</Link>
+              </div>
             </div>
 
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--spacing-md)' }}>
+            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--spacing-md)' }}>
               {specialOffers.map((product: any) => (
                 <ProductCard key={product._id} product={product} />
               ))}
@@ -214,30 +242,6 @@ export default async function Home() {
       {/* Pocket Friendly */}
       {renderProductSection("Smart Savings", "Top tech that won't break the bank.", "/search?sort=price_asc", pocketFriendly)}
 
-      {/* Featured Products Section */}
-      <section className="section-py" style={{ paddingTop: '0' }}>
-        <div className="container">
-          <div className="text-center" style={{ marginBottom: 'var(--spacing-xl)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Featured Products</h2>
-            <p style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginTop: '4px' }}>Handpicked essentials for your mobile device.</p>
-            <div style={{ marginTop: 'var(--spacing-sm)' }}>
-              <Link href="/accessories" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
-            </div>
-          </div>
-
-          {featuredProducts.length > 0 ? (
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
-              {featuredProducts.map((product: any) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-xl" style={{ padding: 'var(--spacing-3xl) 0', color: 'var(--muted-foreground)' }}>
-              <p>No featured products found. Check back soon!</p>
-            </div>
-          )}
-        </div>
-      </section>
     </div>
   );
 }

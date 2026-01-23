@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -74,12 +76,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body style={{ fontFamily: 'var(--font-sans)' }}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <body style={{ fontFamily: 'var(--font-sans)' }} suppressHydrationWarning>
         <CartProvider>
-          <div className="site-wrapper flex flex-col min-h-screen">
-            {children}
-          </div>
+          <WishlistProvider>
+            <div className="site-wrapper flex flex-col min-h-screen">
+              {children}
+            </div>
+            <Toaster position="bottom-right" />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

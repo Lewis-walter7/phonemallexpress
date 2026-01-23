@@ -1,10 +1,17 @@
 .category-header {
-    margin-bottom: var(--spacing-lg);
+    position: sticky;
+    top: 40px;
+    z-index: 40;
+    background-color: var(--background);
+    /* padding: 10px 0; */
+    /* margin-bottom: var(--spacing-sm); */
+    margin-top: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @media (min-width: 768px) {
     .category-header {
-        margin-bottom: var(--spacing-2xl);
+        padding: 1.5rem 0;
     }
 }
 
@@ -12,14 +19,14 @@
     font-family: var(--font-display);
     font-size: var(--font-size-3xl);
     font-weight: 800;
-    margin-bottom: var(--spacing-xs);
+    /* margin-bottom: var(--spacing-xs); */
     letter-spacing: -0.04em;
 }
 
 @media (min-width: 768px) {
     .category-title {
-        font-size: var(--font-size-4xl);
-        margin-bottom: var(--spacing-sm);
+        font-size: var(--font-size-3xl);
+        /* margin-bottom: var(--spacing-sm); */
     }
 }
 
@@ -39,13 +46,13 @@
 .shop-layout {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
 }
 
 @media (min-width: 1024px) {
     .shop-layout {
         grid-template-columns: 240px 1fr;
-        gap: var(--spacing-2xl);
+        gap: var(--spacing-lg);
     }
 }
 
@@ -59,13 +66,33 @@
     display: none;
 }
 
-@media (min-width: 1024px) {
-    .shop-sidebar {
-        display: block;
-        position: sticky;
-        top: 100px;
-        height: fit-content;
-    }
+.shop-sidebar {
+    display: block;
+    position: sticky;
+    top: 180px;
+    /* Below Navbar (70px) + Category Header (~100px) */
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 5px;
+    /* Space for scrollbar */
+}
+
+/* Custom Scrollbar for Sidebar */
+.shop-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.shop-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.shop-sidebar::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 4px;
+}
+
+.shop-sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
 }
 
 .filter-group {
@@ -86,7 +113,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
     padding-bottom: var(--spacing-sm);
 }
 
@@ -110,7 +137,7 @@
 
 @media (min-width: 1280px) {
     .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: var(--spacing-md);
     }
 }

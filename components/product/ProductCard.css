@@ -49,6 +49,36 @@
     font-weight: 700;
     padding: 2px 6px;
     border-radius: var(--radius-sm);
+    z-index: 2;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+    backdrop-filter: blur(4px);
+    border: none;
+}
+
+.wishlist-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.wishlist-btn.active {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #e31b23;
 }
 
 .product-info {

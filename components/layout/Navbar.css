@@ -2,11 +2,10 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background-color: hsla(250, 20%, 5%, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background-color: #050505;
     border-bottom: 1px solid var(--border);
-    height: 70px;
+    height: auto;
+    min-height: 70px;
 }
 
 .navbar-container {
@@ -300,6 +299,18 @@
     display: flex;
 }
 
+/* Hover bridge for sub-menu to prevent closing when crossing gap */
+.menu-item-with-sub::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 20px;
+    /* Bridge the gap */
+    height: 100%;
+    background: transparent;
+}
+
 .sub-item-link {
     padding: 10px 20px;
     color: var(--muted-foreground);
@@ -515,6 +526,36 @@
     transition: background-color var(--transition-fast);
 }
 
-.icon-btn:hover {
-    background-color: hsla(0, 0%, 100%, 0.1);
+
+/* SUB NAVBAR */
+.sub-navbar {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #050505;
+}
+
+.sub-navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 20px 0;
+    overflow-x: auto;
+}
+
+.sub-nav-link {
+    color: var(--foreground);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.sub-nav-link:hover {
+    color: var(--accent);
+}
+
+.sub-nav-link.text-accent {
+    color: #4ade80;
+    /* Brighter green as seen in image */
 }
