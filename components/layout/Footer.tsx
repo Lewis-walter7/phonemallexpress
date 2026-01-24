@@ -82,6 +82,9 @@ const Footer = () => {
 
                 <div className="footer-bottom">
                     <p>© {currentYear} Phone Mall Express. All rights reserved.</p>
+                    <p style={{ marginTop: '4px', fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>
+                        Designed & Developed by <a href="https://lewisindusa.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--foreground)', fontWeight: 500 }}>Lewis Indusa</a>
+                    </p>
                     <div className="payment-icons">
                         {/* Payment icons would go here */}
                     </div>

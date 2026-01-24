@@ -23,14 +23,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://phonemallexpress.com'),
   title: {
-    default: "Phone Mall Express | Premium Phone Accessories",
-    template: "%s | Phone Mall Express"
+    default: "PhoneMallExpress™ | Premium Phone Accessories",
+    template: "%s | PhoneMallExpress™"
   },
   description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
   keywords: ["phone accessories", "phone cases", "fast chargers", "smartwatch accessories", "audio gear"],
-  authors: [{ name: "Phone Mall Express" }],
-  creator: "Phone Mall Express",
-  publisher: "Phone Mall Express",
+  authors: [{ name: "PhoneMallExpress™" }],
+  creator: "PhoneMallExpress™",
+  publisher: "PhoneMallExpress™",
   formatDetection: {
     email: false,
     address: false,
@@ -40,21 +40,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://phonemallexpress.com",
-    siteName: "Phone Mall Express",
-    title: "Phone Mall Express | Premium Phone Accessories",
+    siteName: "PhoneMallExpress™",
+    title: "PhoneMallExpress™ | Premium Phone Accessories",
     description: "Premium phone accessories delivered with speed and quality. Elevate your mobile experience.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Phone Mall Express",
+        alt: "PhoneMallExpress™",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Phone Mall Express | Premium Phone Accessories",
+    title: "PhoneMallExpress™ | Premium Phone Accessories",
     description: "Premium phone accessories delivered with speed and quality.",
     images: ["/twitter-image.jpg"],
   },
