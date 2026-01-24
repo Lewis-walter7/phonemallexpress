@@ -6,7 +6,9 @@ export default function AboutPage() {
             <Breadcrumbs items={[{ label: 'About Us', href: '/about' }]} />
 
             <div className="info-page-header" style={{ marginBottom: 'var(--spacing-lg)' }}>
-                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>About Phone Mall Express</h1>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>
+                    About <span style={{ color: '#E30613' }}>Phone</span><span style={{ color: '#0054A6' }}>Mall</span><span style={{ color: '#0054A6' }}>Express</span><span style={{ color: '#0054A6' }}>™</span>
+                </h1>
                 <p style={{ fontSize: 'var(--font-size-base)', color: 'var(--muted-foreground)', maxWidth: '800px', lineHeight: 1.6 }}>
                     Redefining the mobile experience with premium accessories and unparalleled service since 2018.
                 </p>
@@ -16,7 +18,7 @@ export default function AboutPage() {
                 <section>
                     <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 700, marginBottom: 'var(--spacing-sm)' }}>Our Story</h2>
                     <p style={{ color: 'var(--muted-foreground)', lineHeight: 1.8, marginBottom: 'var(--spacing-sm)' }}>
-                        At Phone Mall Express, we believe that your mobile device is more than just a tool—it's an extension of your lifestyle. Founded with a passion for technology and design, we've grown into a leading destination for premium mobile accessories.
+                        At <span style={{ fontWeight: 700 }}><span style={{ color: '#E30613' }}>Phone</span><span style={{ color: '#0054A6' }}>Mall</span><span style={{ color: '#0054A6' }}>Express</span><span style={{ color: '#0054A6' }}>™</span></span>, we believe that your mobile device is more than just a tool—it's an extension of your lifestyle. Founded with a passion for technology and design, we've grown into a leading destination for premium mobile accessories.
                     </p>
                     <p style={{ color: 'var(--muted-foreground)', lineHeight: 1.8 }}>
                         We started small, driven by the frustration of finding high-quality accessories that didn't compromise on style or protection. Today, we curate a selection of the world's best cases, chargers, and audio gear, ensuring every product we sell meets our rigorous standards for performance and aesthetics.

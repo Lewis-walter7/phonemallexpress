@@ -49,9 +49,9 @@ export default function BulkQuotePage() {
     };
 
     return (
-        <div className="container" style={{ padding: 'var(--spacing-xl) 0' }}>
+        <div className="container" style={{ padding: 'var(--spacing-md) 0' }}>
             <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+                <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-md)' }}>
                     <div style={{
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -76,7 +76,7 @@ export default function BulkQuotePage() {
                 <div style={{
                     background: 'var(--secondary)',
                     borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--spacing-xl)',
+                    padding: 'var(--spacing-md)',
                     border: '1px solid var(--border)'
                 }}>
                     <form onSubmit={handleSubmit}>

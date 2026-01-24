@@ -166,7 +166,7 @@
     display: flex;
     gap: var(--spacing-2xl);
     width: max-content;
-    animation: marquee-scroll 30s linear infinite;
+    animation: marquee-scroll 60s linear infinite;
 }
 
 /* Pause on hover */
