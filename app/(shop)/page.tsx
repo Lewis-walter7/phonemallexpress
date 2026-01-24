@@ -305,9 +305,19 @@ export default async function Home() {
             <div className="marquee-track">
               {/* Duplicated for seamless loop */}
               {[
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM',
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM',
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM'
+                'Doshi Group of Companies', 'Cocacola', 'Ministry of Health', 'Ministry of Defence', 'NSSF',
+                'Engie', 'FAO', 'UNHCR', 'UNOPS', 'IOM',
+                'WORLD VISION', 'UNDP', 'UN-women', 'UNICEF', 'UNESCO',
+                'WHO', 'ICTP', 'IAEA', 'ILO', 'UNIDO',
+                'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
+                'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO',
+                // Duplicated for marquee
+                'Doshi Group of Companies', 'Cocacola', 'Ministry of Health', 'Ministry of Defence', 'NSSF',
+                'Engie', 'FAO', 'UNHCR', 'UNOPS', 'IOM',
+                'WORLD VISION', 'UNDP', 'UN-women', 'UNICEF', 'UNESCO',
+                'WHO', 'ICTP', 'IAEA', 'ILO', 'UNIDO',
+                'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
+                'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO'
               ].map((brand, i) => (
                 <h3 key={i} style={{
                   fontSize: '24px',
