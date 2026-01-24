@@ -7,6 +7,8 @@ import { CompareProvider } from "@/context/CompareContext";
 
 import CompareFloatingBar from "@/components/product/CompareFloatingBar";
 
+import { Suspense } from "react";
+
 export default function ShopLayout({
     children,
 }: {
@@ -14,7 +16,9 @@ export default function ShopLayout({
 }) {
     return (
         <CompareProvider>
-            <Navbar />
+            <Suspense fallback={null}>
+                <Navbar />
+            </Suspense>
             <main className="flex-1">
                 {children}
             </main>
