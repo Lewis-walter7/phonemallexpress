@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './admin-layout.module.css';
 
 export default function DashboardLayout({
@@ -12,6 +12,26 @@ export default function DashboardLayout({
 }) {
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [pendingReviewsCount, setPendingReviewsCount] = useState(0);
+
+    useEffect(() => {
+        const fetchPendingCount = async () => {
+            try {
+                const res = await fetch('/api/admin/reviews?status=pending');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.reviews)) {
+                    setPendingReviewsCount(data.reviews.length);
+                }
+            } catch (error) {
+                console.error('Failed to fetch pending reviews count', error);
+            }
+        };
+
+        fetchPendingCount();
+        // Poll every 30 seconds to keep it fresh
+        const interval = setInterval(fetchPendingCount, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -40,7 +60,22 @@ export default function DashboardLayout({
                 <nav className={styles.nav}>
                     <Link href="/admin/dashboard" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📊 Dashboard</Link>
                     <Link href="/admin/products" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📦 Products</Link>
-                    <Link href="/admin/reviews" className={styles.link} onClick={() => setIsSidebarOpen(false)}>⭐ Reviews</Link>
+                    <Link href="/admin/reviews" className={styles.link} onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>⭐ Reviews</span>
+                        {pendingReviewsCount > 0 && (
+                            <span style={{
+                                background: '#ef4444',
+                                color: 'white',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                marginLeft: '8px'
+                            }}>
+                                {pendingReviewsCount}
+                            </span>
+                        )}
+                    </Link>
                     <Link href="/admin/register" className={styles.link} onClick={() => setIsSidebarOpen(false)}>👥 Register Admin</Link>
                     <Link href="/admin/orders" className={styles.link} onClick={() => setIsSidebarOpen(false)}>🚚 Orders</Link>
                     <Link href="/admin/quotes" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📋 Bulk Quotes</Link>

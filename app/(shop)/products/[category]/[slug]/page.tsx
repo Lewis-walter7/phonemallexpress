@@ -8,6 +8,8 @@ import { generateSEOMetadata } from '@/lib/seo';
 import ProductGallery from '@/components/product/ProductGallery';
 import AddToCartSection from '@/components/product/AddToCartSection';
 import ProductCard from '@/components/product/ProductCard';
+import ReviewList from '@/components/reviews/ReviewList';
+import ReviewForm from '@/components/reviews/ReviewForm';
 import './ProductPage.css';
 
 interface PageProps {
@@ -180,6 +182,22 @@ const ProductPage = async ({ params }: PageProps) => {
                     </section>
                 </div>
             )}
+
+            {/* Reviews Section */}
+            <div className="reviews-section">
+                <h2 className="reviews-section-title">Customer Reviews</h2>
+
+                <div className="reviews-grid">
+                    <div>
+                        <ReviewList productId={product._id.toString()} />
+                    </div>
+                    <div>
+                        <div className="review-form-container">
+                            <ReviewForm productId={product._id.toString()} />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {relatedProducts.length > 0 && (
                 <div className="related-products-section" style={{ marginTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>

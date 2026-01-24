@@ -390,3 +390,187 @@
         gap: var(--spacing-md) !important;
     }
 }
+
+/* ----- Reviews Section Styles ----- */
+
+.reviews-section {
+    margin-top: var(--spacing-lg) !important;
+    border-top: 1px solid var(--border) !important;
+    padding-top: var(--spacing-md) !important;
+}
+
+.reviews-section-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-md);
+    color: var(--foreground);
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+}
+
+@media (min-width: 1024px) {
+    .reviews-grid {
+        grid-template-columns: 1.5fr 1fr;
+        /* Give more space to list */
+        gap: var(--spacing-xl);
+    }
+}
+
+/* Review List */
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.review-author {
+    font-weight: 700;
+    color: var(--foreground);
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #10b981;
+    /* green-500 */
+    background: rgba(16, 185, 129, 0.1);
+    padding: 2px 6px;
+    border-radius: 99px;
+    font-weight: 600;
+}
+
+.review-date {
+    font-size: 11px;
+    color: var(--muted-foreground);
+}
+
+.review-rating {
+    margin-bottom: 8px;
+}
+
+.review-title {
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    color: var(--foreground);
+    margin-bottom: 4px;
+}
+
+.review-content {
+    color: var(--muted-foreground);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+}
+
+/* Review Form */
+.review-form-container {
+    background: var(--card);
+    /* Match card style */
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    position: sticky;
+    top: 20px;
+}
+
+.review-form-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    color: var(--foreground);
+}
+
+.review-form .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.review-form label {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.review-form input,
+.review-form textarea {
+    width: 100%;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    /* Sharper corners like main design */
+    padding: 10px 12px;
+    color: var(--foreground);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-fast);
+}
+
+.review-form input:focus,
+.review-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.review-form button[type="submit"] {
+    width: 100%;
+    background: var(--foreground);
+    color: var(--background);
+    border: none;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: opacity var(--transition-fast);
+}
+
+.review-form button[type="submit"]:hover {
+    opacity: 0.9;
+}
+
+.review-form button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--muted-foreground);
+}
