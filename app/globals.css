@@ -21,6 +21,8 @@
   --accent-foreground: #ffffff;
   --muted: #1e1e1e;
   --muted-foreground: #a1a1a1;
+  --card: #121212;
+  --card-foreground: #ffffff;
   --border: #262626;
   --input: #121212;
   --ring: var(--accent);
@@ -74,6 +76,8 @@
   --accent-foreground: #ffffff;
   --muted: #f4f4f5;
   --muted-foreground: #737373;
+  --card: #ffffff;
+  --card-foreground: #050505;
   --border: #e5e5e5;
   --input: #f4f4f5;
   --ring: var(--accent);
