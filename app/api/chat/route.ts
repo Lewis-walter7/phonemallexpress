@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import dbConnect from '@/lib/db';
+import Product from '@/models/Product';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -23,22 +25,62 @@ export async function POST(req: Request) {
     const currentUsage = parseInt(cookieStore.get(usageKey)?.value || '0');
 
     // Check if message is a greeting (to exclude from limit)
-    const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase().trim() || "";
-    const GREETINGS = ['hi', 'hello', 'hey', 'greetings', 'habari', 'sasa', 'good morning', 'good afternoon', 'good evening'];
+    const lastUserMessage = messages[messages.length - 1]?.content?.trim() || "";
+    // Sanitize for regex - escape special chars
+    const safeQuery = lastUserMessage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 50); // limit length
+
+    const GREETINGS = ['hi', 'hello', 'hey', 'hi there', 'hello there', 'hallo', 'greetings', 'habari', 'sasa', 'good morning', 'good afternoon', 'good evening'];
 
     // Strict match or starts with (e.g. "Hi there") - but aim to catch short greetings mostly
-    const isGreeting = GREETINGS.some(g => lastUserMessage === g || (lastUserMessage.startsWith(g + '') && lastUserMessage.length < 15));
+    const isGreeting = GREETINGS.some(g => lastUserMessage.toLowerCase() === g || (lastUserMessage.toLowerCase().startsWith(g + '') && lastUserMessage.length < 15));
 
     if (!isGreeting && currentUsage >= 6) {
         return NextResponse.json({
-            error: 'You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support.'
+            error: 'You have reached your daily limit of 6 messages. Please contasct us on WhatsApp for unlimited support.'
         }, { status: 429 });
     }
 
     try {
+        await dbConnect();
+
+        // Context Retrieval (RAG-lite)
+        let productContext = "";
+
+        // Only search if not a greeting and query is long enough
+        if (!isGreeting && safeQuery.length > 2) {
+            const products = await Product.find({
+                status: 'published',
+                $or: [
+                    { name: { $regex: safeQuery, $options: 'i' } },
+                    { brand: { $regex: safeQuery, $options: 'i' } },
+                    { category: { $regex: safeQuery, $options: 'i' } },
+                    { subcategory: { $regex: safeQuery, $options: 'i' } }
+                ]
+            })
+                .select('name price stock brand category')
+                .limit(5)
+                .lean();
+
+            if (products.length > 0) {
+                const productList = products.map((p: any) =>
+                    `- ${p.name} (${p.brand}): KES ${p.price.toLocaleString()} | Stock: ${p.stock}`
+                ).join('\n');
+
+                productContext = `
+                CONTEXT FROM DATABASE:
+                The following products match the user's query. Use this EXACT information to answer price/stock questions.
+                ${productList}
+                
+                If the user asks for a specific product and it is NOT in the list above, assume we do not have it or it is out of stock.
+                `;
+            }
+        }
+
         const systemMessage = {
             role: "system",
             content: `You are the AI Assistant for Phone Mall Express.
+            
+            ${productContext}
             
             STRICT RULES:
             1. SCOPE: You are authorized to discuss the following product categories found in our menu:
@@ -57,6 +99,7 @@ export async function POST(req: Request) {
 
             3. Keep answers concise (under 3 sentences where possible).
             4. Be friendly and helpful.
+            5. PRICES: If you have context data, quote the exact KES price. If not, ask the user to check the website or contact support.
             
             Your goal is to help customers find the right tech gadget or appliance.`
         };

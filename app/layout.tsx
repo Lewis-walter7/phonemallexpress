@@ -81,7 +81,7 @@ export default function RootLayout({
       <body style={{ fontFamily: 'var(--font-sans)' }} suppressHydrationWarning>
         <ThemeProvider
           attribute="data-theme"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

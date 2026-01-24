@@ -15,6 +15,8 @@ export default function Chatbot() {
     const [messages, setMessages] = useState<Message[]>([
         { role: 'assistant', content: 'Hi! How can I help you find the perfect gadget today?' }
     ]);
+    const [showLimitWarning, setShowLimitWarning] = useState(false);
+    const [limitWarningDismissed, setLimitWarningDismissed] = useState(false);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,13 +36,40 @@ export default function Chatbot() {
         return () => clearTimeout(timer);
     }, []);
 
+    // Load messages from Local Storage on mount
+    useEffect(() => {
+        const savedMessages = localStorage.getItem('chat_history');
+        if (savedMessages) {
+            try {
+                setMessages(JSON.parse(savedMessages));
+            } catch (e) {
+                console.error("Failed to parse chat history");
+            }
+        }
+
+        // Show limit warning on mount/open
+        setShowLimitWarning(true);
+        const timer = setTimeout(() => {
+            setShowLimitWarning(false);
+        }, 12000); // Disappear after 12s
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Save messages to Local Storage whenever they change
+    useEffect(() => {
+        if (messages.length > 1) { // Don't save if it's just the initial greeting alone, or do? User might want to keep history.
+            localStorage.setItem('chat_history', JSON.stringify(messages));
+        }
+    }, [messages]);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isOpen]);
+    }, [messages, isOpen, showLimitWarning]);
 
     const handleSend = async (text: string) => {
         if (!text.trim() || isLoading) return;
@@ -124,6 +153,34 @@ export default function Chatbot() {
                 </div>
 
                 <div className="chatbot-messages">
+                    {/* Rate Limit Warning */}
+                    {showLimitWarning && !limitWarningDismissed && (
+                        <div className="limit-warning" style={{
+                            padding: '8px 12px',
+                            background: '#fff3cd',
+                            border: '1px solid #ffeeba',
+                            color: '#856404',
+                            fontSize: '0.85rem',
+                            borderRadius: '6px',
+                            margin: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            animation: 'fadeIn 0.3s ease-in-out'
+                        }}>
+                            <span>Free usage: You have up to 6 message requests per day.</span>
+                            <button
+                                onClick={() => {
+                                    setShowLimitWarning(false);
+                                    setLimitWarningDismissed(true);
+                                }}
+                                style={{ background: 'none', border: 'none', color: '#856404', cursor: 'pointer', padding: '0 4px', fontSize: '1.2rem' }}
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    )}
+
                     {messages.map((msg, idx) => (
                         <div key={idx} className={`message ${msg.role}`}>
                             <div className="message-content">
@@ -167,7 +224,7 @@ export default function Chatbot() {
                         <Send size={16} />
                     </button>
                 </form>
-            </div>
+            </div >
         </>
     );
 }

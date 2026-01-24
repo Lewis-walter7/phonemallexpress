@@ -43,6 +43,7 @@ export default function DashboardLayout({
                     <Link href="/admin/reviews" className={styles.link} onClick={() => setIsSidebarOpen(false)}>⭐ Reviews</Link>
                     <Link href="/admin/register" className={styles.link} onClick={() => setIsSidebarOpen(false)}>👥 Register Admin</Link>
                     <Link href="/admin/orders" className={styles.link} onClick={() => setIsSidebarOpen(false)}>🚚 Orders</Link>
+                    <Link href="/admin/quotes" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📋 Bulk Quotes</Link>
 
                     <div className={styles.footer}>
                         <Link href="/" className={styles.link} style={{ fontSize: '0.85rem', color: '#888' }}>

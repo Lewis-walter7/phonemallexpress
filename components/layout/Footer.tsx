@@ -34,6 +34,7 @@ const Footer = () => {
                         <h4 className="footer-title">Company</h4>
                         <ul>
                             <li><Link href="/about">About Us</Link></li>
+                            <li><Link href="/bulk-quote">Bulk Purchase (RSQ)</Link></li>
                             <li><Link href="/contact">Contact</Link></li>
                             <li><Link href="/faq">FAQ</Link></li>
                             <li><Link href="/shipping">Shipping Policy</Link></li>

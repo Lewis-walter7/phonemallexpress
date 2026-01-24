@@ -305,9 +305,9 @@ export default async function Home() {
             <div className="marquee-track">
               {/* Duplicated for seamless loop */}
               {[
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL',
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL',
-                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL'
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM',
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM',
+                'SAMSUNG', 'APPLE', 'XIAOMI', 'TECNO', 'INFINIX', 'OPPO', 'SONY', 'JBL', 'COCA COLA', 'SAFARICOM'
               ].map((brand, i) => (
                 <h3 key={i} style={{
                   fontSize: '24px',
