@@ -41,14 +41,7 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="footer-newsletter">
-                        <h4 className="footer-title">Stay Updated</h4>
-                        <p className="newsletter-text">Get the latest offers and product releases.</p>
-                        <form className="newsletter-form">
-                            <input type="email" placeholder="Email address" required className="newsletter-input" />
-                            <button type="submit" className="newsletter-btn">Join</button>
-                        </form>
-                    </div>
+
                 </div>
 
                 <div className="footer-bottom">

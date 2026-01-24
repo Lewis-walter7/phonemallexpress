@@ -52,7 +52,7 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
             {/* Variants */}
             {variants && variants.length > 0 && (
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
-                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#888' }}>Storage / Variant</h4>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Storage / Variant</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                         {variants.map((v, i) => (
                             <button
@@ -61,10 +61,10 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
                                 className={`variant-btn ${selectedVariant === v ? 'active' : ''}`}
                                 style={{
                                     padding: '8px 16px',
-                                    border: selectedVariant === v ? '1px solid var(--accent)' : '1px solid #333',
+                                    border: selectedVariant === v ? '1px solid var(--accent)' : '1px solid var(--border)',
                                     borderRadius: '8px',
                                     background: selectedVariant === v ? 'var(--accent)' : 'transparent',
-                                    color: selectedVariant === v ? '#fff' : '#fff',
+                                    color: selectedVariant === v ? '#fff' : 'var(--foreground)',
                                     cursor: 'pointer',
                                     fontSize: '14px'
                                 }}
@@ -79,7 +79,7 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
             {/* Colors */}
             {colors && colors.length > 0 && (
                 <div className="colors-section" style={{ marginBottom: '20px' }}>
-                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: '#888' }}>Color</h4>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Color</h4>
                     <div className="colors-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                         {colors.map((c, i) => (
                             <button
@@ -87,10 +87,10 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
                                 onClick={() => setSelectedColor(c)}
                                 style={{
                                     padding: '8px 16px',
-                                    border: selectedColor === c ? '1px solid var(--accent)' : '1px solid #333',
+                                    border: selectedColor === c ? '1px solid var(--accent)' : '1px solid var(--border)',
                                     borderRadius: '8px',
-                                    background: selectedColor === c ? 'rgba(255,255,255,0.1)' : 'transparent',
-                                    color: selectedColor === c ? '#fff' : '#aaa',
+                                    background: selectedColor === c ? 'var(--secondary)' : 'transparent',
+                                    color: selectedColor === c ? 'var(--foreground)' : 'var(--muted-foreground)',
                                     cursor: 'pointer',
                                     fontSize: '14px'
                                 }}

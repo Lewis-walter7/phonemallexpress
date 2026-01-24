@@ -19,6 +19,14 @@ export default function Chatbot() {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    const QUICK_PROMPTS = [
+        "Buying Guide",
+        "Repair Services",
+        "Shop Location",
+        "Under 20k Phones",
+        "Contact Support"
+    ];
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowTooltip(false);
@@ -34,11 +42,10 @@ export default function Chatbot() {
         scrollToBottom();
     }, [messages, isOpen]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
+    const handleSend = async (text: string) => {
+        if (!text.trim() || isLoading) return;
 
-        const userMessage = input.trim();
+        const userMessage = text.trim();
         setInput('');
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
         setIsLoading(true);
@@ -58,19 +65,29 @@ export default function Chatbot() {
             const data = await response.json();
 
             if (!response.ok) {
-                // Display server error (e.g. rate limit) directly
-                throw new Error(data.error || 'Failed to connect');
-            }
-
-            if (data.choices && data.choices[0]) {
+                // If rate limited, show a system-like message but dont verify user here
+                if (response.status === 429) {
+                    setMessages(prev => [...prev, { role: 'assistant', content: "⚠️ You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support." }]);
+                } else {
+                    throw new Error(data.error || 'Failed to connect');
+                }
+            } else if (data.choices && data.choices[0]) {
                 setMessages(prev => [...prev, { role: 'assistant', content: data.choices[0].message.content }]);
             }
         } catch (error: any) {
             console.error(error);
-            setMessages(prev => [...prev, { role: 'assistant', content: error.message || "Sorry, I'm having trouble connecting right now. Please try again later or contact us on WhatsApp." }]);
+            // Use existing error message logic if needed, but the 429 above handles the limit nicely
+            if (!messages.some(m => m.content.includes("daily limit"))) {
+                setMessages(prev => [...prev, { role: 'assistant', content: error.message || "Sorry, I'm having trouble connecting right now." }]);
+            }
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        handleSend(input);
     };
 
     return (
@@ -122,6 +139,20 @@ export default function Chatbot() {
                         </div>
                     )}
                     <div ref={messagesEndRef} />
+                </div>
+
+                {/* Quick Prompts */}
+                <div className="chatbot-prompts">
+                    {QUICK_PROMPTS.map((prompt) => (
+                        <button
+                            key={prompt}
+                            className="prompt-chip"
+                            onClick={() => handleSend(prompt)}
+                            disabled={isLoading}
+                        >
+                            {prompt}
+                        </button>
+                    ))}
                 </div>
 
                 <form onSubmit={handleSubmit} className="chatbot-input-form">

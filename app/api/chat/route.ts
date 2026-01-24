@@ -8,21 +8,34 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
     }
 
-    // Rate Limiting
+    let messages;
+    try {
+        const body = await req.json();
+        messages = body.messages;
+    } catch (e) {
+        return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+
+    // Rate Limiting Logic
     const cookieStore = await cookies();
     const today = new Date().toISOString().split('T')[0];
     const usageKey = `chat_usage_${today}`;
     const currentUsage = parseInt(cookieStore.get(usageKey)?.value || '0');
 
-    if (currentUsage >= 6) {
+    // Check if message is a greeting (to exclude from limit)
+    const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase().trim() || "";
+    const GREETINGS = ['hi', 'hello', 'hey', 'greetings', 'habari', 'sasa', 'good morning', 'good afternoon', 'good evening'];
+
+    // Strict match or starts with (e.g. "Hi there") - but aim to catch short greetings mostly
+    const isGreeting = GREETINGS.some(g => lastUserMessage === g || (lastUserMessage.startsWith(g + '') && lastUserMessage.length < 15));
+
+    if (!isGreeting && currentUsage >= 6) {
         return NextResponse.json({
             error: 'You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support.'
         }, { status: 429 });
     }
 
     try {
-        const { messages } = await req.json();
-
         const systemMessage = {
             role: "system",
             content: `You are the AI Assistant for Phone Mall Express.
@@ -66,12 +79,16 @@ export async function POST(req: Request) {
             throw new Error(data.error?.message || 'Failed to fetch from OpenAI');
         }
 
-        // Return success response with updated cookie
+        // Return success response with updated cookie ONLY if not a greeting
         const res = NextResponse.json(data);
-        res.cookies.set(usageKey, (currentUsage + 1).toString(), {
-            maxAge: 86400, // 24 hours
-            path: '/',
-        });
+
+        if (!isGreeting) {
+            res.cookies.set(usageKey, (currentUsage + 1).toString(), {
+                maxAge: 86400, // 24 hours
+                path: '/',
+            });
+        }
+
         return res;
 
     } catch (error: any) {
