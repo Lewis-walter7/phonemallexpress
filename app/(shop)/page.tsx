@@ -3,7 +3,7 @@ import Image from 'next/image';
 import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import ProductCard from "@/components/product/ProductCard";
-import RSQPopup from "@/components/common/RSQPopup";
+import LazyRSQPopup from "@/components/common/LazyRSQPopup";
 import './Home.css';
 
 const CATEGORIES = [
@@ -337,7 +337,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <RSQPopup />
+      <LazyRSQPopup />
     </div>
   );
 }

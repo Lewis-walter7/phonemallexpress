@@ -4,7 +4,7 @@ import Category from '@/models/Category';
 import Product from '@/models/Product';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const BASE_URL = 'https://phonemallexpress.com';
 
     await connectDB();
 
@@ -13,26 +13,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const products = await Product.find({}, { slug: 1, category: 1, updatedAt: 1 }).populate('category', 'slug').lean();
 
     const categoryUrls = categories.map((cat) => ({
-        url: `${baseUrl}/accessories/${cat.slug}`,
+        url: `${BASE_URL}/products/${cat.slug}`,
         lastModified: (cat as any).updatedAt,
         changeFrequency: 'weekly' as const,
         priority: 0.8,
     }));
 
     const productUrls = products.map((prod) => ({
-        url: `${baseUrl}/accessories/${(prod.category as any).slug}/${prod.slug}`,
+        url: `${BASE_URL}/products/${(prod.category as any).slug}/${prod.slug}`,
         lastModified: (prod as any).updatedAt,
         changeFrequency: 'daily' as const,
         priority: 1.0,
     }));
 
+    const staticRoutes = [
+        '',
+        '/about',
+        '/contact',
+        '/shipping',
+        '/faq',
+        '/privacy',
+        '/bulk-quote',
+        '/repairs',
+    ].map((route) => ({
+        url: `${BASE_URL}${route}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: route === '' ? 1 : 0.5,
+    }));
+
     return [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
-        },
+        ...staticRoutes,
         ...categoryUrls,
         ...productUrls,
     ];
