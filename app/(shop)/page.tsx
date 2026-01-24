@@ -10,7 +10,7 @@ const CATEGORIES = [
     name: 'Smartphones',
     slug: 'phones',
     image: '/phones.png',
-    subcategories: ['Samsung', 'iPhone', 'Tecno', 'Infinix', 'Oppo', 'Realme', 'Honor', 'Huawei', 'Xiaomi', 'Itel', 'Nokia', 'Poco', 'HMD', 'Nothing']
+    subcategories: ['Samsung', 'iPhone', 'Pixel', 'Nothing']
   },
   {
     name: 'Gaming',
