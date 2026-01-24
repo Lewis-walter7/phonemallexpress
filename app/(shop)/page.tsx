@@ -33,7 +33,7 @@ const CATEGORIES = [
   {
     name: 'Accessories',
     slug: 'accessories',
-    image: '/accessories.png',
+    image: '/products.png',
     subcategories: ['Apple Accessories', 'Samsung Accessories', 'Chargers', 'Powerbank']
   },
   {
@@ -219,7 +219,7 @@ export default async function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Link href={`/accessories/${cat.slug}`} className="mobi-card-link">
+                  <Link href={`/products/${cat.slug}`} className="mobi-card-link">
                     Shop More &gt;&gt;
                   </Link>
                 </div>
@@ -236,7 +236,7 @@ export default async function Home() {
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Featured Products</h2>
             <p style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginTop: '4px' }}>Handpicked essentials for your mobile device.</p>
             <div style={{ marginTop: 'var(--spacing-sm)' }}>
-              <Link href="/accessories" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
+              <Link href="/products" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
             </div>
           </div>
 
@@ -285,7 +285,7 @@ export default async function Home() {
       {renderProductSection("Galaxy of Innovation", "Enhance your Samsung experience.", "/search?q=Samsung", samsungProducts)}
 
       {/* Gaming */}
-      {renderProductSection("Level Up Your Gear", "Pro-grade peripherals for victory.", "/accessories/gaming", gamingProducts)}
+      {renderProductSection("Level Up Your Gear", "Pro-grade peripherals for victory.", "/products/gaming", gamingProducts)}
 
       {/* Flash Sales */}
       {renderProductSection("Lightning Deals", "Grab them before they're gone.", "/search?q=deal", flashSales)}

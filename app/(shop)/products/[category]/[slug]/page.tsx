@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps) {
     return generateSEOMetadata({
         title: product.seo?.title || product.name,
         description: product.seo?.description || product.description,
-        path: `/accessories/${slug}`,
+        path: `/products/${slug}`,
         image: product.images?.[0]?.url || product.imageUrl,
     });
 }
@@ -92,7 +92,7 @@ const ProductPage = async ({ params }: PageProps) => {
         "brand": { "@type": "Brand", "name": brandName },
         "offers": {
             "@type": "Offer",
-            "url": `${process.env.NEXT_PUBLIC_APP_URL || ''}/accessories/${catSlug}/${slug}`,
+            "url": `${process.env.NEXT_PUBLIC_APP_URL || ''}/products/${catSlug}/${slug}`,
             "priceCurrency": "KES",
             "price": product.price,
             "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
@@ -107,8 +107,8 @@ const ProductPage = async ({ params }: PageProps) => {
             />
 
             <Breadcrumbs items={[
-                { label: catName, href: `/accessories/${catSlug}` },
-                { label: product.name, href: `/accessories/${catSlug}/${slug}` }
+                { label: catName, href: `/products/${catSlug}` },
+                { label: product.name, href: `/products/${catSlug}/${slug}` }
             ]} />
 
             <div className="product-layout">

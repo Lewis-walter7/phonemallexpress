@@ -24,8 +24,25 @@
     }
 }
 
+.logo-footer {
+    font-family: var(--font-display);
+    font-size: var(--font-size-base);
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.05em;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.footer-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
 .footer-desc {
-    margin-top: var(--spacing-xs);
+    margin-top: 0;
     color: var(--muted-foreground);
     font-size: var(--font-size-sm);
     max-width: 300px;

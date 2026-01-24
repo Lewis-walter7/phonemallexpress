@@ -9,20 +9,21 @@ interface FeatureObj {
     value: string;
 }
 
+
 const CATEGORY_SUBCATEGORIES: Record<string, string[]> = {
-    'Audio': ['Earbuds', 'Headphones', 'Speakers', 'Microphones', 'Soundbars', 'Home Theater', 'Accessories'],
-    'Laptops': ['Gaming', 'Business', 'Ultrabooks', 'MacBook', 'Chromebook', '2-in-1', 'Accessories'],
-    'Phones': ['Smartphones', 'Feature Phones', 'Foldable', 'Rugged'],
-    'Tablets': ['iPad', 'Android Tablets', 'Graphics Tablets', 'Accessories'],
-    'Gaming': ['Consoles', 'Controllers', 'Video Games', 'Accessories', 'VR'],
-    'Cameras': ['DSLR', 'Mirrorless', 'Action Cameras', 'Drones', 'Security Cameras', 'Lenses'],
-    'TVs': ['Smart TVs', 'Android TVs', 'QLED', 'OLED', '4K', '8K', 'Projectors'],
-    'Computing': ['Desktops', 'Monitors', 'Printers', 'Scanners', 'Components', 'Software'],
-    'Networking': ['Routers', 'Switches', 'Access Points', 'Cables'],
-    'Storage': ['External Hard Drives', 'SSD', 'Flash Drives', 'Memory Cards'],
-    'Accessories': ['Cases', 'Screen Protectors', 'Chargers', 'Cables', 'Power Banks', 'Mounts'],
-    'Smartwatches': ['Apple Watch', 'Samsung Watch', 'Fitness Bands', 'Garmin', 'Kids Watches'],
-    'Wearables': ['Smartwatches', 'Smart Rings', 'Fitness Bands']
+    'Phones': ['Smartphones', 'Feature Phones', 'Refurbished'],
+    'Tablets': ['Apple iPad', 'Samsung Tablets', 'Tecno Tablets', 'Redmi Tablets', 'Xiaomi Tablets'],
+    'Audio': ['Buds', 'Earphones', 'Headphones', 'Soundbar', 'Speakers'],
+    'Gaming': ['Gaming Consoles', 'PlayStation Games', 'Gaming Controller', 'Gaming Headsets'],
+    'Wearables': ['Smartwatch', 'Smart Bands', 'Smart Ring'],
+    'Accessories': ['Samsung Accessories', 'Apple Accessories', 'Chargers & Adapters', 'Powerbanks', 'Cables', 'Screen Protectors', 'Phone Covers', 'Media Streamers', 'Handheld Gimbals', 'Modems', 'Mouse'],
+    'Storage': ['Flash Drives', 'Hard Disks', 'Memory Cards', 'SSDs'],
+    'Refrigerators': ['Side by side', 'Single door', 'Double door'],
+    'Washing Machines': ['Top load', 'Front load'],
+    'Kitchen ware': ['Cookers', 'Airfryers', 'Blenders', 'Electric kettles'],
+    'TVs': ['Smart TVs', 'Android TVs', '4K UHD TVs', 'Tv Accessories'],
+    'Cameras': ['Digital Cameras', 'Security Cameras', 'Camera Accessories'],
+    'Other': ['General']
 };
 
 const PHONE_VARIANTS = [
@@ -32,6 +33,118 @@ const PHONE_VARIANTS = [
     "12/256GB", "12/512GB",
     "16/512GB", "16/1TB", "16/2TB"
 ];
+
+// ------------------------------------------------------------------
+// HELPERS & PARSERS (Hoisted)
+// ------------------------------------------------------------------
+const KNOWN_SPEC_KEYS = [
+    'Model Name', 'Network Technology', 'Launch', 'Body', 'Display Type', 'Display Size', 'Display Resolution',
+    'Display', 'Platform', 'Memory', 'Internal Storage', 'Card Slot',
+    'Main Camera', 'Selfie Camera', 'Sound', 'Comms', 'Features', 'Battery Capacity', 'Battery', 'Misc',
+    'Dimensions', 'Weight', 'Build', 'SIM', 'Type', 'Size', 'Resolution', 'Operating System', 'OS', 'Chipset', 'CPU', 'GPU',
+    'Card slot', 'Internal', 'Single', 'Dual', 'Triple', 'Quad', 'Sensors', 'Charging', 'Colors', 'Price',
+    'Rear Camera', 'Front Camera', 'FM Radio', 'Bluetooth', 'Audio Jack', 'USB Port', 'Torch', 'Extras', 'WLAN'
+];
+
+const parseKeyFeatures = (text: string): FeatureObj[] => {
+    if (!text.trim()) return [];
+
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+    const newRows: FeatureObj[] = [];
+
+    lines.forEach(line => {
+        const cleanLine = line.replace(/^[\s\-\•\*]+/, '').trim();
+        if (!cleanLine) return;
+
+        let key = 'Feature';
+        let value = cleanLine;
+
+        // Handle "Key: Value"
+        const colonIndex = cleanLine.indexOf(':');
+        if (colonIndex !== -1 && colonIndex < 30) {
+            key = cleanLine.substring(0, colonIndex).trim();
+            value = cleanLine.substring(colonIndex + 1).trim();
+        } else {
+            // Heuristics for bullet points without colons
+            const lower = cleanLine.toLowerCase();
+            if (lower.includes('display') || lower.includes('screen') || lower.includes('inch')) key = 'Display';
+            else if (lower.includes('battery') || lower.includes('mah')) key = 'Battery';
+            else if (lower.includes('camera') || lower.includes('mp')) key = 'Camera';
+            else if (lower.includes('ram') || lower.includes('storage') || lower.includes('gb') || lower.includes('tb')) key = 'Memory';
+            else if (lower.includes('processor') || lower.includes('cpu') || lower.includes('ghz')) key = 'Processor';
+            else if (lower.includes('android') || lower.includes('ios')) key = 'OS';
+            else if (lower.includes('sim')) key = 'SIM';
+            else if (lower.includes('network')) key = 'Network';
+            else if (lower.includes('bluetooth') || lower.includes('wifi') || lower.includes('usb')) key = 'Connectivity';
+        }
+
+        key = key.replace(/^"/, '').replace(/"$/, '');
+        value = value.replace(/^"/, '').replace(/"$/, '');
+
+        if (key && value) newRows.push({ key, value });
+    });
+
+    return newRows;
+};
+
+const parseTechnicalSpecs = (text: string): FeatureObj[] => {
+    if (!text.trim()) return [];
+
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+    const newRows: FeatureObj[] = [];
+
+    let pendingKey = '';
+    let pendingValue = '';
+
+    const flushPending = () => {
+        if (pendingKey) {
+            newRows.push({ key: pendingKey, value: pendingValue.trim() });
+            pendingKey = '';
+            pendingValue = '';
+        }
+    };
+
+    lines.forEach(line => {
+        const cleanLine = line.replace(/^[\s\-\•\*]+/, '').trim();
+
+        const matchedKey = KNOWN_SPEC_KEYS.sort((a, b) => b.length - a.length)
+            .find(k => cleanLine.toLowerCase().startsWith(k.toLowerCase()));
+
+        if (matchedKey) {
+            flushPending();
+            pendingKey = matchedKey;
+            let remainder = cleanLine.substring(matchedKey.length).trim();
+            // Remove leading colon if present
+            if (remainder.startsWith(':') || remainder.startsWith('-')) remainder = remainder.substring(1).trim();
+            // If the remainder is just the key name (tabbed), handle that (common in copypaste from tables)
+            if (!remainder && line.includes('\t')) {
+                // Try to get value after tab
+                const parts = line.split('\t');
+                if (parts.length > 1) remainder = parts[1];
+            }
+            pendingValue = remainder;
+        } else {
+            const colonIndex = cleanLine.indexOf(':');
+            if (colonIndex !== -1 && colonIndex < 40) {
+                flushPending();
+                pendingKey = cleanLine.substring(0, colonIndex).trim();
+                pendingValue = cleanLine.substring(colonIndex + 1).trim();
+            } else {
+                if (pendingKey) {
+                    pendingValue = pendingValue ? pendingValue + ' ' + cleanLine : cleanLine;
+                } else {
+                    // If no key yet, treat as "General" only if it looks like a spec
+                    if (cleanLine.includes('GB') || cleanLine.includes('mAh') || cleanLine.includes('MHz')) {
+                        newRows.push({ key: 'General', value: cleanLine });
+                    }
+                }
+            }
+        }
+    });
+
+    flushPending();
+    return newRows;
+};
 
 export default function AddProductPage() {
     const router = useRouter();
@@ -155,104 +268,7 @@ export default function AddProductPage() {
         }
     };
 
-    // ------------------------------------------------------------------
-    // PARSER 1: Key Features
-    // ------------------------------------------------------------------
-    const parseKeyFeatures = (text: string) => {
-        if (!text.trim()) return [];
 
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
-        const newRows: FeatureObj[] = [];
-
-        lines.forEach(line => {
-            const cleanLine = line.replace(/^[\s\-\•\*]+/, '').trim();
-            if (!cleanLine) return;
-
-            let key = 'Feature';
-            let value = cleanLine;
-
-            const colonIndex = cleanLine.indexOf(':');
-            if (colonIndex !== -1 && colonIndex < 20) {
-                key = cleanLine.substring(0, colonIndex).trim();
-                value = cleanLine.substring(colonIndex + 1).trim();
-            } else {
-                const lower = cleanLine.toLowerCase();
-                if (lower.includes('display') || lower.includes('screen')) key = 'Display';
-                else if (lower.includes('battery')) key = 'Battery';
-                else if (lower.includes('camera')) key = 'Camera';
-                else if (lower.includes('ram') || lower.includes('storage')) key = 'Memory';
-                else if (lower.includes('processor') || lower.includes('cpu')) key = 'Processor';
-                else if (lower.includes('android') || lower.includes('ios')) key = 'OS';
-                else if (lower.includes('sim')) key = 'SIM';
-                else if (lower.includes('network')) key = 'Network';
-            }
-
-            newRows.push({ key, value });
-        });
-
-        return newRows;
-    };
-
-    // ------------------------------------------------------------------
-    // PARSER 2: Technical Specs
-    // ------------------------------------------------------------------
-    const parseTechnicalSpecs = (text: string) => {
-        if (!text.trim()) return [];
-
-        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
-        const newRows: FeatureObj[] = [];
-
-        const KNOWN_KEYS = [
-            'Model Name', 'Network Technology', 'Launch', 'Body', 'Display', 'Platform', 'Memory',
-            'Main Camera', 'Selfie Camera', 'Sound', 'Comms', 'Features', 'Battery', 'Misc',
-            'Dimensions', 'Weight', 'Build', 'SIM', 'Type', 'Size', 'Resolution', 'OS', 'Chipset', 'CPU', 'GPU',
-            'Card slot', 'Internal', 'Single', 'Dual', 'Triple', 'Quad', 'Sensors', 'Charging', 'Colors', 'Price'
-        ];
-
-        let pendingKey = '';
-        let pendingValue = '';
-
-        const flushPending = () => {
-            if (pendingKey) {
-                newRows.push({ key: pendingKey, value: pendingValue.trim() });
-                pendingKey = '';
-                pendingValue = '';
-            }
-        };
-
-        lines.forEach(line => {
-            const cleanLine = line.replace(/^[\s\-\•\*]+/, '').trim();
-
-            const matchedKey = KNOWN_KEYS.sort((a, b) => b.length - a.length)
-                .find(k => cleanLine.toLowerCase().startsWith(k.toLowerCase()));
-
-            if (matchedKey) {
-                flushPending();
-                pendingKey = matchedKey;
-                let remainder = cleanLine.substring(matchedKey.length).trim();
-                // Remove leading colon if present
-                if (remainder.startsWith(':') || remainder.startsWith('-')) remainder = remainder.substring(1).trim();
-                pendingValue = remainder;
-            } else {
-                const colonIndex = cleanLine.indexOf(':');
-                if (colonIndex !== -1 && colonIndex < 40) {
-                    flushPending();
-                    pendingKey = cleanLine.substring(0, colonIndex).trim();
-                    pendingValue = cleanLine.substring(colonIndex + 1).trim();
-                } else {
-                    if (pendingKey) {
-                        pendingValue = pendingValue ? pendingValue + '\n' + cleanLine : cleanLine;
-                    } else {
-                        pendingKey = 'General';
-                        pendingValue = cleanLine;
-                    }
-                }
-            }
-        });
-
-        flushPending();
-        return newRows;
-    };
 
     // Features Smart Paste
     const [pasteModeFeatures, setPasteModeFeatures] = useState(false);
@@ -278,6 +294,182 @@ export default function AddProductPage() {
             setPasteModeSpecs(false);
             setRawTextSpecs('');
         }
+    };
+
+    // ------------------------------------------------------------------
+    // GLOBAL SMART PARSER
+    // ------------------------------------------------------------------
+    const [globalSmartPasteMode, setGlobalSmartPasteMode] = useState(false);
+    const [globalRawText, setGlobalRawText] = useState('');
+
+    const handleGlobalSmartParse = () => {
+        const text = globalRawText;
+        if (!text.trim()) return;
+
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+        if (lines.length === 0) return;
+
+        // NOISE FILTERING
+        // We filter out lines that are clearly navigational, warranty info, or site-specific metadata
+        const NOISE_INDICATORS = [
+            'add to wishlist', 'add to compare', 'reviews (', 'in stock', 'out of stock',
+            'sku:', 'brands:', 'tags:', 'category:', 'warranty', 'corporate customers',
+            'phoneplace care', 'call us', 'nb:', 'buy now', 'east africa', 'uae', 'dubai',
+            'watch video', 'brand:', 'model:', 'questions?', 'review'
+        ];
+
+        const cleanedLines = lines.filter(line => {
+            const lower = line.toLowerCase();
+
+            // 1. Explicit Strings
+            if (NOISE_INDICATORS.some(indicator => lower.includes(indicator))) return false;
+
+            // 2. Regex Patterns (Email, Phone-like digits with context)
+            if (line.match(/@/)) return false; // Email
+            if (line.match(/(?:\+|07)\d{2,}/)) return false; // Phone numbers roughly
+
+            // 3. Specific User Cases
+            // "iPhone 16 Series" -> If it ends in "Series" and is short, it's likely a tag or breadcrumb, NOT the product name (which is usually longer or specific)
+            if (line.length < 30 && lower.endsWith('series')) return false;
+
+            return true;
+        });
+
+        // 1. NAME Extraction
+        let name = '';
+        // Try strict first on cleaned lines
+        for (let i = 0; i < Math.min(cleanedLines.length, 10); i++) {
+            const line = cleanedLines[i];
+            const lower = line.toLowerCase();
+            if (
+                lower.includes('ksh') || lower.includes('kes') ||
+                line.length < 3
+            ) {
+                continue;
+            }
+
+            if (line.length < 150 && !line.includes(':')) {
+                name = line;
+                break;
+            }
+        }
+        // Fallback: just take the first non-price line from cleaned lines
+        if (!name) {
+            for (let i = 0; i < Math.min(cleanedLines.length, 5); i++) {
+                const line = cleanedLines[i];
+                if (!line.match(/KSh|KES|Shs|UGX|US\s?\$|\d+%|Add to cart/i) && line.length > 2) {
+                    name = line.substring(0, 150);
+                    break;
+                }
+            }
+        }
+
+        // 2. BRAND Extraction
+        let brand = '';
+        // Explicit search
+        const brandMatch = text.match(/^Brand:\s*(.+)$/im);
+        if (brandMatch && brandMatch[1]) {
+            brand = brandMatch[1].trim();
+        } else {
+            // Fallback to first word of name
+            if (name) {
+                const firstWord = name.split(' ')[0];
+                if (firstWord && firstWord.length > 2) {
+                    brand = firstWord;
+                }
+            }
+        }
+
+        // 3. PRICE Extraction
+        // Supports: KSh 1,200 | KES 1,200 | Ksh. 1,200 | Shs 1,200 | US $100
+        const priceRegex = /(?:KSh\.?|KES|Sh(?:s|illings)?\.?|UGX|US\s?\$)\s*([\d,]+)/gi;
+        const prices: number[] = [];
+        let match;
+        const textWithPrices = text;
+        while ((match = priceRegex.exec(textWithPrices)) !== null) {
+            const numStr = match[1].replace(/,/g, '');
+            const num = parseInt(numStr, 10);
+            if (!isNaN(num)) prices.push(num);
+        }
+
+        let price = '';
+        let salePriceVal = '';
+        let isSpecial = false;
+
+        if (prices.length > 0) {
+            const uniquePrices = Array.from(new Set(prices)).sort((a, b) => b - a);
+            if (uniquePrices.length >= 2) {
+                price = uniquePrices[0].toString();
+                salePriceVal = uniquePrices[uniquePrices.length - 1].toString();
+                if (uniquePrices[0] > uniquePrices[uniquePrices.length - 1]) {
+                    isSpecial = true;
+                }
+            } else {
+                price = uniquePrices[0].toString();
+            }
+        }
+
+        // 4. FEATURES
+        let featuresRows: FeatureObj[] = [];
+        const featuresMatch = text.match(/(?:Key Features|Features|Pros and Cons)(?:[:\s]*)([\s\S]*?)(?:Full Specifications|Specifications|Price and Availability|Technical Specifications|Description|Overview|$)/i);
+        if (featuresMatch && featuresMatch[1]) {
+            featuresRows = parseKeyFeatures(featuresMatch[1]);
+        }
+
+        // 5. SPECS
+        let specsRows: FeatureObj[] = [];
+        const specsMatch = text.match(/(?:Full Specifications|Technical Specifications|Specifications)(?:[:\s]*)([\s\S]*?)(?:Pros and Cons|related products|Key Features|Description|Overview|$)/i);
+        if (specsMatch && specsMatch[1]) {
+            specsRows = parseTechnicalSpecs(specsMatch[1]);
+        }
+
+        // 6. DESCRIPTION
+        let description = '';
+        // Explicit Description Header
+        const descHeaderMatch = text.match(/(?:Description|Overview)(?:[:\s]*)([\s\S]*?)(?:Key Features|Features|Specifications|Full Specifications|Price and Availability|$)/i);
+        if (descHeaderMatch && descHeaderMatch[1]) {
+            // Filter out lines that look like table rows to avoid junk
+            description = descHeaderMatch[1].split('\n')
+                .filter(l => !l.includes('\t') && !l.match(/^\s*[\w\s]+:/)) // No tabs, no "Key:" lines
+                .join('\n\n').trim();
+        }
+
+        if (!description) {
+            const descMatch = text.match(/(?:Features:|in Kenya and Features:)([\s\S]*?)(?:Tecno|Samsung|Apple|Full Specifications|Specifications)/i);
+            if (descMatch && descMatch[1]) {
+                description = descMatch[1].split('\n').filter(l => l.length > 50).join('\n\n').trim();
+            }
+        }
+
+        if (!description) {
+            // Fallback: look for paragraphs > 30 chars (relaxed)
+            const paragraphs = lines.filter(l =>
+                l.length > 30 &&
+                !l.includes('\t') &&
+                !l.includes('KSh') &&
+                !l.startsWith('Key Features') &&
+                !l.match(/^\s*[\w\s]+:/) // No spec lines
+            );
+            if (paragraphs.length > 0) description = paragraphs.join('\n\n');
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            name: name || prev.name,
+            brand: brand || prev.brand,
+            price: price || prev.price,
+            salePrice: salePriceVal || prev.salePrice,
+            description: description || prev.description
+        }));
+
+        if (salePriceVal) setFormData(prev => ({ ...prev, salePrice: salePriceVal }));
+        if (isSpecial) setIsOnSpecialOffer(true);
+        if (featuresRows.length > 0) setFeatures(featuresRows);
+        if (specsRows.length > 0) setSpecifications(specsRows);
+
+        // Close modal
+        setGlobalSmartPasteMode(false);
+        setGlobalRawText('');
     };
 
 
@@ -320,6 +512,27 @@ export default function AddProductPage() {
                 setColors([...colors, colorInput.trim()]);
                 setColorInput('');
             }
+        }
+    };
+
+    const handleColorInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        if (val.includes(',')) {
+            const split = val.split(',');
+            const lastChunk = split.pop() || '';
+            const newColorsToAdd = split.map(s => s.trim()).filter(s => s && !colors.includes(s));
+
+            if (newColorsToAdd.length > 0) {
+                setColors(prev => {
+                    // Filter duplicates again against the latest state if needed, but 'colors' closure is usually fine
+                    // Ideally:
+                    const uniqueNew = newColorsToAdd.filter(c => !prev.includes(c));
+                    return [...prev, ...uniqueNew];
+                });
+            }
+            setColorInput(lastChunk);
+        } else {
+            setColorInput(val);
         }
     };
 
@@ -420,20 +633,21 @@ export default function AddProductPage() {
 
     const inputStyle = {
         width: '100%',
-        padding: '0.75rem',
+        padding: '0.5rem',
         background: '#111',
         border: '1px solid #333',
         borderRadius: '6px',
         color: 'white',
-        marginTop: '0.5rem',
-        outline: 'none'
+        marginTop: '0.25rem',
+        outline: 'none',
+        fontSize: '0.9rem'
     };
 
     const labelStyle = {
         display: 'block',
-        marginTop: '1.5rem',
+        marginTop: '1rem',
         color: '#ccc',
-        fontSize: '0.9rem'
+        fontSize: '0.85rem'
     };
 
     const renderKeyValueSection = (
@@ -536,6 +750,63 @@ export default function AddProductPage() {
         <div style={{ padding: '2rem', color: 'white', maxWidth: '900px', margin: '0 auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.8rem', margin: 0, fontFamily: 'var(--font-display)' }}>Add New Product</h1>
+
+                <button
+                    type="button"
+                    onClick={() => setGlobalSmartPasteMode(true)}
+                    style={{
+                        padding: '8px 16px',
+                        background: 'linear-gradient(45deg, #ff6b00, #ff9f00)',
+                        border: 'none',
+                        color: 'white',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        fontSize: '0.85rem',
+                        boxShadow: '0 4px 10px rgba(255, 107, 0, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                    }}
+                >
+                    <span>✨</span> Smart Auto-Fill
+                </button>
+
+                {globalSmartPasteMode && (
+                    <div style={{
+                        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 9999,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+                    }}>
+                        <div style={{ background: '#111', padding: '1.5rem', borderRadius: '12px', width: '100%', maxWidth: '600px', border: '1px solid #333' }}>
+                            <h3 style={{ marginTop: 0, color: 'white' }}>Smart Auto-Fill</h3>
+                            <p style={{ color: '#888', fontSize: '0.9rem' }}>Paste the full product page text here. We'll extract the name, price, specs, and features automatically.</p>
+
+                            <textarea
+                                value={globalRawText}
+                                onChange={(e) => setGlobalRawText(e.target.value)}
+                                rows={15}
+                                placeholder={"Paste raw text here...\n\nExample:\nTecno T302\nKSh2,500 KSh1,700\nKey Features:\n..."}
+                                style={{ width: '100%', padding: '10px', background: '#000', color: '#fff', border: '1px solid #333', borderRadius: '8px', fontSize: '0.85rem' }}
+                            />
+
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '1rem' }}>
+                                <button
+                                    onClick={() => setGlobalSmartPasteMode(false)}
+                                    style={{ padding: '8px 16px', background: 'transparent', border: '1px solid #333', color: '#ccc', borderRadius: '6px', cursor: 'pointer' }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleGlobalSmartParse}
+                                    style={{ padding: '8px 16px', background: '#ff6b00', border: 'none', color: 'white', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                                >
+                                    Process Text
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem', color: isFeatured ? 'var(--accent)' : '#888' }}>
                         <input
@@ -566,22 +837,22 @@ export default function AddProductPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                         <label style={labelStyle}>Product Name</label>
-                        <input name="name" required placeholder="e.g. iPhone 15 Pro" style={inputStyle} onChange={handleChange} />
+                        <input name="name" required value={formData.name} placeholder="e.g. iPhone 15 Pro" style={inputStyle} onChange={handleChange} />
                     </div>
                     <div>
                         <label style={labelStyle}>Brand</label>
-                        <input name="brand" placeholder="e.g. Apple" style={inputStyle} onChange={handleChange} />
+                        <input name="brand" value={formData.brand} placeholder="e.g. Apple" style={inputStyle} onChange={handleChange} />
                     </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
                         <label style={labelStyle}>Price (KES)</label>
-                        <input name="price" type="number" required placeholder="150000" style={inputStyle} onChange={handleChange} />
+                        <input name="price" type="number" required value={formData.price} placeholder="150000" style={inputStyle} onChange={handleChange} />
                     </div>
                     <div>
                         <label style={labelStyle}>Stock Quantity</label>
-                        <input name="stock" type="number" required placeholder="10" style={inputStyle} onChange={handleChange} />
+                        <input name="stock" type="number" required value={formData.stock} placeholder="10" style={inputStyle} onChange={handleChange} />
                     </div>
                 </div>
 
@@ -605,7 +876,7 @@ export default function AddProductPage() {
                     {isOnSpecialOffer && (
                         <div style={{ flex: 1 }}>
                             <label style={{ ...labelStyle, marginTop: 0 }}>Discounted Price (Sale Price)</label>
-                            <input name="salePrice" type="number" placeholder="Lower than original price" style={inputStyle} onChange={handleChange} />
+                            <input name="salePrice" type="number" value={formData.salePrice} placeholder="Lower than original price" style={inputStyle} onChange={handleChange} />
                         </div>
                     )}
                 </div>
@@ -613,57 +884,41 @@ export default function AddProductPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
                     <div>
                         <label style={{ ...labelStyle, marginTop: 0 }}>Min Price (Optional - for range)</label>
-                        <input name="minPrice" type="number" placeholder="15000" style={inputStyle} onChange={handleChange} />
+                        <input name="minPrice" type="number" value={formData.minPrice} placeholder="15000" style={inputStyle} onChange={handleChange} />
                     </div>
                     <div>
                         <label style={{ ...labelStyle, marginTop: 0 }}>Max Price (Optional - for range)</label>
-                        <input name="maxPrice" type="number" placeholder="21000" style={inputStyle} onChange={handleChange} />
+                        <input name="maxPrice" type="number" value={formData.maxPrice} placeholder="21000" style={inputStyle} onChange={handleChange} />
                     </div>
                 </div>
 
                 <label style={labelStyle}>Category</label>
-                <select name="category" style={inputStyle} value={formData.category} onChange={handleChange}>
-                    <option value="Phones">Phones</option>
-                    <option value="Tablets">Tablets</option>
-                    <option value="Laptops">Laptops</option>
-                    <option value="Audio">Audio</option>
-                    <option value="Gaming">Gaming</option>
-                    <option value="Smartwatches">Smartwatches</option>
-                    <option value="Accessories">Accessories</option>
-                    <option value="TVs">TVs</option>
-                    <option value="Computing">Computing</option>
-                    <option value="Cameras">Cameras</option>
-                    <option value="Networking">Networking</option>
-                    <option value="Storage">Storage</option>
-                    <option value="Other">Other</option>
+                <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    style={inputStyle}
+                >
+                    {Object.keys(CATEGORY_SUBCATEGORIES).map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
                 </select>
 
                 <label style={labelStyle}>Subcategory</label>
-                {CATEGORY_SUBCATEGORIES[formData.category] ? (
-                    <select
-                        name="subcategory"
-                        value={formData.subcategory}
-                        onChange={handleChange}
-                        style={inputStyle}
-                    >
-                        <option value="">Select Subcategory</option>
-                        {CATEGORY_SUBCATEGORIES[formData.category].map(sub => (
-                            <option key={sub} value={sub}>{sub}</option>
-                        ))}
-                        <option value="Other">Other</option>
-                    </select>
-                ) : (
-                    <input
-                        name="subcategory"
-                        value={formData.subcategory}
-                        placeholder="e.g. Specific Type"
-                        style={inputStyle}
-                        onChange={handleChange}
-                    />
-                )}
+                <select
+                    name="subcategory"
+                    value={formData.subcategory}
+                    onChange={handleChange}
+                    style={inputStyle}
+                >
+                    <option value="">Select Subcategory</option>
+                    {CATEGORY_SUBCATEGORIES[formData.category]?.map((sub) => (
+                        <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                </select>
 
                 <label style={labelStyle}>Description</label>
-                <textarea name="description" rows={4} style={inputStyle} onChange={handleChange} />
+                <textarea name="description" value={formData.description} rows={4} style={inputStyle} onChange={handleChange} />
 
                 {/* Colors Section */}
                 <label style={labelStyle}>Colors</label>
@@ -675,9 +930,9 @@ export default function AddProductPage() {
                         </span>
                     ))}
                     <input
-                        placeholder="Type color & Enter..."
+                        placeholder="Type color & Enter, or separate by commas..."
                         value={colorInput}
-                        onChange={(e) => setColorInput(e.target.value)}
+                        onChange={handleColorInputChange}
                         onKeyDown={handleAddColor}
                         style={{ background: 'transparent', border: 'none', color: 'white', flex: 1, outline: 'none', minWidth: '120px' }}
                     />
@@ -791,6 +1046,16 @@ export default function AddProductPage() {
                         style={{ padding: '10px 20px', background: 'transparent', border: '1px solid #333', color: '#ccc', borderRadius: '6px', cursor: 'pointer' }}
                     >
                         Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            await saveDraft();
+                            alert('Draft saved successfully!');
+                        }}
+                        style={{ padding: '10px 20px', background: 'transparent', border: '1px solid #333', color: 'var(--accent)', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
+                        {savingDraft ? 'Saving...' : 'Save Draft'}
                     </button>
                     <button
                         type="submit"

@@ -376,3 +376,17 @@
     font-weight: 600;
     color: var(--foreground);
 }
+
+/* Ensure Related Products grid is 2 columns on mobile */
+.related-products-section .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm) !important;
+}
+
+@media (min-width: 640px) {
+    .related-products-section .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--spacing-md) !important;
+    }
+}

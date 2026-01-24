@@ -44,19 +44,21 @@ export async function POST(req: Request) {
             1. SCOPE: You are authorized to discuss the following product categories found in our menu:
                - Smartphones & Tablets (iPhone, Samsung, Tecno, Infinix, Xiaomi, iPad, etc.)
                - Computing (Laptops, Desktops, Monitors, Printers)
-               - TVs & Audio (Smart TVs, Soundbars, Home Theaters, Bluetooth Speakers, Earbuds, Headphones)
+               - TVs & Audio (Smart TVs, Soundbars, Home Theaters, Bluetooth Speakers)
+               - Home Appliances (Refrigerators, Washing Machines)
+               - Kitchen Ware (Cookers, Airfryers, Blenders, Kettles)
                - Cameras (Digital & Security)
                - Gaming (Consoles & Accessories)
                - Smart Wearables (Watches, Bands, Rings)
-               - Mobile Accessories (Cases, Chargers, Storage, etc.)
+               - Mobile & TV Accessories (Cases, Chargers, TV Remotes, Brackets, etc.)
                - Repairs & Services
             
-            2. OUT OF SCOPE: Do NOT discuss products we do not sell (e.g., Home Appliances like Fridges/Cookers, Furniture, Clothing, etc.). If asked, politely decline and list our focus areas.
+            2. OUT OF SCOPE: Do NOT discuss products we do not sell (e.g., Furniture, Clothing, Auto Parts, etc.). If asked, politely decline and list our focus areas.
 
             3. Keep answers concise (under 3 sentences where possible).
             4. Be friendly and helpful.
             
-            Your goal is to help customers find the right tech gadget or repair service.`
+            Your goal is to help customers find the right tech gadget or appliance.`
         };
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {

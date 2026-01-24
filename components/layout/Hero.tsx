@@ -16,10 +16,10 @@ const Hero = () => {
                         Discover a curated collection of high-performance phone cases, lightning-fast chargers, and premium audio gear designed for the modern user.
                     </p>
                     <div className="hero-actions">
-                        <Link href="/accessories/cases" className="btn btn-primary">
+                        <Link href="/products/cases" className="btn btn-primary">
                             Shop Cases
                         </Link>
-                        <Link href="/accessories" className="btn btn-secondary">
+                        <Link href="/products" className="btn btn-secondary">
                             View All
                         </Link>
                     </div>

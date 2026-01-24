@@ -91,7 +91,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
     return (
         <div className="product-card">
-            <Link href={`/accessories/${catSlug}/${seoSlug}`} className="product-image-link">
+            <Link href={`/products/${catSlug}/${seoSlug}`} className="product-image-link">
                 <div className="product-image-container">
                     {productImage && !imageError ? (
                         <Image
@@ -127,10 +127,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </Link>
 
             <div className="product-info">
-                <Link href={`/accessories/${catSlug}`} className="product-category">
+                <Link href={`/products/${catSlug}`} className="product-category">
                     {catName}
                 </Link>
-                <Link href={`/accessories/${catSlug}/${seoSlug}`}>
+                <Link href={`/products/${catSlug}/${seoSlug}`}>
                     <h3 className="product-name">{product.name}</h3>
                 </Link>
 

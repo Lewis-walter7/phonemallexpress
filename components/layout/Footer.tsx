@@ -11,7 +11,7 @@ const Footer = () => {
                 <div className="footer-grid">
                     <div className="footer-info">
                         <Link href="/" className="logo">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={150} height={40} className="logo-image" style={{ width: 'auto', height: '40px' }} />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={200} height={80} />
                         </Link>
                         <p className="footer-desc">
                             Premium phone accessories delivered with speed and quality. Elevate your mobile experience with our curated collection.
@@ -21,12 +21,12 @@ const Footer = () => {
                     <div className="footer-links">
                         <h4 className="footer-title">Shop</h4>
                         <ul>
-                            <li><Link href="/accessories/phones">Smartphones</Link></li>
+                            <li><Link href="/products/phones">Smartphones</Link></li>
                             <li><Link href="/repairs">Repairs & Services</Link></li>
-                            <li><Link href="/accessories/tablets">Tablets & iPads</Link></li>
-                            <li><Link href="/accessories/audio">Audio Gear</Link></li>
-                            <li><Link href="/accessories/gaming">Gaming</Link></li>
-                            <li><Link href="/accessories/wearables">Wearables</Link></li>
+                            <li><Link href="/products/tablets">Tablets & iPads</Link></li>
+                            <li><Link href="/products/audio">Audio Gear</Link></li>
+                            <li><Link href="/products/gaming">Gaming</Link></li>
+                            <li><Link href="/products/wearables">Wearables</Link></li>
                         </ul>
                     </div>
 

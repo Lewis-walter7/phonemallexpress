@@ -71,14 +71,20 @@ const categories = [
         name: 'Mobile Accessories',
         slug: 'accessories',
         subItems: [
-            { name: 'Chargers', slug: 'accessories?type=chargers' },
+            { name: 'Samsung Accessories', slug: 'accessories?brand=samsung' },
+            { name: 'Apple Accessories', slug: 'accessories?brand=apple' },
+            { name: 'Chargers & Adapters', slug: 'accessories?type=chargers' },
+            { name: 'Powerbanks', slug: 'accessories?type=powerbanks' },
+            { name: 'Cables', slug: 'accessories?type=cables' },
+            { name: 'Screen Protectors', slug: 'accessories?type=protectors' },
+            { name: 'Phone Covers', slug: 'accessories?type=covers' },
+            { name: 'Media Streamers', slug: 'accessories?type=streamers' },
             { name: 'Flash Drives', slug: 'accessories?type=flashdrives' },
             { name: 'Handheld Gimbals', slug: 'accessories?type=gimbals' },
             { name: 'Hard Disks', slug: 'accessories?type=harddisks' },
             { name: 'Memory Cards', slug: 'accessories?type=memorycards' },
             { name: 'Modems', slug: 'accessories?type=modems' },
             { name: 'Mouse', slug: 'accessories?type=mouse' },
-            { name: 'Phone Covers', slug: 'accessories?type=covers' },
         ]
     },
     {
@@ -98,6 +104,34 @@ const categories = [
             { name: 'Smart TVs', slug: 'tvs?type=smart' },
             { name: 'Android TVs', slug: 'tvs?type=android' },
             { name: '4K UHD TVs', slug: 'tvs?type=4k' },
+            { name: 'TV Accessories', slug: 'tvs?type=accessories' },
+        ]
+    },
+    {
+        name: 'Refrigerators',
+        slug: 'appliances/fridges',
+        subItems: [
+            { name: 'Side by Side', slug: 'appliances?type=side-by-side' },
+            { name: 'Single Door', slug: 'appliances?type=single-door' },
+            { name: 'Double Door', slug: 'appliances?type=double-door' },
+        ]
+    },
+    {
+        name: 'Washing Machines',
+        slug: 'appliances/washing',
+        subItems: [
+            { name: 'Top Load', slug: 'appliances?type=top-load' },
+            { name: 'Front Load', slug: 'appliances?type=front-load' },
+        ]
+    },
+    {
+        name: 'Kitchen Ware',
+        slug: 'kitchen',
+        subItems: [
+            { name: 'Cookers', slug: 'kitchen?type=cookers' },
+            { name: 'Airfryers', slug: 'kitchen?type=airfryers' },
+            { name: 'Blenders', slug: 'kitchen?type=blenders' },
+            { name: 'Electric Kettles', slug: 'kitchen?type=kettles' },
         ]
     },
     {
@@ -163,11 +197,11 @@ const Navbar = () => {
                                 </button>
 
                                 <div className="dropdown-menu-content">
-                                    <Link href="/accessories" className="menu-item-link">All Accessories</Link>
+                                    <Link href="/products" className="menu-item-link">All Accessories</Link>
 
                                     {categories.map((cat) => (
                                         <div key={cat.slug} className="menu-item-with-sub">
-                                            <Link href={`/accessories/${cat.slug}`} className="menu-item-link">
+                                            <Link href={`/products/${cat.slug}`} className="menu-item-link">
                                                 {cat.name}
                                                 <ChevronRight size={14} />
                                             </Link>
@@ -176,7 +210,7 @@ const Navbar = () => {
                                                 {cat.subItems.map((sub, idx) => (
                                                     <Link
                                                         key={idx}
-                                                        href={`/accessories/${sub.slug}`}
+                                                        href={`/products/${sub.slug}`}
                                                         className="sub-item-link"
                                                     >
                                                         {sub.name}
@@ -233,7 +267,7 @@ const Navbar = () => {
                             <span className="action-label">Account</span>
                         </Link>
 
-                        <div className="mr-2">
+                        <div>
                             <ThemeToggle />
                         </div>
 
@@ -252,12 +286,12 @@ const Navbar = () => {
                     <div className="container sub-navbar-container">
                         <Link href="/search?q=Samsung" className="sub-nav-link">Samsung</Link>
                         <Link href="/search?q=Apple" className="sub-nav-link">Apple</Link>
-                        <Link href="/accessories/phones" className="sub-nav-link">Smartphones</Link>
-                        <Link href="/accessories" className="sub-nav-link">Mobile Accessories</Link>
-                        <Link href="/accessories/audio" className="sub-nav-link text-accent">Audio</Link>
-                        <Link href="/accessories/gaming" className="sub-nav-link">Gaming</Link>
-                        <Link href="/accessories?type=storage" className="sub-nav-link">Storage</Link>
-                        <Link href="/accessories/tablets" className="sub-nav-link">Tablets</Link>
+                        <Link href="/products/phones" className="sub-nav-link">Smartphones</Link>
+                        <Link href="/products/accessories" className="sub-nav-link">Mobile Accessories</Link>
+                        <Link href="/products/audio" className="sub-nav-link text-accent">Audio</Link>
+                        <Link href="/products/gaming" className="sub-nav-link">Gaming</Link>
+                        <Link href="/products?type=storage" className="sub-nav-link">Storage</Link>
+                        <Link href="/products/tablets" className="sub-nav-link">Tablets</Link>
                         <Link href="/search?q=Content+Creator" className="sub-nav-link">Content Creator Kit</Link>
                     </div>
                 </div>
@@ -303,7 +337,7 @@ const Navbar = () => {
                                 <div key={cat.slug} className="mobile-nav-item">
                                     <div className="mobile-nav-row">
                                         <Link
-                                            href={`/accessories/${cat.slug}`}
+                                            href={`/products/${cat.slug}`}
                                             className="mobile-nav-link"
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
@@ -322,7 +356,7 @@ const Navbar = () => {
                                             {cat.subItems.map((sub, idx) => (
                                                 <Link
                                                     key={idx}
-                                                    href={`/accessories/${sub.slug}`}
+                                                    href={`/products/${sub.slug}`}
                                                     className="mobile-submenu-link"
                                                     onClick={() => setIsMobileMenuOpen(false)}
                                                 >
@@ -340,7 +374,7 @@ const Navbar = () => {
                                 Home
                                 <ChevronRight size={18} />
                             </Link>
-                            <Link href="/accessories" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/products" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
                                 All Accessories
                                 <ChevronRight size={18} />
                             </Link>

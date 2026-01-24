@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 interface PageProps {
     params: Promise<{ category: string }>;
-    searchParams: Promise<{ brand?: string; minPrice?: string; maxPrice?: string; search?: string; page?: string }>;
+    searchParams: Promise<{ brand?: string; minPrice?: string; maxPrice?: string; search?: string; page?: string; type?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps) {
     });
 }
 
-async function getCategoryProducts(categorySlug: string, search?: string, brand?: string, page: number = 1, limit: number = 20) {
+async function getCategoryProducts(categorySlug: string, search?: string, brand?: string, subcategory?: string, page: number = 1, limit: number = 20) {
     await connectDB();
     let query: any = { status: 'published' };
 
@@ -46,6 +46,11 @@ async function getCategoryProducts(categorySlug: string, search?: string, brand?
     // Handle Brand
     if (brand) {
         query.brand = { $regex: brand, $options: 'i' };
+    }
+
+    // Handle Subcategory (Type)
+    if (subcategory) {
+        query.subcategory = { $regex: subcategory, $options: 'i' };
     }
 
     // Handle Category
@@ -76,7 +81,7 @@ async function getCategoryProducts(categorySlug: string, search?: string, brand?
 
 const CategoryPage = async ({ params, searchParams }: PageProps) => {
     const { category: slug } = await params;
-    const { search, brand, page } = await searchParams;
+    const { search, brand, page, type } = await searchParams;
     const currentPage = Number(page) || 1;
     const limit = 20;
 
@@ -93,7 +98,7 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
         categoryName = 'All Accessories';
     }
 
-    const { products, totalPages, totalCount } = await getCategoryProducts(slug, search, brand, currentPage, limit);
+    const { products, totalPages, totalCount } = await getCategoryProducts(slug, search, brand, type, currentPage, limit);
 
     return (
         <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>

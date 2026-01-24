@@ -135,24 +135,63 @@ export default function CategoryFilters() {
                     </div>
                 </div>
 
+                {/* Subcategory / Type */}
+                <div className="filter-group" style={{ marginBottom: '24px' }}>
+                    <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Accessory Type</h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {[
+                            { id: 'chargers', label: 'Chargers' },
+                            { id: 'powerbanks', label: 'Powerbanks' },
+                            { id: 'cables', label: 'Cables' },
+                            { id: 'protectors', label: 'Screen Protectors' },
+                            { id: 'covers', label: 'Phone Covers' },
+                            { id: 'streamers', label: 'Streamers' },
+                            { id: 'flashdrives', label: 'Flash Drives' },
+                            { id: 'gimbals', label: 'Gimbals' },
+                            { id: 'harddisks', label: 'Hard Disks' },
+                            { id: 'memorycards', label: 'Memory Cards' },
+                            { id: 'modems', label: 'Modems' },
+                            { id: 'mouse', label: 'Mouse' }
+                        ].map(item => {
+                            const isSelected = searchParams.get('type') === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => handleToggle('type', item.id)}
+                                    style={{
+                                        padding: '6px 10px',
+                                        fontSize: '11px',
+                                        borderRadius: '6px',
+                                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                        backgroundColor: isSelected ? 'var(--muted)' : 'transparent',
+                                        color: isSelected ? 'var(--foreground)' : 'var(--muted-foreground)',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {item.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
                 {/* Price Range */}
                 <div className="filter-group" style={{ marginBottom: '24px' }}>
                     <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Price Range (KES)</h3>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         <input
                             type="number"
-                            placeholder="Min"
+                            placeholder="Min Price"
                             value={minPrice}
                             onChange={(e) => setMinPrice(e.target.value)}
-                            style={{ flex: 1, padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
+                            style={{ width: '100%', padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
                         />
-                        <span style={{ color: 'var(--muted-foreground)' }}>-</span>
                         <input
                             type="number"
-                            placeholder="Max"
+                            placeholder="Max Price"
                             value={maxPrice}
                             onChange={(e) => setMaxPrice(e.target.value)}
-                            style={{ flex: 1, padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
+                            style={{ width: '100%', padding: '10px', background: 'var(--input)', border: '1px solid var(--border)', color: 'var(--foreground)', borderRadius: '8px', fontSize: '13px' }}
                         />
                     </div>
                 </div>
