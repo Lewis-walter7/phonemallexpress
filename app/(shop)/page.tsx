@@ -33,13 +33,13 @@ const CATEGORIES = [
   {
     name: 'Accessories',
     slug: 'accessories',
-    image: '/products.png',
+    image: '/accessories.png',
     subcategories: ['Apple Accessories', 'Samsung Accessories', 'Chargers', 'Powerbank']
   },
   {
     name: 'Storage',
     slug: 'storage',
-    image: '/laptops.png',
+    image: '/drive.png',
     subcategories: ['Flash Drives', 'Hard Drives', 'Memory Cards', 'USB Hubs']
   }
 ];

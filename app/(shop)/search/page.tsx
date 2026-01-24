@@ -46,7 +46,7 @@ function SearchContent() {
     }, [query, page]);
 
     return (
-        <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
+        <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }} suppressHydrationWarning={true}>
             <Breadcrumbs items={[{ label: 'Search', href: '/search' }]} />
 
             <div style={{ marginTop: '0.125rem', marginBottom: products.length > 0 ? '0.5rem' : 'var(--spacing-md)' }}>
@@ -69,9 +69,7 @@ function SearchContent() {
                 </div>
             ) : products.length > 0 ? (
                 <>
-                    <p style={{ color: 'var(--muted-foreground)', fontSize: 'var(--font-size-xs)', marginBottom: '0.75rem' }}>
-                        Found {pagination.totalCount} {pagination.totalCount === 1 ? 'product' : 'products'}
-                    </p>
+
                     <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
                         {products.map((product: any) => (
                             <ProductCard key={product._id} product={product} />

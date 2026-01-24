@@ -153,6 +153,8 @@ const Navbar = () => {
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
     // Prevent body scroll when menu is open
     useEffect(() => {
@@ -284,15 +286,39 @@ const Navbar = () => {
                 {/* SUB NAVBAR (Desktop) */}
                 <div className="sub-navbar desktop-only">
                     <div className="container sub-navbar-container">
-                        <Link href="/search?q=Samsung" className="sub-nav-link">Samsung</Link>
-                        <Link href="/search?q=Apple" className="sub-nav-link">Apple</Link>
-                        <Link href="/products/phones" className="sub-nav-link">Smartphones</Link>
-                        <Link href="/products/accessories" className="sub-nav-link">Mobile Accessories</Link>
-                        <Link href="/products/audio" className="sub-nav-link text-accent">Audio</Link>
-                        <Link href="/products/gaming" className="sub-nav-link">Gaming</Link>
-                        <Link href="/products?type=storage" className="sub-nav-link">Storage</Link>
-                        <Link href="/products/tablets" className="sub-nav-link">Tablets</Link>
-                        <Link href="/search?q=Content+Creator" className="sub-nav-link">Content Creator Kit</Link>
+                        {[
+                            { name: 'Samsung', href: '/search?q=Samsung' },
+                            { name: 'Apple', href: '/search?q=Apple' },
+                            { name: 'Smartphones', href: '/products/phones' },
+                            { name: 'Mobile Accessories', href: '/products/accessories' },
+                            { name: 'Audio', href: '/products/audio' },
+                            { name: 'Gaming', href: '/products/gaming' },
+                            { name: 'Storage', href: '/products?type=storage' },
+                            { name: 'Tablets', href: '/products/tablets' },
+                            { name: 'Content Creator Kit', href: '/search?q=Content+Creator' }
+                        ].map((link) => {
+                            const isActive = () => {
+                                const [path, query] = link.href.split('?');
+                                if (pathname !== path) return false;
+                                if (query) {
+                                    const params = new URLSearchParams(query);
+                                    for (const [key, val] of params.entries()) {
+                                        if (searchParams.get(key) !== val) return false;
+                                    }
+                                }
+                                return true;
+                            };
+
+                            return (
+                                <Link
+                                    key={link.name}
+                                    href={link.href}
+                                    className={`sub-nav-link ${isActive() ? 'text-accent' : ''}`}
+                                >
+                                    {link.name}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             </header>

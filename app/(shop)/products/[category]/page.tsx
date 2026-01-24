@@ -109,12 +109,7 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
                 </aside>
 
                 <main className="shop-content">
-                    <div className="shop-controls">
-                        {/* Sort Dropdown or results count */}
-                        <p className="product-count">
-                            Showing {(currentPage - 1) * limit + 1}-{Math.min(currentPage * limit, totalCount)} of {totalCount} products
-                        </p>
-                    </div>
+
 
                     <div className="product-grid">
                         {products.map((product: any) => (
