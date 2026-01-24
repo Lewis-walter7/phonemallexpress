@@ -212,7 +212,11 @@ export default async function Home() {
                   <h3 className="mobi-card-title">{cat.name}</h3>
                   <ul className="mobi-card-list">
                     {cat.subcategories.map(sub => (
-                      <li key={sub}>{sub}</li>
+                      <li key={sub}>
+                        <Link href={`/search?q=${encodeURIComponent(sub)}`} className="subcategory-link">
+                          {sub}
+                        </Link>
+                      </li>
                     ))}
                   </ul>
                   <Link href={`/accessories/${cat.slug}`} className="mobi-card-link">

@@ -75,13 +75,23 @@
 }
 
 .mobi-card-list li {
-    color: var(--muted-foreground);
     font-size: 0.85rem;
     line-height: 1.4;
     margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.subcategory-link {
+    color: var(--muted-foreground);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.subcategory-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
 }
 
 .mobi-card-link {
