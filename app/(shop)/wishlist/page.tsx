@@ -6,6 +6,7 @@ import { ShoppingCart, Trash2, Heart } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
+import './WishlistPage.css';
 
 export default function WishlistPage() {
     const { wishlist, removeFromWishlist } = useWishlist();
@@ -45,7 +46,7 @@ export default function WishlistPage() {
                 My Wishlist ({wishlist.length})
             </h1>
 
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--spacing-md)' }}>
+            <div className="wishlist-grid">
                 {wishlist.map((item) => (
                     <div key={item.id} className="product-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
                         <Link href={`/accessories/${item.category?.toLowerCase() || 'products'}/${item.slug}`} className="product-image-link">
