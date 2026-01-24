@@ -41,6 +41,21 @@ const Footer = () => {
                         </ul>
                     </div>
 
+                    <div className="footer-links">
+                        <h4 className="footer-title">Location</h4>
+                        <ul className="footer-contact">
+                            <li>
+                                <strong>Nairobi CBD</strong><br />
+                                Pujita House, 2nd Floor, Shop 1<br />
+                                Moi Avenue
+                            </li>
+                            <li style={{ marginTop: '10px' }}>
+                                <strong>Call / WhatsApp:</strong><br />
+                                <a href="tel:+254701445445" style={{ color: 'var(--muted-foreground)', textDecoration: 'none' }}>0701 445 445</a>
+                            </li>
+                        </ul>
+                    </div>
+
 
                 </div>
 

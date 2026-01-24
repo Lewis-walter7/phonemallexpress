@@ -26,18 +26,16 @@ export async function POST(request: Request) {
 
         const { email, password } = validation.data;
 
-        // 2. Ensure Default Admin Exists (Seeding)
+        // 2. Ensure Default Admin Exists (Dynamic Seeding)
         const adminCount = await Admin.countDocuments();
         if (adminCount === 0) {
-            const defaultEmail = process.env.ADMIN_EMAIL || 'admin@phonemallexpress.com';
-            const defaultPass = process.env.ADMIN_PASSWORD || 'admin123';
-
-            const hashedPassword = await bcrypt.hash(defaultPass, 10);
+            console.log('--- No admins found. Creating first admin from login credentials... ---');
+            const hashedPassword = await bcrypt.hash(password, 10);
             await Admin.create({
-                email: defaultEmail,
+                email: email,
                 password: hashedPassword
             });
-            console.log('--- Initial Admin Created ---');
+            console.log(`--- Initial Admin Created: ${email} ---`);
         }
 
         // 3. Find Admin
