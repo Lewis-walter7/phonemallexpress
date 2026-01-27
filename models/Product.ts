@@ -63,11 +63,13 @@ const ProductSchema = new mongoose.Schema({
     }],
     warrantyVariants: [{
         name: String,
+        price: { type: Number, default: 0 },
         stock: { type: Number, default: 0 },
         isDisabled: { type: Boolean, default: false }
     }],
     simVariants: [{
         name: String,
+        price: { type: Number, default: 0 },
         stock: { type: Number, default: 0 },
         isDisabled: { type: Boolean, default: false }
     }],

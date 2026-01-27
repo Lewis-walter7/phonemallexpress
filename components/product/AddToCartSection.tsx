@@ -15,35 +15,93 @@ interface AddToCartSectionProps {
     };
     variants?: any[];
     storageVariants?: any[];
-    warrantyVariants?: any[];
-    simVariants?: any[];
+    warrantyVariants?: {
+        name: string;
+        price: number;
+        stock: number;
+        isDisabled: boolean;
+    }[];
+    simVariants?: {
+        name: string;
+        price: number;
+        stock: number;
+        isDisabled: boolean;
+    }[];
     colors?: string[];
 }
 
-const AddToCartSection = ({
-    product,
-    variants = [],
-    storageVariants = [],
-    warrantyVariants = [],
-    simVariants = [],
-    colors = []
-}: AddToCartSectionProps) => {
+export default function AddToCartSection({ product, variants, storageVariants, warrantyVariants, simVariants, colors }: AddToCartSectionProps) {
     const [quantity, setQuantity] = useState(1);
 
     // Legacy support
     const [selectedVariant, setSelectedVariant] = useState<any>(variants && variants.length > 0 ? variants[0] : null);
 
     // Grouped selections
-    const [selectedStorage, setSelectedStorage] = useState<any>(storageVariants.find(v => !v.isDisabled) || null);
-    const [selectedWarranty, setSelectedWarranty] = useState<any>(warrantyVariants.find(v => !v.isDisabled) || null);
-    const [selectedSim, setSelectedSim] = useState<any>(simVariants.find(v => !v.isDisabled) || null);
+    const [selectedStorage, setSelectedStorage] = useState<any>(null);
+    const [selectedWarranty, setSelectedWarranty] = useState<any>(null);
+    const [selectedSim, setSelectedSim] = useState<any>(null);
 
-    const [selectedColor, setSelectedColor] = useState<string>(colors && colors.length > 0 ? colors[0] : '');
+    const [selectedColor, setSelectedColor] = useState<string>("");
     const { addToCart } = useCart();
 
-    const currentPrice = selectedStorage
-        ? (selectedStorage.salePrice || selectedStorage.price)
-        : (selectedVariant ? (selectedVariant.salePrice || selectedVariant.price) : product.price);
+    // Initialize selections
+    React.useEffect(() => {
+        if (storageVariants && storageVariants.length > 0) {
+            // Select first available storage
+            const firstAvailable = storageVariants.find(v => !v.isDisabled && v.stock > 0);
+            if (firstAvailable) setSelectedStorage(firstAvailable);
+        }
+
+        if (warrantyVariants && warrantyVariants.length > 0) {
+            // Select first available warranty
+            const firstAvailable = warrantyVariants.find(v => !v.isDisabled);
+            if (firstAvailable) setSelectedWarranty(firstAvailable);
+        }
+
+        if (simVariants && simVariants.length > 0) {
+            // Select first available SIM
+            const firstAvailable = simVariants.find(v => !v.isDisabled);
+            if (firstAvailable) setSelectedSim(firstAvailable);
+        }
+
+        if (colors && colors.length > 0) {
+            setSelectedColor(colors[0]);
+        }
+    }, [storageVariants, warrantyVariants, simVariants, colors]);
+
+    const calculateCurrentPrice = () => {
+        let price = product.price;
+
+        // Add storage price override if exists (usually storage variant replaces base price)
+        if (selectedStorage) {
+            if (selectedStorage.salePrice > 0) {
+                price = selectedStorage.salePrice;
+            } else if (selectedStorage.price > 0) {
+                price = selectedStorage.price;
+            }
+        } else if (selectedVariant) {
+            // Legacy variant price
+            if (selectedVariant.salePrice > 0) {
+                price = selectedVariant.salePrice;
+            } else if (selectedVariant.price > 0) {
+                price = selectedVariant.price;
+            }
+        }
+
+        // Add warranty price
+        if (selectedWarranty && selectedWarranty.price) {
+            price += selectedWarranty.price;
+        }
+
+        // Add SIM price
+        if (selectedSim && selectedSim.price) {
+            price += selectedSim.price;
+        }
+
+        return price;
+    };
+
+    const currentPrice = calculateCurrentPrice();
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'inc') {
@@ -54,23 +112,23 @@ const AddToCartSection = ({
     };
 
     const handleAddToCart = () => {
-        const variantOptions = [];
-        if (selectedStorage) variantOptions.push(selectedStorage.name);
-        if (selectedWarranty) variantOptions.push(selectedWarranty.name);
-        if (selectedSim) variantOptions.push(selectedSim.name);
-        if (selectedVariant && !selectedStorage) variantOptions.push(selectedVariant.name);
-
-        addToCart({
+        const cartItem = {
             id: product._id,
             name: product.name,
             price: currentPrice,
-            quantity: quantity,
             image: product.image,
+            quantity: quantity,
+            selectedStorage: selectedStorage ? selectedStorage.name : undefined,
+            selectedWarranty: selectedWarranty ? selectedWarranty.name : undefined,
+            selectedSim: selectedSim ? selectedSim.name : undefined,
+            selectedColor: selectedColor || undefined,
             slug: product.slug,
             category: product.category,
-            variant: variantOptions.join(' / ') || undefined,
-            color: selectedColor || undefined
-        });
+            // Fallback for legacy
+            variant: (!selectedStorage && selectedVariant) ? selectedVariant.name : undefined
+        };
+        addToCart(cartItem);
+        // setIsCartOpen(true); // Not available in context
     };
 
     return (
@@ -122,7 +180,7 @@ const AddToCartSection = ({
                                     fontSize: '14px'
                                 }}
                             >
-                                {v.name}
+                                {v.name} {v.price > 0 ? `(+ KSh ${v.price.toLocaleString()})` : ''}
                             </button>
                         ))}
                     </div>
@@ -149,7 +207,7 @@ const AddToCartSection = ({
                                     fontSize: '14px'
                                 }}
                             >
-                                {v.name}
+                                {v.name} {v.price > 0 ? `(+ KSh ${v.price.toLocaleString()})` : ''}
                             </button>
                         ))}
                     </div>
@@ -243,4 +301,4 @@ const AddToCartSection = ({
     );
 };
 
-export default AddToCartSection;
+
