@@ -574,3 +574,15 @@
     border-radius: var(--radius-md);
     color: var(--muted-foreground);
 }
+
+/* Video Section Refinement */
+.product-video-section {
+    max-width: 800px;
+    margin: var(--spacing-lg) auto 0 auto;
+    border-top: 1px solid var(--border);
+    padding-top: var(--spacing-md);
+}
+
+.youtube-video-container {
+    background: #000;
+}

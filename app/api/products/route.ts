@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+import { validateAdminSession } from '@/lib/auth';
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -47,6 +49,14 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     await dbConnect();
     try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get('admin_token')?.value;
+        const admin = token ? await validateAdminSession(token) : null;
+
+        if (!admin) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const product = await Product.create(body);
         return NextResponse.json({ success: true, data: product }, { status: 201 });
@@ -59,6 +69,14 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
     await dbConnect();
     try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get('admin_token')?.value;
+        const admin = token ? await validateAdminSession(token) : null;
+
+        if (!admin) {
+            return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const { _id, ...updateData } = body;
 
@@ -81,6 +99,14 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
     await dbConnect();
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    const admin = token ? await validateAdminSession(token) : null;
+
+    if (!admin) {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

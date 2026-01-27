@@ -14,16 +14,36 @@ interface AddToCartSectionProps {
         image: string;
     };
     variants?: any[];
+    storageVariants?: any[];
+    warrantyVariants?: any[];
+    simVariants?: any[];
     colors?: string[];
 }
 
-const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSectionProps) => {
+const AddToCartSection = ({
+    product,
+    variants = [],
+    storageVariants = [],
+    warrantyVariants = [],
+    simVariants = [],
+    colors = []
+}: AddToCartSectionProps) => {
     const [quantity, setQuantity] = useState(1);
+
+    // Legacy support
     const [selectedVariant, setSelectedVariant] = useState<any>(variants && variants.length > 0 ? variants[0] : null);
+
+    // Grouped selections
+    const [selectedStorage, setSelectedStorage] = useState<any>(storageVariants.find(v => !v.isDisabled) || null);
+    const [selectedWarranty, setSelectedWarranty] = useState<any>(warrantyVariants.find(v => !v.isDisabled) || null);
+    const [selectedSim, setSelectedSim] = useState<any>(simVariants.find(v => !v.isDisabled) || null);
+
     const [selectedColor, setSelectedColor] = useState<string>(colors && colors.length > 0 ? colors[0] : '');
     const { addToCart } = useCart();
 
-    const currentPrice = selectedVariant ? (selectedVariant.salePrice || selectedVariant.price) : product.price;
+    const currentPrice = selectedStorage
+        ? (selectedStorage.salePrice || selectedStorage.price)
+        : (selectedVariant ? (selectedVariant.salePrice || selectedVariant.price) : product.price);
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'inc') {
@@ -34,6 +54,12 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
     };
 
     const handleAddToCart = () => {
+        const variantOptions = [];
+        if (selectedStorage) variantOptions.push(selectedStorage.name);
+        if (selectedWarranty) variantOptions.push(selectedWarranty.name);
+        if (selectedSim) variantOptions.push(selectedSim.name);
+        if (selectedVariant && !selectedStorage) variantOptions.push(selectedVariant.name);
+
         addToCart({
             id: product._id,
             name: product.name,
@@ -42,17 +68,98 @@ const AddToCartSection = ({ product, variants = [], colors = [] }: AddToCartSect
             image: product.image,
             slug: product.slug,
             category: product.category,
-            variant: selectedVariant ? selectedVariant.name : undefined,
+            variant: variantOptions.join(' / ') || undefined,
             color: selectedColor || undefined
         });
     };
 
     return (
         <div className="product-actions-wrapper">
-            {/* Variants */}
-            {variants && variants.length > 0 && (
+            {/* Storage Variants */}
+            {storageVariants && storageVariants.length > 0 && (
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
-                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Storage / Variant</h4>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Storage</h4>
+                    <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {storageVariants.filter(v => !v.isDisabled).map((v, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSelectedStorage(v)}
+                                className={`variant-btn ${selectedStorage === v ? 'active' : ''}`}
+                                style={{
+                                    padding: '8px 16px',
+                                    border: selectedStorage === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    background: selectedStorage === v ? 'var(--accent)' : 'transparent',
+                                    color: selectedStorage === v ? '#fff' : 'var(--foreground)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                {v.name} - KSh {(v.salePrice || v.price).toLocaleString()}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Warranty Variants */}
+            {warrantyVariants && warrantyVariants.length > 0 && (
+                <div className="variants-section" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Warranty</h4>
+                    <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {warrantyVariants.filter(v => !v.isDisabled).map((v, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSelectedWarranty(v)}
+                                className={`variant-btn ${selectedWarranty === v ? 'active' : ''}`}
+                                style={{
+                                    padding: '8px 16px',
+                                    border: selectedWarranty === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    background: selectedWarranty === v ? 'var(--accent)' : 'transparent',
+                                    color: selectedWarranty === v ? '#fff' : 'var(--foreground)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                {v.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* SIM Variants */}
+            {simVariants && simVariants.length > 0 && (
+                <div className="variants-section" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>SIM Card Slots</h4>
+                    <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {simVariants.filter(v => !v.isDisabled).map((v, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSelectedSim(v)}
+                                className={`variant-btn ${selectedSim === v ? 'active' : ''}`}
+                                style={{
+                                    padding: '8px 16px',
+                                    border: selectedSim === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    background: selectedSim === v ? 'var(--accent)' : 'transparent',
+                                    color: selectedSim === v ? '#fff' : 'var(--foreground)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                {v.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Legacy Variants (Price changes based on selection) */}
+            {variants && variants.length > 0 && !selectedStorage && (
+                <div className="variants-section" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Options</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                         {variants.map((v, i) => (
                             <button

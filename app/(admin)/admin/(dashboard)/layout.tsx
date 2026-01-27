@@ -1,127 +1,32 @@
-'use client';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { validateAdminSession } from '@/lib/auth';
+import AdminLayoutClient from './AdminLayoutClient';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import styles from './admin-layout.module.css';
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const router = useRouter();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [pendingReviewsCount, setPendingReviewsCount] = useState(0);
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
 
-    useEffect(() => {
-        const fetchPendingCount = async () => {
-            try {
-                const res = await fetch('/api/admin/reviews?status=pending');
-                const data = await res.json();
-                if (data.success && Array.isArray(data.reviews)) {
-                    setPendingReviewsCount(data.reviews.length);
-                }
-            } catch (error) {
-                console.error('Failed to fetch pending reviews count', error);
-            }
-        };
+    if (!token) {
+        redirect('/admin/login');
+    }
 
-        fetchPendingCount();
-        // Poll every 30 seconds to keep it fresh
-        const interval = setInterval(fetchPendingCount, 30000);
-        return () => clearInterval(interval);
-    }, []);
+    const admin = await validateAdminSession(token);
 
-    const handleLogout = async () => {
-        try {
-            await fetch('/api/admin/logout', { method: 'POST' });
-            router.push('/admin/login');
-            router.refresh(); // Clear client cache
-        } catch (error) {
-            console.error('Logout failed', error);
-        }
-    };
+    if (!admin) {
+        // Clear cookie if session is invalid (e.g., admin deleted)
+        // Note: setting cookies in a layout can be tricky in some Next.js versions,
+        // but redirecting to login will prompt the middleware to handle it or the user to re-auth.
+        redirect('/admin/login');
+    }
 
     return (
-        <div className={styles.container}>
-            {/* Mobile Sidebar Overlay */}
-            <div
-                className={`${styles.overlay} ${isSidebarOpen ? styles.visible : ''}`}
-                onClick={() => setIsSidebarOpen(false)}
-            />
-
-            {/* Sidebar */}
-            <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.open : ''}`}>
-                <div className={styles.logo}>
-                    PHONEMALL<span style={{ color: 'var(--accent)', fontSize: '0.8rem' }}>EXPRESS Admin</span>
-                </div>
-
-                <nav className={styles.nav}>
-                    <Link href="/admin/dashboard" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📊 Dashboard</Link>
-                    <Link href="/admin/products" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📦 Products</Link>
-                    <Link href="/admin/reviews" className={styles.link} onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span>⭐ Reviews</span>
-                        {pendingReviewsCount > 0 && (
-                            <span style={{
-                                background: '#ef4444',
-                                color: 'white',
-                                fontSize: '10px',
-                                fontWeight: 'bold',
-                                padding: '2px 6px',
-                                borderRadius: '10px',
-                                marginLeft: '8px'
-                            }}>
-                                {pendingReviewsCount}
-                            </span>
-                        )}
-                    </Link>
-                    <Link href="/admin/register" className={styles.link} onClick={() => setIsSidebarOpen(false)}>👥 Register Admin</Link>
-                    <Link href="/admin/orders" className={styles.link} onClick={() => setIsSidebarOpen(false)}>🚚 Orders</Link>
-                    <Link href="/admin/quotes" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📋 Bulk Quotes</Link>
-
-                    <div className={styles.footer}>
-                        <Link href="/" className={styles.link} style={{ fontSize: '0.85rem', color: '#888' }}>
-                            ↪ Back to Shop
-                        </Link>
-                        <button
-                            onClick={handleLogout}
-                            className={styles.link}
-                            style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#f44336',
-                                cursor: 'pointer',
-                                textAlign: 'left',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                fontSize: '0.95rem'
-                            }}
-                        >
-                            🚪 Sign Out
-                        </button>
-                    </div>
-                </nav>
-            </aside>
-
-            {/* Main Content Area */}
-            <main className={styles.mainContent}>
-                {/* Mobile Header */}
-                <header className={styles.mobileHeader}>
-                    <button
-                        className={styles.hamburgerBtn}
-                        onClick={() => setIsSidebarOpen(true)}
-                    >
-                        ☰
-                    </button>
-                    <span className={styles.logo}>PHONEMALL Admin</span>
-                    <div style={{ width: '32px' }}></div> {/* Spacer for alignment */}
-                </header>
-                <div style={{ padding: '2rem' }}>
-                    {children}
-                </div>
-            </main>
-        </div>
+        <AdminLayoutClient>
+            {children}
+        </AdminLayoutClient>
     );
 }

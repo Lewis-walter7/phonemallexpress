@@ -101,6 +101,9 @@ const ProductPage = async ({ params }: PageProps) => {
         }
     };
 
+    // Sanitize product for Client Components to fix "Only plain objects" error
+    const sanitizedProductData = JSON.parse(JSON.stringify(product));
+
     return (
         <div className="container section-py">
             <script
@@ -161,8 +164,11 @@ const ProductPage = async ({ params }: PageProps) => {
                             category: catName,
                             image: productImages[0]?.url || ''
                         }}
-                        variants={product.variants || []}
-                        colors={product.colors || []}
+                        variants={sanitizedProductData.variants || []}
+                        storageVariants={sanitizedProductData.storageVariants || []}
+                        warrantyVariants={sanitizedProductData.warrantyVariants || []}
+                        simVariants={sanitizedProductData.simVariants || []}
+                        colors={sanitizedProductData.colors || []}
                     />
                 </div>
             </div>
@@ -182,6 +188,30 @@ const ProductPage = async ({ params }: PageProps) => {
                     </section>
                 </div>
             )}
+
+            {product.youtubeVideoUrl && ((url) => {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                const videoId = (match && match[2].length === 11) ? match[2] : null;
+
+                if (!videoId) return null;
+
+                return (
+                    <div className="product-video-section">
+                        <h2 className="info-section-title">Product Video</h2>
+                        <div className="youtube-video-container" style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+                            <iframe
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                                src={`https://www.youtube.com/embed/${videoId}`}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </div>
+                );
+            })(product.youtubeVideoUrl)}
 
             {/* Reviews Section */}
             <div className="reviews-section">

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import dbConnect from '@/lib/db';
 import Admin from '@/models/Admin';
 import bcrypt from 'bcryptjs';
+import { validateAdminSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
     try {
@@ -10,8 +11,9 @@ export async function POST(request: Request) {
 
         const cookieStore = await cookies();
         const adminToken = cookieStore.get('admin_token')?.value;
+        const currentAdmin = adminToken ? await validateAdminSession(adminToken) : null;
 
-        if (!adminToken) {
+        if (!currentAdmin) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized: Admin access required' },
                 { status: 401 }

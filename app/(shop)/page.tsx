@@ -55,7 +55,7 @@ const CATEGORIES = [
 async function getFeaturedProducts() {
   await dbConnect();
   const featuredProducts = await Product.find({ isFeatured: true, status: 'published' })
-    .limit(8)
+    .limit(12)
     .lean();
   return JSON.parse(JSON.stringify(featuredProducts));
 }

@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import dbConnect from '@/lib/db';
 import Review from '@/models/Review';
+import { validateAdminSession } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
     try {
         await dbConnect();
 
-        const { searchParams } = new URL(request.url);
-        const status = searchParams.get('status');
+        const cookieStore = await cookies();
+        const token = cookieStore.get('admin_token')?.value;
+        const admin = token ? await validateAdminSession(token) : null;
+
+        if (!admin) {
+            return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+        }
 
         const query: any = {};
         if (status && status !== 'all') {
