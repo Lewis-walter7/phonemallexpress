@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './products.module.css';
+import toast from 'react-hot-toast';
 
 interface Product {
     _id: string;
@@ -20,6 +21,7 @@ export default function AdminProductsPage() {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState<'published' | 'draft'>('published');
+    const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         fetchProducts();
@@ -40,6 +42,11 @@ export default function AdminProductsPage() {
         }
     }, [searchQuery, products]);
 
+    // Clear selection when changing tabs or filtering
+    useEffect(() => {
+        setSelectedProducts(new Set());
+    }, [activeTab, searchQuery]);
+
     const fetchProducts = async () => {
         try {
             setLoading(true);
@@ -51,6 +58,7 @@ export default function AdminProductsPage() {
             }
         } catch (error) {
             console.error('Failed to fetch products', error);
+            toast.error('Failed to load products');
         } finally {
             setLoading(false);
         }
@@ -59,19 +67,75 @@ export default function AdminProductsPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this product?')) return;
 
-        try {
+        const deletePromise = async () => {
             const res = await fetch(`/api/products?id=${id}`, {
                 method: 'DELETE',
             });
-            if (res.ok) {
-                const updated = products.filter(p => p._id !== id);
-                setProducts(updated);
-            } else {
-                alert('Failed to delete product');
-            }
-        } catch (error) {
-            alert('Error deleting product');
+            if (!res.ok) throw new Error('Failed to delete');
+
+            const updated = products.filter(p => p._id !== id);
+            setProducts(updated);
+            setSelectedProducts(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(id);
+                return newSet;
+            });
+        };
+
+        toast.promise(deletePromise(), {
+            loading: 'Deleting product...',
+            success: 'Product deleted',
+            error: 'Failed to delete product'
+        });
+    };
+
+    const handleBatchDelete = async () => {
+        if (selectedProducts.size === 0) return;
+        if (!confirm(`Are you sure you want to delete ${selectedProducts.size} products? This cannot be undone.`)) return;
+
+        const deletePromise = async () => {
+            const ids = Array.from(selectedProducts).join(',');
+            const res = await fetch(`/api/products?ids=${ids}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) throw new Error('Failed to delete');
+
+            const data = await res.json();
+
+            // Update local state
+            const updated = products.filter(p => !selectedProducts.has(p._id));
+            setProducts(updated);
+            setSelectedProducts(new Set());
+            return data;
+        };
+
+        toast.promise(deletePromise(), {
+            loading: 'Deleting products...',
+            success: 'Products deleted successfully',
+            error: 'Failed to delete products'
+        });
+    };
+
+    const toggleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.checked) {
+            const allIds = filteredProducts.map(p => p._id);
+            setSelectedProducts(new Set(allIds));
+        } else {
+            setSelectedProducts(new Set());
         }
+    };
+
+    const toggleSelectProduct = (id: string) => {
+        setSelectedProducts(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(id)) {
+                newSet.delete(id);
+            } else {
+                newSet.add(id);
+            }
+            return newSet;
+        });
     };
 
     return (
@@ -97,6 +161,14 @@ export default function AdminProductsPage() {
                     </div>
                 </div>
                 <div className={styles.actions}>
+                    {selectedProducts.size > 0 && (
+                        <button
+                            onClick={handleBatchDelete}
+                            className={styles.dangerBtn}
+                        >
+                            🗑️ Delete Selected ({selectedProducts.size})
+                        </button>
+                    )}
                     <button
                         onClick={fetchProducts}
                         disabled={loading}
@@ -131,6 +203,14 @@ export default function AdminProductsPage() {
                         <table className={styles.table}>
                             <thead className={styles.thead}>
                                 <tr className={styles.tr}>
+                                    <th className={styles.th} style={{ width: '40px' }}>
+                                        <input
+                                            type="checkbox"
+                                            className={styles.checkbox}
+                                            checked={filteredProducts.length > 0 && selectedProducts.size === filteredProducts.length}
+                                            onChange={toggleSelectAll}
+                                        />
+                                    </th>
                                     <th className={styles.th}>Image</th>
                                     <th className={styles.th}>Name</th>
                                     <th className={styles.th}>Category</th>
@@ -143,9 +223,18 @@ export default function AdminProductsPage() {
                                 {filteredProducts.map((product) => {
                                     const productImage = product.images?.[0]?.url || product.imageUrl;
                                     const catName = typeof product.category === 'string' ? product.category : (product.category?.name || 'Uncategorized');
+                                    const isSelected = selectedProducts.has(product._id);
 
                                     return (
-                                        <tr key={product._id} className={styles.tr}>
+                                        <tr key={product._id} className={`${styles.tr} ${isSelected ? styles.rowSelected : ''}`}>
+                                            <td className={styles.td}>
+                                                <input
+                                                    type="checkbox"
+                                                    className={styles.checkbox}
+                                                    checked={isSelected}
+                                                    onChange={() => toggleSelectProduct(product._id)}
+                                                />
+                                            </td>
                                             <td className={styles.td}>
                                                 <div style={{ width: '40px', height: '40px', background: '#333', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
                                                     {productImage ? (
@@ -202,10 +291,33 @@ export default function AdminProductsPage() {
 
                     {/* Mobile View: Cards */}
                     <div className={styles.productCardGrid}>
+                        {/* Mobile Bulk Actions */}
+                        {filteredProducts.length > 0 && (
+                            <div style={{ background: '#222', padding: '10px', borderRadius: '8px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkbox}
+                                    checked={filteredProducts.length > 0 && selectedProducts.size === filteredProducts.length}
+                                    onChange={toggleSelectAll}
+                                />
+                                <span>Select All</span>
+                            </div>
+                        )}
+
                         {filteredProducts.map((product) => {
                             const productImage = product.images?.[0]?.url || product.imageUrl;
+                            const isSelected = selectedProducts.has(product._id);
+
                             return (
-                                <div key={product._id} className={styles.productCard}>
+                                <div key={product._id} className={styles.productCard} style={isSelected ? { borderColor: 'var(--accent)', background: 'rgba(var(--accent-rgb), 0.05)' } : {}}>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <input
+                                            type="checkbox"
+                                            className={styles.checkbox}
+                                            checked={isSelected}
+                                            onChange={() => toggleSelectProduct(product._id)}
+                                        />
+                                    </div>
                                     <div className={styles.productCardImage}>
                                         {productImage ? (
                                             <img src={productImage} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -109,17 +109,26 @@ export async function DELETE(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const ids = searchParams.get('ids');
 
-    if (!id) {
-        return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
+    if (!id && !ids) {
+        return NextResponse.json({ success: false, error: 'ID or IDs required' }, { status: 400 });
     }
 
     try {
-        const deletedProduct = await Product.findByIdAndDelete(id);
-        if (!deletedProduct) {
-            return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+        if (ids) {
+            const idArray = ids.split(',').filter(Boolean);
+            const result = await Product.deleteMany({ _id: { $in: idArray } });
+            return NextResponse.json({ success: true, data: { deletedCount: result.deletedCount } });
         }
-        return NextResponse.json({ success: true, data: {} });
+
+        if (id) {
+            const deletedProduct = await Product.findByIdAndDelete(id);
+            if (!deletedProduct) {
+                return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+            }
+            return NextResponse.json({ success: true, data: {} });
+        }
     } catch (error) {
         return NextResponse.json({ success: false, error: 'Failed to delete product' }, { status: 400 });
     }
