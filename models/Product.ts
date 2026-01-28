@@ -127,7 +127,33 @@ const ProductSchema = new mongoose.Schema({
     bundleDiscount: {
         type: Number,
         default: 5
+    },
+    slug: {
+        type: String,
+        unique: true,
+        sparse: true
     }
 }, { timestamps: true });
+
+// Pre-save hook to generate slug
+ProductSchema.pre('save', async function () {
+    if (!this.isModified('name') && this.slug) {
+        return;
+    }
+
+    if (!this.slug || this.isModified('name')) {
+        // Simple slugify
+        let slug = this.name.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+        // Append ID to ensure uniqueness and match current URL pattern
+        if (this._id) {
+            slug = `${slug}-${this._id}`;
+        }
+
+        this.slug = slug;
+    }
+});
 
 export default mongoose.models.Product || mongoose.model('Product', ProductSchema);

@@ -174,8 +174,53 @@ export default async function Home() {
     );
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "PhoneMallExpress™",
+    "url": "https://phonemallexpress.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://phonemallexpress.com/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "PhoneMallExpress™",
+    "url": "https://phonemallexpress.com",
+    "logo": "https://phonemallexpress.com/logo.png",
+    "sameAs": [
+      "https://www.facebook.com/PhonemallExpress",
+      "https://www.instagram.com/phonemallexpress",
+      "https://www.tiktok.com/@phonemallexpress"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+254718948929",
+      "contactType": "customer service",
+      "areaServed": "KE",
+      "availableLanguage": "English"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Old Mutual Building, First Floor, Suite 105",
+      "addressLocality": "Nairobi CBD",
+      "addressCountry": "KE"
+    }
+  };
+
   return (
     <div className="home-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd]) }}
+      />
       {/* Shop by Category Section */}
       <section className="section-py" style={{ paddingTop: '0.25rem' }}>
         <div className="container">
