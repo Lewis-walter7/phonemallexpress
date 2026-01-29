@@ -3,13 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+// ... imports
 import { ChevronRight, ShieldCheck, Truck, CreditCard, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useRouter } from 'next/navigation';
 import './Checkout.css';
 
 const CheckoutPage = () => {
     const { cart, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart();
     const [step, setStep] = useState(1);
+    const router = useRouter();
+    const [isProcessing, setIsProcessing] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         firstName: '',
@@ -18,18 +22,76 @@ const CheckoutPage = () => {
         city: '',
         phone: '',
         shippingMethod: 'standard',
-        paymentMethod: 'mpesa'
+        paymentMethod: 'mpesa' // 'mpesa', 'card', 'pesapal'
     });
 
     const handleNext = () => setStep(step + 1);
     const handleBack = () => setStep(step - 1);
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        // Map 'shipping' radio group to 'shippingMethod' state key
+        // Map 'payment' radio group to 'paymentMethod' state key
+        const key = name === 'shipping' ? 'shippingMethod' : 'paymentMethod';
+        setFormData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleCompletePurchase = async () => {
+        setIsProcessing(true);
+        try {
+            if (formData.paymentMethod === 'pesapal') {
+                const orderId = `ORDER-${Date.now()}`;
+                const shippingCost = formData.shippingMethod === 'standard' ? 300 : 500;
+                const grandTotal = totalPrice + shippingCost;
+
+                const res = await fetch('/api/pesapal/submit-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orderId,
+                        amount: grandTotal,
+                        currency: 'KES',
+                        email: formData.email,
+                        firstName: formData.firstName,
+                        lastName: formData.lastName,
+                        phone: formData.phone,
+                        description: `Order ${orderId} - ${totalItems} items`
+                    })
+                });
+
+                const data = await res.json();
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    console.error('PesaPal Checkout Error:', data);
+                    const errorMessage = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
+                    alert('PesaPal Error: ' + (errorMessage || 'Failed to initiate payment'));
+                    setIsProcessing(false);
+                }
+            } else {
+                // ... Existing handlers for M-Pesa or others
+                alert('Payment method implementation pending for ' + formData.paymentMethod);
+                setIsProcessing(false);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred. Please try again.');
+            setIsProcessing(false);
+        }
+    };
+
     if (cart.length === 0) {
+        // ... (empty cart render)
         return (
             <div className="container section-py empty-checkout">
                 <h2>Your cart is empty</h2>
                 <p>Add some premium accessories to your cart to proceed with checkout.</p>
-                <Link href="/accessories" className="btn btn-primary">Return to Shop</Link>
+                <Link href="/products" className="btn btn-primary">Return to Shop</Link>
             </div>
         );
     }
@@ -62,30 +124,30 @@ const CheckoutPage = () => {
                                 <h3 className="section-title">Customer Information</h3>
                                 <div className="form-group">
                                     <label htmlFor="email">Email Address</label>
-                                    <input type="email" id="email" placeholder="you@example.com" />
+                                    <input type="email" id="email" placeholder="you@example.com" value={formData.email} onChange={handleInputChange} />
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="firstName">First Name</label>
-                                        <input type="text" id="firstName" />
+                                        <input type="text" id="firstName" value={formData.firstName} onChange={handleInputChange} />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="lastName">Last Name</label>
-                                        <input type="text" id="lastName" />
+                                        <input type="text" id="lastName" value={formData.lastName} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="address">Delivery Address</label>
-                                    <input type="text" id="address" placeholder="Stree name, Apartment, etc." />
+                                    <input type="text" id="address" placeholder="Stree name, Apartment, etc." value={formData.address} onChange={handleInputChange} />
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label htmlFor="city">City</label>
-                                        <input type="text" id="city" />
+                                        <input type="text" id="city" value={formData.city} onChange={handleInputChange} />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="phone">Phone Number</label>
-                                        <input type="tel" id="phone" placeholder="0712 345 678" />
+                                        <input type="tel" id="phone" placeholder="0712 345 678" value={formData.phone} onChange={handleInputChange} />
                                     </div>
                                 </div>
                                 <div className="step-actions">
@@ -103,7 +165,13 @@ const CheckoutPage = () => {
                                 <h3 className="section-title">Shipping Method</h3>
                                 <div className="shipping-options">
                                     <label className="shipping-option">
-                                        <input type="radio" name="shipping" defaultChecked />
+                                        <input
+                                            type="radio"
+                                            name="shipping"
+                                            value="standard"
+                                            checked={formData.shippingMethod === 'standard'}
+                                            onChange={handleOptionChange}
+                                        />
                                         <div className="option-info">
                                             <span className="option-name">Standard Delivery (Nairobi)</span>
                                             <span className="option-time">1-2 business days</span>
@@ -111,7 +179,13 @@ const CheckoutPage = () => {
                                         <span className="option-price">KSh 300</span>
                                     </label>
                                     <label className="shipping-option">
-                                        <input type="radio" name="shipping" />
+                                        <input
+                                            type="radio"
+                                            name="shipping"
+                                            value="upcountry"
+                                            checked={formData.shippingMethod === 'upcountry'}
+                                            onChange={handleOptionChange}
+                                        />
                                         <div className="option-info">
                                             <span className="option-name">Standard Delivery (Upcountry)</span>
                                             <span className="option-time">2-4 business days</span>
@@ -134,7 +208,13 @@ const CheckoutPage = () => {
                                 <h3 className="section-title">Payment Method</h3>
                                 <div className="payment-options">
                                     <label className="payment-option">
-                                        <input type="radio" name="payment" defaultChecked />
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="mpesa"
+                                            checked={formData.paymentMethod === 'mpesa'}
+                                            onChange={handleOptionChange}
+                                        />
                                         <div className="option-info">
                                             <span className="option-name">M-PESA / Mobile Money</span>
                                             <span className="option-desc">Pay via Lipa na M-Pesa</span>
@@ -142,19 +222,27 @@ const CheckoutPage = () => {
                                         <CreditCard size={24} />
                                     </label>
                                     <label className="payment-option">
-                                        <input type="radio" name="payment" />
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="pesapal"
+                                            checked={formData.paymentMethod === 'pesapal'}
+                                            onChange={handleOptionChange}
+                                        />
                                         <div className="option-info">
-                                            <span className="option-name">Credit / Debit Card</span>
-                                            <span className="option-desc">Powered by Flutterwave</span>
+                                            <span className="option-name">PesaPal (Card/Mobile)</span>
+                                            <span className="option-desc">Secure payment via PesaPal</span>
                                         </div>
-                                        <CreditCard size={24} />
+                                        <div className="flex gap-2">
+                                            <span className="font-bold text-blue-500">P</span>
+                                        </div>
                                     </label>
                                 </div>
                                 <div className="step-actions">
-                                    <button className="btn btn-link" onClick={handleBack}>Back to Shipping</button>
-                                    <button className="btn btn-primary">
-                                        Complete Purchase
-                                        <ShieldCheck size={18} />
+                                    <button className="btn btn-link" onClick={handleBack} disabled={isProcessing}>Back to Shipping</button>
+                                    <button className="btn btn-primary" onClick={handleCompletePurchase} disabled={isProcessing}>
+                                        {isProcessing ? 'Processing...' : 'Complete Purchase'}
+                                        {!isProcessing && <ShieldCheck size={18} />}
                                     </button>
                                 </div>
                             </div>
@@ -219,11 +307,11 @@ const CheckoutPage = () => {
                             </div>
                             <div className="total-row">
                                 <span>Shipping</span>
-                                <span>KSh 300</span>
+                                <span>KSh {formData.shippingMethod === 'standard' ? 300 : 500}</span>
                             </div>
                             <div className="total-row grand-total">
                                 <span>Total</span>
-                                <span>KSh {(totalPrice + 300).toLocaleString()}</span>
+                                <span>KSh {(totalPrice + (formData.shippingMethod === 'standard' ? 300 : 500)).toLocaleString()}</span>
                             </div>
                         </div>
                         <div className="trust-badges">
@@ -242,5 +330,6 @@ const CheckoutPage = () => {
         </div>
     );
 };
+
 
 export default CheckoutPage;

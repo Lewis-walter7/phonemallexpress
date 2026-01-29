@@ -1,3 +1,4 @@
+import './lib/dns-patch';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
