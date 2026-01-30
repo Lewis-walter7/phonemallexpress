@@ -4,6 +4,7 @@ import { ShoppingCart } from 'lucide-react';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import connectDB from '@/lib/db';
 import Product from '@/models/Product';
+import Review from '@/models/Review';
 import { generateSEOMetadata } from '@/lib/seo';
 import ProductGallery from '@/components/product/ProductGallery';
 import AddToCartSection from '@/components/product/AddToCartSection';
@@ -64,6 +65,17 @@ const ProductPage = async ({ params }: PageProps) => {
         status: 'published'
     }).limit(4).lean() as any[];
 
+    // Fetch reviews for structured data
+    const reviews = await Review.find({
+        productId: product._id,
+        status: 'approved'
+    }).sort({ createdAt: -1 }).limit(10).lean();
+
+    const reviewCount = reviews.length;
+    const averageRating = reviewCount > 0
+        ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1)
+        : product.averageRating || 0;
+
     const rawImages = (product.images && product.images.length > 0)
         ? product.images
         : (product.imageUrl ? [product.imageUrl] : []);
@@ -84,6 +96,7 @@ const ProductPage = async ({ params }: PageProps) => {
     const catName = typeof product.category === 'string' ? product.category : ((product.category as any)?.name || 'Category');
     const brandName = typeof product.brand === 'string' ? product.brand : ((product.brand as any)?.name || 'Brand');
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -94,12 +107,77 @@ const ProductPage = async ({ params }: PageProps) => {
         "brand": { "@type": "Brand", "name": brandName },
         "offers": {
             "@type": "Offer",
-            "url": `${process.env.NEXT_PUBLIC_APP_URL || ''}/products/${catSlug}/${slug}`,
+            "url": `${baseUrl}/products/${catSlug}/${slug}`,
             "priceCurrency": "KES",
             "price": product.price,
-            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "shippingDetails": {
+                "@type": "OfferShippingDetails",
+                "shippingRate": {
+                    "@type": "MonetaryAmount",
+                    "value": 0,
+                    "currency": "KES"
+                },
+                "shippingDestination": {
+                    "@type": "DefinedRegion",
+                    "addressCountry": "KE"
+                },
+                "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 0,
+                        "maxValue": 2,
+                        "unitCode": "DAY"
+                    },
+                    "transitTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 1,
+                        "maxValue": 5,
+                        "unitCode": "DAY"
+                    }
+                }
+            },
+            "hasMerchantReturnPolicy": {
+                "@type": "MerchantReturnPolicy",
+                "applicableCountry": "KE",
+                "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+                "merchantReturnDays": 14,
+                "returnMethod": "https://schema.org/ReturnByMail",
+                "returnFees": "https://schema.org/ReturnFeesCustomerPaying"
+            },
+            "priceValidUntil": `${new Date().getFullYear()}-12-31`
         }
     };
+
+    if (reviewCount > 0 || product.reviewCount > 0) {
+        (jsonLd as any).aggregateRating = {
+            "@type": "AggregateRating",
+            "ratingValue": averageRating,
+            "reviewCount": reviewCount || product.reviewCount,
+            "bestRating": "5",
+            "worstRating": "1"
+        };
+    }
+
+    if (reviews.length > 0) {
+        (jsonLd as any).review = reviews.map(r => ({
+            "@type": "Review",
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": r.rating,
+                "bestRating": "5",
+                "worstRating": "1"
+            },
+            "author": {
+                "@type": "Person",
+                "name": r.userName
+            },
+            "reviewBody": r.review,
+            "datePublished": r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            "name": r.title
+        }));
+    }
 
     // Sanitize product for Client Components to fix "Only plain objects" error
     const sanitizedProductData = JSON.parse(JSON.stringify(product));
