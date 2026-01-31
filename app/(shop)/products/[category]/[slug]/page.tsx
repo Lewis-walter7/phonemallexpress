@@ -181,7 +181,6 @@ const ProductPage = async ({ params }: PageProps) => {
 
     // Sanitize product for Client Components to fix "Only plain objects" error
     const sanitizedProductData = JSON.parse(JSON.stringify(product));
-
     return (
         <div className="container section-py">
             <script

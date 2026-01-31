@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Heart } from 'lucide-react';
@@ -26,13 +26,27 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-    const [imageError, setImageError] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-    // Determine the product image, prioritizing images[0] then imageUrl
-    let productImage = product.images?.[0]?.url || product.imageUrl;
-    const productAlt = product.images?.[0]?.alt || product.name;
+    // Determine the product images and normalize them into { url, alt } objects
+    const allImages = (product.images && product.images.length > 0
+        ? product.images.map(img => typeof img === 'string' ? { url: img, alt: product.name } : img)
+        : product.imageUrl
+            ? [{ url: product.imageUrl, alt: product.name }]
+            : []).filter(img => img && img.url && img.url.trim() !== '');
+
+    // Auto-advance carousel
+    useEffect(() => {
+        if (allImages.length <= 1) return;
+
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [allImages.length]);
 
     // Price Logic
     let currentPrice = product.price;
@@ -66,7 +80,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             name: product.name,
             price: currentPrice, // Use current display price
             quantity: 1,
-            image: productImage || '',
+            image: allImages[0]?.url || '',
             slug: product.slug,
             category: catName
         });
@@ -82,7 +96,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 id: product._id,
                 name: product.name,
                 price: currentPrice,
-                image: productImage || '',
+                image: allImages[0]?.url || '',
                 slug: product.slug,
                 category: catName
             });
@@ -93,24 +107,44 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="product-card">
             <Link href={`/products/${catSlug}/${seoSlug}`} className="product-image-link">
                 <div className="product-image-container">
-                    {productImage && !imageError ? (
-                        <Image
-                            src={productImage}
-                            alt={productAlt}
-                            fill
-                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                            className="product-image"
-                            loading="lazy"
-                            onError={() => setImageError(true)}
-                        />
-                    ) : (
-                        <div className="product-image-placeholder" />
+                    <div
+                        className="product-image-slider"
+                        style={{
+                            transform: `translateX(-${currentImageIndex * 100}%)`,
+                        }}
+                    >
+                        {allImages.length > 0 ? (
+                            allImages.map((img, index) => (
+                                <div key={index} className="product-image-slide">
+                                    <Image
+                                        src={img.url}
+                                        alt={img.alt || product.name}
+                                        fill
+                                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                                        className="product-image"
+                                        loading="lazy"
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <div className="product-image-placeholder" />
+                        )}
+                    </div>
+
+                    {allImages.length > 1 && (
+                        <div className="carousel-dots">
+                            {allImages.map((_, index) => (
+                                <span
+                                    key={index}
+                                    className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                                />
+                            ))}
+                        </div>
                     )}
+
                     {discount && <span className="discount-badge">-{discount}%</span>}
                     {product.isOnSpecialOffer && <span className="special-offer-badge">SALE</span>}
-
-
-                    // ...
 
                     <button
                         className={`wishlist-btn ${inWishlist ? 'active' : ''}`}

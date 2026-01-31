@@ -38,10 +38,10 @@ const CATEGORIES = [
     subcategories: ['Apple Accessories', 'Samsung Accessories', 'Chargers', 'Powerbank']
   },
   {
-    name: 'Storage',
-    slug: 'storage',
-    image: '/drive.png',
-    subcategories: ['Flash Drives', 'Hard Drives', 'Memory Cards', 'USB Hubs']
+    name: 'Laptops',
+    slug: 'laptops',
+    image: '/laptops.png',
+    subcategories: ['MacBook', 'HP Laptops', 'Dell Laptops', 'Lenovo']
   }
 ];
 
@@ -251,7 +251,7 @@ export default async function Home() {
                     width={100}
                     height={100}
                     className="mobi-card-image"
-                    style={{ objectFit: 'contain' }}
+                    style={{ objectFit: 'contain', height: 'auto' }}
                   />
                 </div>
                 <div className="mobi-card-content">

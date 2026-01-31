@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 
 export default function CategoryFilters() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const params = useParams();
+    const category = params?.category as string;
 
     // Initial States
     const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
@@ -136,44 +138,46 @@ export default function CategoryFilters() {
                 </div>
 
                 {/* Subcategory / Type */}
-                <div className="filter-group" style={{ marginBottom: '24px' }}>
-                    <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Accessory Type</h3>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {[
-                            { id: 'chargers', label: 'Chargers' },
-                            { id: 'powerbanks', label: 'Powerbanks' },
-                            { id: 'cables', label: 'Cables' },
-                            { id: 'protectors', label: 'Screen Protectors' },
-                            { id: 'covers', label: 'Phone Covers' },
-                            { id: 'streamers', label: 'Streamers' },
-                            { id: 'flashdrives', label: 'Flash Drives' },
-                            { id: 'gimbals', label: 'Gimbals' },
-                            { id: 'harddisks', label: 'Hard Disks' },
-                            { id: 'memorycards', label: 'Memory Cards' },
-                            { id: 'modems', label: 'Modems' },
-                            { id: 'mouse', label: 'Mouse' }
-                        ].map(item => {
-                            const isSelected = searchParams.get('type') === item.id;
-                            return (
-                                <button
-                                    key={item.id}
-                                    onClick={() => handleToggle('type', item.id)}
-                                    style={{
-                                        padding: '6px 10px',
-                                        fontSize: '11px',
-                                        borderRadius: '6px',
-                                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
-                                        backgroundColor: isSelected ? 'var(--muted)' : 'transparent',
-                                        color: isSelected ? 'var(--foreground)' : 'var(--muted-foreground)',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    {item.label}
-                                </button>
-                            );
-                        })}
+                {category !== 'audio' && (
+                    <div className="filter-group" style={{ marginBottom: '24px' }}>
+                        <h3 className="filter-title" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--muted-foreground)', marginBottom: '12px', textTransform: 'uppercase' }}>Accessory Type</h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                            {[
+                                { id: 'chargers', label: 'Chargers' },
+                                { id: 'powerbanks', label: 'Powerbanks' },
+                                { id: 'cables', label: 'Cables' },
+                                { id: 'protectors', label: 'Screen Protectors' },
+                                { id: 'covers', label: 'Phone Covers' },
+                                { id: 'streamers', label: 'Streamers' },
+                                { id: 'flashdrives', label: 'Flash Drives' },
+                                { id: 'gimbals', label: 'Gimbals' },
+                                { id: 'harddisks', label: 'Hard Disks' },
+                                { id: 'memorycards', label: 'Memory Cards' },
+                                { id: 'modems', label: 'Modems' },
+                                { id: 'mouse', label: 'Mouse' }
+                            ].map(item => {
+                                const isSelected = searchParams.get('type') === item.id;
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => handleToggle('type', item.id)}
+                                        style={{
+                                            padding: '6px 10px',
+                                            fontSize: '11px',
+                                            borderRadius: '6px',
+                                            border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                            backgroundColor: isSelected ? 'var(--muted)' : 'transparent',
+                                            color: isSelected ? 'var(--foreground)' : 'var(--muted-foreground)',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {item.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Price Range */}
                 <div className="filter-group" style={{ marginBottom: '24px' }}>

@@ -12,7 +12,7 @@ const Footer = () => {
                     {/* Column 1: Brand & Social */}
                     <div className="footer-col brand-col">
                         <Link href="/" className="logo-footer">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={180} height={70} />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={180} height={70} style={{ height: 'auto' }} />
                         </Link>
                         <p className="footer-desc">
                             Premium phone accessories delivered with speed and quality. Elevate your mobile experience with our curated collection.

@@ -3,10 +3,6 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { CartProvider } from "@/context/CartContext";
-import { WishlistProvider } from "@/context/WishlistContext";
-import { Toaster } from "react-hot-toast";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -74,6 +70,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Providers } from "@/components/providers/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,21 +80,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body style={{ fontFamily: 'var(--font-sans)' }} suppressHydrationWarning>
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <CartProvider>
-            <WishlistProvider>
-              <div className="site-wrapper flex flex-col min-h-screen">
-                {children}
-              </div>
-              <Toaster position="bottom-right" />
-            </WishlistProvider>
-          </CartProvider>
-        </ThemeProvider>
+        <Providers>
+          <div className="site-wrapper flex flex-col min-h-screen">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );

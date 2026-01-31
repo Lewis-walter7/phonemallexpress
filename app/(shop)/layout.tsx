@@ -3,7 +3,6 @@ import Chatbot from "@/components/common/Chatbot";
 import "@/components/common/WhatsAppButton.css";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-import { CompareProvider } from "@/context/CompareContext";
 
 import CompareFloatingBar from "@/components/product/CompareFloatingBar";
 
@@ -15,7 +14,7 @@ export default function ShopLayout({
     children: React.ReactNode;
 }) {
     return (
-        <CompareProvider>
+        <>
             <Suspense fallback={null}>
                 <Navbar />
             </Suspense>
@@ -26,6 +25,6 @@ export default function ShopLayout({
             <WhatsAppButton />
             <Chatbot />
             <CompareFloatingBar />
-        </CompareProvider>
+        </>
     );
 }
