@@ -357,13 +357,23 @@ export default async function Home() {
                 'WHO', 'ICTP', 'IAEA', 'ILO', 'UNIDO',
                 'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
                 'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO',
+                'University of Eldoret', 'University of Kabianga', 'University of Nairobi',
+                'Jomo Kenyatta University of Agriculture & Technology (JKUAT)', 'Karatina University',
+                'Kenyatta University', 'Meru University of Science and Technology', 'Moi University',
+                'Multi Media University', 'Chuka University', 'Dedan Kimathi University of Technology',
+                'Egerton University', 'KCA University', 'Kenya Methodist University', 'Mount Kenya University',
                 // Duplicated for marquee
                 'Doshi Group of Companies', 'Cocacola', 'Ministry of Health', 'Ministry of Defence', 'NSSF',
                 'Engie', 'FAO', 'UNHCR', 'UNOPS', 'IOM',
                 'WORLD VISION', 'UNDP', 'UN-women', 'UNICEF', 'UNESCO',
                 'WHO', 'ICTP', 'IAEA', 'ILO', 'UNIDO',
                 'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
-                'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO'
+                'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO',
+                'University of Eldoret', 'University of Kabianga', 'University of Nairobi',
+                'Jomo Kenyatta University of Agriculture & Technology (JKUAT)', 'Karatina University',
+                'Kenyatta University', 'Meru University of Science and Technology', 'Moi University',
+                'Multi Media University', 'Chuka University', 'Dedan Kimathi University of Technology',
+                'Egerton University', 'KCA University', 'Kenya Methodist University', 'Mount Kenya University'
               ].map((brand, i) => (
                 <h3 key={i} style={{
                   fontSize: '24px',
