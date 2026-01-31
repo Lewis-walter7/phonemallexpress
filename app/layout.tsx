@@ -23,7 +23,15 @@ export const metadata: Metadata = {
     template: "%s | PhoneMallExpress™"
   },
   description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
-  keywords: ["phone accessories", "phone cases", "fast chargers", "smartwatch accessories", "audio gear", "Samsung cases", "iPhone accessories", "gaming accessories", "USB-C cables", "Kenya", "Nairobi", "electronics shop"],
+  keywords: [
+    "phone accessories", "phone cases", "fast chargers", "smartwatch accessories", "audio gear",
+    "Samsung cases", "iPhone accessories", "gaming accessories", "USB-C cables",
+    "Kenya", "Nairobi", "electronics shop",
+    "iPhone prices in Kenya", "Samsung phones Kenya", "Same day delivery Nairobi",
+    "Best phone shop Nairobi", "Original iPhone chargers Kenya", "Phone screen protectors Kenya",
+    "JBL speakers Kenya", "Anker chargers Kenya", "Power banks Kenya",
+    "Smart home gadgets Kenya", "Laptop accessories Nairobi", "Gaming headsets Kenya"
+  ],
   alternates: {
     canonical: '/',
   },

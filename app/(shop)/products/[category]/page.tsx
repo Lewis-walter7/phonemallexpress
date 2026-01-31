@@ -100,8 +100,28 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
 
     const { products, totalPages, totalCount } = await getCategoryProducts(slug, search, brand, type, currentPage, limit);
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": categoryName,
+        "description": `Browse our wide selection of ${categoryName} at PhoneMallExpress.`,
+        "url": `${baseUrl}/products/${slug}`,
+        "hasPart": products.map((product: any) => ({
+            "@type": "Product",
+            "name": product.name,
+            "url": `${baseUrl}/products/${slug}/${product.slug}`,
+            "description": product.description,
+            "image": product.imageUrl || (product.images && product.images[0]) || ""
+        }))
+    };
+
     return (
         <div className="container" style={{ paddingTop: '0.15rem', paddingBottom: 'var(--spacing-lg)' }}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="shop-layout">
                 {/* Mobile Filters Toggle would go here */}
                 <aside className="shop-sidebar">

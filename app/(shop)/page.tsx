@@ -191,10 +191,12 @@ export default async function Home() {
 
   const orgJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "ElectronicsStore",
     "name": "PhoneMallExpress™",
     "url": "https://phonemallexpress.com",
     "logo": "https://phonemallexpress.com/logo.png",
+    "image": "https://phonemallexpress.com/og-image.jpg",
+    "priceRange": "$$",
     "sameAs": [
       "https://www.facebook.com/PhonemallExpress",
       "https://www.instagram.com/phonemallexpress",
@@ -212,7 +214,22 @@ export default async function Home() {
       "streetAddress": "Old Mutual Building, First Floor, Suite 105",
       "addressLocality": "Nairobi CBD",
       "addressCountry": "KE"
-    }
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    ]
   };
 
   return (

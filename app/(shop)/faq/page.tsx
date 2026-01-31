@@ -47,8 +47,27 @@ const faqs = [
 ];
 
 export default function FAQPage() {
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.flatMap(category =>
+            category.questions.map(q => ({
+                "@type": "Question",
+                "name": q.q,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": q.a
+                }
+            }))
+        )
+    };
+
     return (
         <div className="container" style={{ paddingTop: 'var(--spacing-md)', paddingBottom: 'var(--spacing-lg)' }}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Breadcrumbs items={[{ label: 'FAQ', href: '/faq' }]} />
 
             <div className="info-page-header" style={{ marginBottom: 'var(--spacing-lg)' }}>
