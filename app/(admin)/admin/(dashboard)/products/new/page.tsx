@@ -18,7 +18,7 @@ const CATEGORY_SUBCATEGORIES: Record<string, string[]> = {
     'Wearables': ['Smartwatch', 'Smart Bands', 'Smart Ring'],
     'Accessories': ['Samsung Accessories', 'Apple Accessories', 'Chargers & Adapters', 'Powerbanks', 'Cables', 'Screen Protectors', 'Phone Covers', 'Media Streamers', 'Handheld Gimbals', 'Modems', 'Mouse'],
     'Storage': ['Flash Drives', 'Hard Disks', 'Memory Cards', 'SSDs'],
-    'Computers': ['Laptops', 'Desktop Computers', 'iMacs', 'Macbooks'],
+    'Computers': ['Laptops', 'Desktop Computers', 'iMacs', 'Macbooks', 'Servers'],
     'Refrigerators': ['Side by side', 'Single door', 'Double door'],
     'Washing Machines': ['Top load', 'Front load'],
     'Kitchen ware': ['Cookers', 'Airfryers', 'Blenders', 'Electric kettles'],
@@ -194,8 +194,8 @@ export default function AddProductPage() {
         sim: false
     });
     const [storageVariants, setStorageVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
-    const [warrantyVariants, setWarrantyVariants] = useState<{ name: string; price: string; stock: string; isDisabled: boolean }[]>([]);
-    const [simVariants, setSimVariants] = useState<{ name: string; price: string; stock: string; isDisabled: boolean }[]>([]);
+    const [warrantyVariants, setWarrantyVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
+    const [simVariants, setSimVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
 
     const [variants, setVariants] = useState<{ name: string; price: string; stock: string }[]>([]);
     const [frequentlyBoughtTogether, setFrequentlyBoughtTogether] = useState<string[]>([]);
@@ -1125,14 +1125,17 @@ export default function AddProductPage() {
                             {/* Warranty Variants Table */}
                             {variantTypes.warranty && (
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
-                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Warranty Variants</label>
+                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Warranty Variants (Add-on Prices)</label>
                                     {warrantyVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. 1 Year)" value={v.name} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].name = e.target.value; setWarrantyVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Price (Add-on)" value={v.price} onChange={(e) => {
+                                            <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].price = e.target.value; setWarrantyVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
+                                                const newV = [...warrantyVariants]; newV[i].salePrice = e.target.value; setWarrantyVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].stock = e.target.value; setWarrantyVariants(newV);
@@ -1145,21 +1148,24 @@ export default function AddProductPage() {
                                             <button type="button" onClick={() => setWarrantyVariants(warrantyVariants.filter((_, idx) => idx !== i))} style={{ background: '#333', color: '#ff4444', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '5px 8px' }}>×</button>
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => setWarrantyVariants([...warrantyVariants, { name: '', price: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Warranty Variant</button>
+                                    <button type="button" onClick={() => setWarrantyVariants([...warrantyVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Warranty Variant</button>
                                 </div>
                             )}
 
                             {/* SIM Variants Table */}
                             {variantTypes.sim && (
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
-                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>SIM Card Slot Variants</label>
+                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>SIM Card Slot Variants (Add-on Prices)</label>
                                     {simVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. Dual SIM)" value={v.name} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].name = e.target.value; setSimVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Price (Add-on)" value={v.price} onChange={(e) => {
+                                            <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].price = e.target.value; setSimVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
+                                                const newV = [...simVariants]; newV[i].salePrice = e.target.value; setSimVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].stock = e.target.value; setSimVariants(newV);
@@ -1172,7 +1178,7 @@ export default function AddProductPage() {
                                             <button type="button" onClick={() => setSimVariants(simVariants.filter((_, idx) => idx !== i))} style={{ background: '#333', color: '#ff4444', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '5px 8px' }}>×</button>
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => setSimVariants([...simVariants, { name: '', price: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add SIM Variant</button>
+                                    <button type="button" onClick={() => setSimVariants([...simVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add SIM Variant</button>
                                 </div>
                             )}
 

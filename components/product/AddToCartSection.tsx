@@ -18,12 +18,14 @@ interface AddToCartSectionProps {
     warrantyVariants?: {
         name: string;
         price: number;
+        salePrice?: number | null;
         stock: number;
         isDisabled: boolean;
     }[];
     simVariants?: {
         name: string;
         price: number;
+        salePrice?: number | null;
         stock: number;
         isDisabled: boolean;
     }[];
@@ -31,6 +33,11 @@ interface AddToCartSectionProps {
 }
 
 export default function AddToCartSection({ product, variants, storageVariants, warrantyVariants, simVariants, colors }: AddToCartSectionProps) {
+    console.log('ATC Props:', {
+        storage: storageVariants?.length,
+        warranty: warrantyVariants?.length,
+        sim: simVariants?.length
+    });
     const [quantity, setQuantity] = useState(1);
 
     // Legacy support
@@ -70,35 +77,39 @@ export default function AddToCartSection({ product, variants, storageVariants, w
     }, [storageVariants, warrantyVariants, simVariants, colors]);
 
     const calculateCurrentPrice = () => {
-        let price = product.price;
+        let basePrice = product.price;
+        let storagePrice = 0;
+        let warrantyPrice = 0;
+        let simAddon = 0;
 
-        // Add storage price override if exists (usually storage variant replaces base price)
+        // 1. Storage Price
         if (selectedStorage) {
-            if (selectedStorage.salePrice > 0) {
-                price = selectedStorage.salePrice;
-            } else if (selectedStorage.price > 0) {
-                price = selectedStorage.price;
-            }
+            storagePrice = (selectedStorage.salePrice > 0 ? selectedStorage.salePrice : selectedStorage.price) || 0;
         } else if (selectedVariant) {
-            // Legacy variant price
-            if (selectedVariant.salePrice > 0) {
-                price = selectedVariant.salePrice;
-            } else if (selectedVariant.price > 0) {
-                price = selectedVariant.price;
-            }
+            // Legacy support
+            storagePrice = (selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.price) || 0;
         }
 
-        // Add warranty price
-        if (selectedWarranty && selectedWarranty.price) {
-            price += selectedWarranty.price;
+        // 2. Warranty Price
+        if (selectedWarranty) {
+            warrantyPrice = (selectedWarranty.salePrice > 0 ? selectedWarranty.salePrice : selectedWarranty.price) || 0;
         }
 
-        // Add SIM price
-        if (selectedSim && selectedSim.price) {
-            price += selectedSim.price;
+        // 3. SIM Add-on (Always an addition)
+        if (selectedSim) {
+            simAddon = (selectedSim.salePrice > 0 ? selectedSim.salePrice : selectedSim.price) || 0;
         }
 
-        return price;
+        // Main Logic: Take the higher of Storage, Warranty. 
+        // If both are 0 (not selected or 0 price), fall back to basePrice.
+        const variantBase = Math.max(storagePrice, warrantyPrice);
+
+        let finalPrice = variantBase > 0 ? variantBase : basePrice;
+
+        // Always add SIM on top
+        finalPrice += simAddon;
+
+        return finalPrice;
     };
 
     const currentPrice = calculateCurrentPrice();
@@ -133,12 +144,38 @@ export default function AddToCartSection({ product, variants, storageVariants, w
 
     return (
         <div className="product-actions-wrapper">
+            <div className="dynamic-price-display" style={{
+                marginBottom: '20px',
+                padding: '15px',
+                background: 'rgba(255,107,0,0.1)',
+                borderRadius: '12px',
+                border: '1px solid var(--accent)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px'
+            }}>
+                <span style={{ fontSize: '14px', color: '#888', fontWeight: 500 }}>Total Price</span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+                    <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent)' }}>
+                        KSh {currentPrice.toLocaleString()}
+                    </span>
+                    {product.price < currentPrice && (
+                        <span style={{ fontSize: '16px', color: '#666', textDecoration: 'line-through' }}>
+                            KSh {product.price.toLocaleString()}
+                        </span>
+                    )}
+                </div>
+                <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
+                    *Price updates dynamically based on your selections below
+                </p>
+            </div>
+
             {/* Storage Variants */}
             {storageVariants && storageVariants.length > 0 && (
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
                     <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Storage</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {storageVariants.filter(v => !v.isDisabled).map((v, i) => (
+                        {storageVariants.map((v, i) => (
                             <button
                                 key={i}
                                 onClick={() => setSelectedStorage(v)}
@@ -165,7 +202,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
                     <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Warranty</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {warrantyVariants.filter(v => !v.isDisabled).map((v, i) => (
+                        {warrantyVariants.map((v, i) => (
                             <button
                                 key={i}
                                 onClick={() => setSelectedWarranty(v)}
@@ -192,7 +229,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
                     <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>SIM Card Slots</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {simVariants.filter(v => !v.isDisabled).map((v, i) => (
+                        {simVariants.map((v, i) => (
                             <button
                                 key={i}
                                 onClick={() => setSelectedSim(v)}
@@ -215,7 +252,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
             )}
 
             {/* Legacy Variants (Price changes based on selection) */}
-            {variants && variants.length > 0 && !selectedStorage && (
+            {variants && variants.length > 0 && (
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
                     <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Options</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>

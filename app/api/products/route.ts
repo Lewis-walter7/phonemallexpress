@@ -80,15 +80,30 @@ export async function PUT(request: Request) {
         const body = await request.json();
         const { _id, ...updateData } = body;
 
+        console.log('PUT Update:', _id, {
+            storage: updateData.storageVariants?.length,
+            warranty: updateData.warrantyVariants?.length,
+            sim: updateData.simVariants?.length
+        });
+
         if (!_id) {
             return NextResponse.json({ success: false, error: 'Product ID required for update' }, { status: 400 });
         }
 
-        const product = await Product.findByIdAndUpdate(_id, updateData, { new: true, runValidators: true });
-
+        const product = await Product.findById(_id);
         if (!product) {
             return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
         }
+
+        // Apply updates
+        Object.assign(product, updateData);
+
+        // Recalculate discount if needed (server-side safety)
+        if (product.isOnSpecialOffer && product.price > 0 && product.salePrice && product.salePrice < product.price) {
+            product.discountPercentage = Math.round(((product.price - product.salePrice) / product.price) * 100);
+        }
+
+        await product.save();
 
         return NextResponse.json({ success: true, data: product });
     } catch (error) {

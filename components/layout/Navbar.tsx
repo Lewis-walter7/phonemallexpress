@@ -104,6 +104,7 @@ const categories = [
             { name: 'Desktops', slug: 'computing?type=desktop' },
             { name: 'Monitors', slug: 'computing?type=monitor' },
             { name: 'Printers', slug: 'computing?type=printer' },
+            { name: 'Servers', slug: 'computing?type=servers' },
         ]
     },
     {

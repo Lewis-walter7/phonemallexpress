@@ -37,6 +37,9 @@ const ProductPage = async ({ params }: PageProps) => {
     await connectDB();
 
     let product = null;
+    console.log('--- PRODUCT SCHEMA PATHS ---');
+    console.log(Object.keys(Product.schema.paths));
+    console.log('----------------------------');
 
     // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
     const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
@@ -181,6 +184,7 @@ const ProductPage = async ({ params }: PageProps) => {
 
     // Sanitize product for Client Components to fix "Only plain objects" error
     const sanitizedProductData = JSON.parse(JSON.stringify(product));
+
     return (
         <div className="container section-py">
             <script
@@ -200,15 +204,6 @@ const ProductPage = async ({ params }: PageProps) => {
                     <div className="product-header">
                         <p className="brand-name">{brandName}</p>
                         <h1 className="product-title">{product.name}</h1>
-                        <div className="product-price-row">
-                            <span className="current-price">KSh {product.price.toLocaleString()}</span>
-                            {originalPrice && originalPrice > product.price && (
-                                <span className="old-price">KSh {originalPrice.toLocaleString()}</span>
-                            )}
-                            {discountPercentage && (
-                                <span className="discount-badge">-{discountPercentage}%</span>
-                            )}
-                        </div>
                     </div>
 
                     <div className="product-description">

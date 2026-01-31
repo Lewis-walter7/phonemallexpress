@@ -21,6 +21,8 @@ interface ProductCardProps {
         discountPercentage?: number;
         imageUrl?: string;
         images?: { url: string; alt: string }[];
+        minPrice?: number;
+        maxPrice?: number;
         category: string | { name: string; slug: string };
     };
 }
@@ -170,9 +172,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
                 <div className="product-footer-row">
                     <div className="product-price-container">
-                        <span className="product-price">KSh {currentPrice.toLocaleString()}</span>
-                        {oldPrice && oldPrice > currentPrice && (
-                            <span className="product-old-price">KSh {oldPrice.toLocaleString()}</span>
+                        {product.minPrice && product.maxPrice && product.minPrice !== product.maxPrice ? (
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span className="product-price" style={{ fontSize: '0.85rem', color: '#888' }}>From</span>
+                                <span className="product-price">KSh {product.minPrice.toLocaleString()}</span>
+                            </div>
+                        ) : (
+                            <>
+                                <span className="product-price">KSh {currentPrice.toLocaleString()}</span>
+                                {oldPrice && oldPrice > currentPrice && (
+                                    <span className="product-old-price">KSh {oldPrice.toLocaleString()}</span>
+                                )}
+                            </>
                         )}
                     </div>
 
