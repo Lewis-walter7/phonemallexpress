@@ -97,7 +97,7 @@ const categories = [
         ]
     },
     {
-        name: 'Computing',
+        name: 'Computers',
         slug: 'computing',
         subItems: [
             { name: 'Laptops', slug: 'laptops' },

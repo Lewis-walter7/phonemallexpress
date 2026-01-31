@@ -38,10 +38,10 @@ const CATEGORIES = [
     subcategories: ['Apple Accessories', 'Samsung Accessories', 'Chargers', 'Powerbank']
   },
   {
-    name: 'Laptops',
-    slug: 'laptops',
+    name: 'Computers',
+    slug: 'computers',
     image: '/laptops.png',
-    subcategories: ['MacBook', 'HP Laptops', 'Dell Laptops', 'Lenovo']
+    subcategories: ['MacBook', 'Laptops', 'Desktop', 'Printers', 'iMac']
   }
 ];
 

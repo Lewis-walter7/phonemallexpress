@@ -198,6 +198,11 @@ export default function AddProductPage() {
     const [simVariants, setSimVariants] = useState<{ name: string; price: string; stock: string; isDisabled: boolean }[]>([]);
 
     const [variants, setVariants] = useState<{ name: string; price: string; stock: string }[]>([]);
+    const [frequentlyBoughtTogether, setFrequentlyBoughtTogether] = useState<string[]>([]);
+    const [fbtSearch, setFbtSearch] = useState('');
+    const [fbtResults, setFbtResults] = useState<any[]>([]);
+    const [fbtLoading, setFbtLoading] = useState(false);
+    const [selectedFbtObjects, setSelectedFbtObjects] = useState<any[]>([]);
 
     // Auto-Save Logic
     const isFirstRun = useRef(true);
@@ -213,7 +218,46 @@ export default function AddProductPage() {
         }, 5000); // 5 seconds debounce
 
         return () => clearTimeout(timer);
-    }, [formData, features, specifications, isFeatured, isOnSpecialOffer, colors, variants, storageVariants, warrantyVariants, simVariants, variantTypes]);
+    }, [formData, features, specifications, isFeatured, isOnSpecialOffer, colors, variants, storageVariants, warrantyVariants, simVariants, variantTypes, frequentlyBoughtTogether]);
+
+    // FBT Search Logic
+    useEffect(() => {
+        const searchFbt = async () => {
+            if (fbtSearch.length < 2) {
+                setFbtResults([]);
+                return;
+            }
+            setFbtLoading(true);
+            try {
+                const res = await fetch(`/api/products?search=${fbtSearch}`);
+                const data = await res.json();
+                if (data.success) {
+                    setFbtResults(data.data.filter((p: any) => p.name.toLowerCase().includes(fbtSearch.toLowerCase())));
+                }
+            } catch (error) {
+                console.error('FBT Search Error', error);
+            } finally {
+                setFbtLoading(false);
+            }
+        };
+
+        const timer = setTimeout(searchFbt, 500);
+        return () => clearTimeout(timer);
+    }, [fbtSearch]);
+
+    const handleAddFbt = (product: any) => {
+        if (!frequentlyBoughtTogether.includes(product._id)) {
+            setFrequentlyBoughtTogether([...frequentlyBoughtTogether, product._id]);
+            setSelectedFbtObjects([...selectedFbtObjects, product]);
+        }
+        setFbtSearch('');
+        setFbtResults([]);
+    };
+
+    const handleRemoveFbt = (id: string) => {
+        setFrequentlyBoughtTogether(frequentlyBoughtTogether.filter(fId => fId !== id));
+        setSelectedFbtObjects(selectedFbtObjects.filter(p => p._id !== id));
+    };
 
     const saveDraft = async () => {
         // Don't save if empty name
@@ -263,6 +307,7 @@ export default function AddProductPage() {
                     price: Number(v.price) || 0,
                     stock: Number(v.stock) || 0
                 })) : [],
+                frequentlyBoughtTogether,
                 youtubeVideoUrl: formData.youtubeVideoUrl || null,
                 status: 'draft',
                 price: Number(formData.price) || 0,
@@ -642,6 +687,7 @@ export default function AddProductPage() {
                     price: Number(v.price) || 0,
                     stock: Number(v.stock) || 0
                 })) : [],
+                frequentlyBoughtTogether,
                 youtubeVideoUrl: formData.youtubeVideoUrl || null,
                 status: 'published',
                 price: regularPrice,
@@ -1175,6 +1221,60 @@ export default function AddProductPage() {
                     'Display Type: AMOLED\nDimensions: 159.2 x 75 x 12.9 mm',
                     parseTechnicalSpecs
                 )}
+
+                {/* Frequently Bought Together Section */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid #222', paddingTop: '1rem' }}>
+                    <label style={{ ...labelStyle, marginTop: 0, color: '#ff6b00', fontWeight: 'bold' }}>Frequently Bought Together</label>
+                    <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.5rem' }}>Select products that are often purchased with this item.</p>
+
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            placeholder="Search products to add..."
+                            value={fbtSearch}
+                            onChange={(e) => setFbtSearch(e.target.value)}
+                            style={inputStyle}
+                        />
+                        {fbtLoading && (
+                            <div style={{ position: 'absolute', right: '10px', top: '12px', fontSize: '0.8rem', color: '#888' }}>Searching...</div>
+                        )}
+                        {fbtResults.length > 0 && (
+                            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#111', border: '1px solid #333', borderRadius: '8px', zIndex: 10, maxHeight: '200px', overflowY: 'auto', marginTop: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                                {fbtResults.map(p => (
+                                    <div
+                                        key={p._id}
+                                        onClick={() => handleAddFbt(p)}
+                                        style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #222', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.background = '#222')}
+                                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                                    >
+                                        <div style={{ width: '30px', height: '30px', background: '#333', borderRadius: '4px', overflow: 'hidden' }}>
+                                            {p.imageUrl && <img src={p.imageUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: '0.85rem', color: 'white' }}>{p.name}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#888' }}>KSh {p.price.toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '1rem' }}>
+                        {selectedFbtObjects.map(p => (
+                            <div key={p._id} style={{ background: '#222', padding: '6px 12px', borderRadius: '20px', border: '1px solid #333', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
+                                <span>{p.name}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveFbt(p._id)}
+                                    style={{ background: 'transparent', border: 'none', color: '#ff4444', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 1 }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
                 <label style={labelStyle}>Product Images</label>
 

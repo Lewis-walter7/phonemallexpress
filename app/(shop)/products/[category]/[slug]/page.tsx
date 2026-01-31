@@ -41,17 +41,17 @@ const ProductPage = async ({ params }: PageProps) => {
     // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
     const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
     if (idMatch) {
-        product = await Product.findById(idMatch[1]).lean();
+        product = await Product.findById(idMatch[1]).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
     }
 
     // 2. If not found, try exact slug match (legacy)
     if (!product) {
-        product = await Product.findOne({ slug }).lean();
+        product = await Product.findOne({ slug }).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
     }
 
     // 3. Last resort: if slug IS just an ID
     if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
-        product = await Product.findById(slug).lean();
+        product = await Product.findById(slug).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
     }
 
     if (!product) {
@@ -305,6 +305,19 @@ const ProductPage = async ({ params }: PageProps) => {
                     </div>
                 </div>
             </div>
+
+            {product.frequentlyBoughtTogether && product.frequentlyBoughtTogether.length > 0 && (
+                <div className="fbt-section" style={{ marginTop: 'var(--spacing-lg)', borderTop: '2px solid var(--accent)', paddingTop: 'var(--spacing-md)', background: 'rgba(255,107,0,0.05)', padding: '1.5rem', borderRadius: '12px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800, marginBottom: 'var(--spacing-md)', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <ShoppingCart size={24} /> Frequently Bought Together
+                    </h2>
+                    <div className="product-grid">
+                        {product.frequentlyBoughtTogether.map((p: any) => (
+                            <ProductCard key={p._id.toString()} product={JSON.parse(JSON.stringify(p))} />
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {relatedProducts.length > 0 && (
                 <div className="related-products-section" style={{ marginTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border)', paddingTop: 'var(--spacing-md)' }}>

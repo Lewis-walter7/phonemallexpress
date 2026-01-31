@@ -124,6 +124,10 @@ const ProductSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
     }],
+    frequentlyBoughtTogether: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
     bundleDiscount: {
         type: Number,
         default: 5

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
     try {
         if (id) {
-            const product = await Product.findById(id).populate('category brand');
+            const product = await Product.findById(id).populate({ path: 'category brand frequentlyBoughtTogether', strictPopulate: false });
             if (!product) {
                 return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
             }
