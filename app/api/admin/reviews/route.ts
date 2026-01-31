@@ -16,6 +16,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
         }
 
+        const searchParams = request.nextUrl.searchParams;
+        const status = searchParams.get('status');
+
         const query: any = {};
         if (status && status !== 'all') {
             query.status = status;

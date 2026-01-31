@@ -41,7 +41,7 @@ const ProductSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['Phones', 'Tablets', 'Laptops', 'Audio', 'Gaming', 'Smartwatches', 'Accessories', 'TVs', 'Computing', 'Cameras', 'Networking', 'Storage', 'Refrigerators', 'Washing Machines', 'Kitchen ware', 'Other'],
+        enum: ['Phones', 'Tablets', 'Laptops', 'Audio', 'Gaming', 'Smartwatches', 'Accessories', 'TVs', 'Computers', 'Cameras', 'Networking', 'Storage', 'Refrigerators', 'Washing Machines', 'Kitchen ware', 'Other'],
         required: [true, 'Please specify a category.'],
     },
     subcategory: {
