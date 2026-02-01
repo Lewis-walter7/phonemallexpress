@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,7 +17,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://phonemallexpress.com'),
   title: {
-    default: "PhoneMallExpress™ | Premium Phones and Accessories",
+    default: "PhoneMallExpress™ | Premium Electronics and Accessories",
     template: "%s | PhoneMallExpress™"
   },
   description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
@@ -48,8 +46,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://phonemallexpress.com",
     siteName: "PhoneMallExpress™",
-    title: "PhoneMallExpress™ | Premium Phone Accessories",
-    description: "Premium phone accessories delivered with speed and quality. Elevate your mobile experience.",
+    title: "PhoneMallExpress™ | Premium Electronics and Accessories",
+    description: "Premium Electronics and Accessories delivered with speed and quality. Elevate your mobile experience.",
     images: [
       {
         url: "/og-image.jpg",
@@ -61,8 +59,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PhoneMallExpress™ | Premium Phone Accessories",
-    description: "Premium phone accessories delivered with speed and quality.",
+    title: "PhoneMallExpress™ | Premium Electronics and Accessories",
+    description: "Premium Electronics and Accessories delivered with speed and quality.",
     images: ["/twitter-image.jpg"],
   },
   robots: {
