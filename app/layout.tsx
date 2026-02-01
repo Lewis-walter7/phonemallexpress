@@ -19,7 +19,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL('https://phonemallexpress.com'),
   title: {
-    default: "PhoneMallExpress™ | Premium Phone Accessories",
+    default: "PhoneMallExpress™ | Premium Phones and Accessories",
     template: "%s | PhoneMallExpress™"
   },
   description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
