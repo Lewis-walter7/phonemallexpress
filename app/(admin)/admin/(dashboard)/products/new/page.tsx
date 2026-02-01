@@ -843,7 +843,7 @@ export default function AddProductPage() {
         <div style={{ padding: '2rem', color: 'white', maxWidth: '900px', margin: '0 auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ fontSize: '1.8rem', margin: 0, fontFamily: 'var(--font-display)' }}>Add New Product</h1>
-
+                {/* 
                 <button
                     type="button"
                     onClick={() => setGlobalSmartPasteMode(true)}
@@ -863,7 +863,7 @@ export default function AddProductPage() {
                     }}
                 >
                     <span>✨</span> Smart Auto-Fill
-                </button>
+                </button> */}
 
                 {globalSmartPasteMode && (
                     <div style={{
