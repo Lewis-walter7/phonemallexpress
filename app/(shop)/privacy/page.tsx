@@ -1,4 +1,13 @@
+import { Metadata } from 'next';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+
+export const metadata: Metadata = {
+    title: 'Privacy Policy',
+    description: 'Our privacy policy explains how we collect and protect your data at PhoneMallExpress.',
+    alternates: {
+        canonical: '/privacy',
+    },
+};
 
 export default function PrivacyPage() {
     return (

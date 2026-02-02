@@ -1,4 +1,13 @@
+import { Metadata } from 'next';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+
+export const metadata: Metadata = {
+    title: 'FAQ',
+    description: 'Find answers to common questions about shipping, returns, payments, and security at PhoneMallExpress.',
+    alternates: {
+        canonical: '/faq',
+    },
+};
 
 const faqs = [
     {

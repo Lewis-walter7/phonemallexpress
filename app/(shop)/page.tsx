@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import dbConnect from "@/lib/db";
@@ -5,7 +6,16 @@ import Product from "@/models/Product";
 import ProductCard from "@/components/product/ProductCard";
 import LazyRSQPopup from "@/components/common/LazyRSQPopup";
 import HomeBanners from "@/components/home/HomeBanners";
+import { generateSEOMetadata } from '@/lib/seo';
 import './Home.css';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: "PhoneMallExpress™ | Premium Electronics and Accessories",
+    description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
+    path: '/',
+  });
+}
 
 const CATEGORIES = [
   {

@@ -1,6 +1,18 @@
+import { Metadata } from 'next';
+import Breadcrumbs from "@/components/common/Breadcrumbs";
+
+export const metadata: Metadata = {
+    title: 'Shipping Policy',
+    description: 'Learn about our shipping rates, processing times, and delivery estimates at PhoneMallExpress.',
+    alternates: {
+        canonical: '/shipping',
+    },
+};
+
 export default function ShippingPage() {
     return (
         <div className="container" style={{ padding: '3rem 0', maxWidth: '800px' }}>
+            <Breadcrumbs items={[{ label: 'Shipping', href: '/shipping' }]} />
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 800, marginBottom: '2rem' }}>Shipping Policy</h1>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>

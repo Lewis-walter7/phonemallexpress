@@ -1,4 +1,13 @@
+import { Metadata } from 'next';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
+
+export const metadata: Metadata = {
+    title: 'About Us',
+    description: 'Learn more about PhoneMallExpress - redefining the mobile experience with premium accessories and service since 2018.',
+    alternates: {
+        canonical: '/about',
+    },
+};
 
 export default function AboutPage() {
     return (

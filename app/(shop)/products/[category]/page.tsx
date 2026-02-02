@@ -21,7 +21,16 @@ export async function generateMetadata({ params }: PageProps) {
     await connectDB();
     const category = await Category.findOne({ slug });
 
-    if (!category) return {};
+    if (!category) {
+        if (slug === 'all') {
+            return generateSEOMetadata({
+                title: 'All Products',
+                description: 'Browse our entire collection of premium electronics and mobile accessories.',
+                path: '/products/all',
+            });
+        }
+        return {};
+    }
 
     return generateSEOMetadata({
         title: category.name,
