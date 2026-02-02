@@ -184,8 +184,203 @@
     }
 }
 
-@media (max-width: 640px) {
-    .marquee-track {
-        gap: var(--spacing-xl);
+
+/* Home Carousel Banners Section */
+.home-banners-section {
+    padding: 0;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .home-banners-section {
+        display: none;
+        /* Hidden as requested */
+    }
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--secondary);
+    border-bottom: 1px solid var(--border);
+    aspect-ratio: 21 / 6;
+    object-fit: contain;
+    /* More stable ratio for desktop/tablet */
+}
+
+@media (min-width: 1024px) {
+    .carousel-container {
+        aspect-ratio: 25 / 6;
+        object-fit: contain;
+    }
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    width: 100%;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-card {
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-card:hover {
+    transform: none;
+    /* Disable lift for carousel slides */
+    box-shadow: none;
+}
+
+.banner-image-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.banner-image {
+    object-fit: cover;
+}
+
+.banner-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    /* Center button in carousel */
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-container:hover .banner-overlay {
+    opacity: 1;
+}
+
+.banner-btn {
+    background-color: var(--accent);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 99px;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-container:hover .banner-btn {
+    transform: translateY(0);
+}
+
+.banner-btn:hover {
+    background-color: white;
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+/* Carousel Controls */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    opacity: 0;
+    backdrop-filter: blur(4px);
+}
+
+.carousel-container:hover .carousel-arrow {
+    opacity: 1;
+}
+
+.carousel-arrow:hover {
+    background: var(--accent);
+    scale: 1.1;
+}
+
+.carousel-arrow.prev {
+    left: 20px;
+}
+
+.carousel-arrow.next {
+    right: 20px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--accent);
+    width: 30px;
+    border-radius: 5px;
+}
+
+@media (max-width: 767px) {
+    .carousel-container {
+        aspect-ratio: 16 / 10;
+    }
+
+    .banner-overlay {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .banner-btn {
+        transform: translateY(0);
+        padding: 8px 20px;
+        font-size: 0.85rem;
+    }
+
+    .carousel-arrow {
+        display: none;
+        /* Hide arrows on mobile */
     }
 }

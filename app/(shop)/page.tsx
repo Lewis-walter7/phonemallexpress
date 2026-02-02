@@ -4,6 +4,7 @@ import dbConnect from "@/lib/db";
 import Product from "@/models/Product";
 import ProductCard from "@/components/product/ProductCard";
 import LazyRSQPopup from "@/components/common/LazyRSQPopup";
+import HomeBanners from "@/components/home/HomeBanners";
 import './Home.css';
 
 const CATEGORIES = [
@@ -238,6 +239,10 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd]) }}
       />
+
+      {/* Promotional Banners */}
+      <HomeBanners />
+
       {/* Shop by Category Section */}
       <section className="section-py" style={{ paddingTop: '0.25rem' }}>
         <div className="container">
