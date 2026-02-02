@@ -9,9 +9,28 @@ import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import './Checkout.css';
 
+const SHIPPING_METHODS = [
+    { id: 'cbd-fast', name: 'CBD (Fast Delivery)', price: 150 },
+    { id: 'near-cbd', name: 'Near Nairobi CBD (Upperhill, Ngara, Westlands) - Immediate Delivery by Rider', price: 250 },
+    { id: 'nairobi-estates', name: 'Within Nairobi Estates - Immediate Delivery by Rider', price: 500 },
+    { id: 'nairobi-outskirts', name: 'Nairobi Outskirts - Immediate Delivery by Rider', price: 800 },
+    { id: 'westlands', name: 'Westlands', price: 300 },
+    { id: 'kangemi', name: 'Kangemi', price: 450 },
+    { id: 'ngara', name: 'Ngara', price: 250 },
+    { id: 'muthaiga', name: 'Muthaiga / Survey / Allsops', price: 350 },
+    { id: 'roysambu', name: 'Thome / Garden Estate / Roysambu / Githurai', price: 500 },
+    { id: 'kahawa', name: 'Kahawa Wendani / Kahawa Sukari', price: 600 },
+    { id: 'south-b', name: 'Nyayo Stadium / South B / Capital Centre', price: 300 },
+    { id: 'jamhuri', name: 'Fig Tree / Jamhuri Sec / Slima Plaza', price: 250 },
+    { id: 'parklands', name: 'Parklands / City Park', price: 300 },
+    { id: 'gigiri', name: 'U.N / Gachie / Kitisuru / Village Market / Two Rivers', price: 500 },
+    { id: 'ruaka', name: 'Ruaka', price: 550 },
+];
+
 const CheckoutPage = () => {
     const { cart, totalItems, totalPrice, updateQuantity, removeFromCart } = useCart();
     const [step, setStep] = useState(1);
+    const [showAddressInput, setShowAddressInput] = useState(false);
     const router = useRouter();
     const [isProcessing, setIsProcessing] = useState(false);
     const [formData, setFormData] = useState({
@@ -21,7 +40,7 @@ const CheckoutPage = () => {
         address: '',
         city: '',
         phone: '',
-        shippingMethod: 'standard',
+        shippingMethod: 'near-cbd',
         paymentMethod: 'mpesa' // 'mpesa', 'card', 'pesapal'
     });
 
@@ -46,7 +65,8 @@ const CheckoutPage = () => {
         try {
             if (formData.paymentMethod === 'pesapal') {
                 const orderId = `ORDER-${Date.now()}`;
-                const shippingCost = formData.shippingMethod === 'standard' ? 300 : 500;
+                const selectedShipping = SHIPPING_METHODS.find(m => m.id === formData.shippingMethod);
+                const shippingCost = selectedShipping ? selectedShipping.price : 0;
                 const grandTotal = totalPrice + shippingCost;
 
                 const res = await fetch('/api/pesapal/submit-order', {
@@ -163,35 +183,48 @@ const CheckoutPage = () => {
                         {step === 2 && (
                             <div className="step-shipping">
                                 <h3 className="section-title">Shipping Method</h3>
-                                <div className="shipping-options">
-                                    <label className="shipping-option">
-                                        <input
-                                            type="radio"
-                                            name="shipping"
-                                            value="standard"
-                                            checked={formData.shippingMethod === 'standard'}
-                                            onChange={handleOptionChange}
-                                        />
-                                        <div className="option-info">
-                                            <span className="option-name">Standard Delivery (Nairobi)</span>
-                                            <span className="option-time">1-2 business days</span>
+                                <div className="shipping-layout-custom">
+                                    <div className="shipping-label-column">
+                                        <label className="main-side-label">SHIPPING</label>
+                                    </div>
+                                    <div className="shipping-options-column">
+                                        {SHIPPING_METHODS.map((method) => (
+                                            <label key={method.id} className="shipping-radio-item">
+                                                <input
+                                                    type="radio"
+                                                    name="shipping"
+                                                    value={method.id}
+                                                    checked={formData.shippingMethod === method.id}
+                                                    onChange={handleOptionChange}
+                                                />
+                                                <span className="radio-custom-text">
+                                                    {method.name}: <strong>KSh {method.price.toLocaleString()}</strong>
+                                                </span>
+                                            </label>
+                                        ))}
+                                        <div className="shipping-info-footer">
+                                            <p className="shipping-to-text">Shipping to <strong>{formData.city || 'Nairobi County'}</strong>.</p>
+
+                                            {showAddressInput ? (
+                                                <div className="inline-address-edit">
+                                                    <input
+                                                        type="text"
+                                                        id="city"
+                                                        placeholder="Enter your City/County"
+                                                        value={formData.city}
+                                                        onChange={handleInputChange}
+                                                        autoFocus
+                                                    />
+                                                    <button className="btn-done" onClick={() => setShowAddressInput(false)}>Done</button>
+                                                </div>
+                                            ) : (
+                                                <button className="change-address-btn" onClick={() => setShowAddressInput(true)}>
+                                                    <Truck size={12} />
+                                                    CHANGE ADDRESS
+                                                </button>
+                                            )}
                                         </div>
-                                        <span className="option-price">KSh 300</span>
-                                    </label>
-                                    <label className="shipping-option">
-                                        <input
-                                            type="radio"
-                                            name="shipping"
-                                            value="upcountry"
-                                            checked={formData.shippingMethod === 'upcountry'}
-                                            onChange={handleOptionChange}
-                                        />
-                                        <div className="option-info">
-                                            <span className="option-name">Standard Delivery (Upcountry)</span>
-                                            <span className="option-time">2-4 business days</span>
-                                        </div>
-                                        <span className="option-price">KSh 500</span>
-                                    </label>
+                                    </div>
                                 </div>
                                 <div className="step-actions">
                                     <button className="btn btn-link" onClick={handleBack}>Back to Info</button>
@@ -307,11 +340,11 @@ const CheckoutPage = () => {
                             </div>
                             <div className="total-row">
                                 <span>Shipping</span>
-                                <span>KSh {formData.shippingMethod === 'standard' ? 300 : 500}</span>
+                                <span>KSh {(SHIPPING_METHODS.find(m => m.id === formData.shippingMethod)?.price || 0).toLocaleString()}</span>
                             </div>
                             <div className="total-row grand-total">
                                 <span>Total</span>
-                                <span>KSh {(totalPrice + (formData.shippingMethod === 'standard' ? 300 : 500)).toLocaleString()}</span>
+                                <span>KSh {(totalPrice + (SHIPPING_METHODS.find(m => m.id === formData.shippingMethod)?.price || 0)).toLocaleString()}</span>
                             </div>
                         </div>
                         <div className="trust-badges">

@@ -64,7 +64,14 @@ const Footer = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="contact-icon"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
                                 <div>
                                     <strong>Nairobi CBD</strong>
-                                    <p>Old Mutual Building, First Floor, Suite 105</p>
+                                    <a
+                                        href="https://www.google.com/maps/place/PhoneMallExpress%E2%84%A2%EF%B8%8F/@-1.2844256,36.8212716,17z/data=!3m1!4b1!4m6!3m5!1s0x182f11af01f3f543:0x9f025b1847085e11!8m2!3d-1.284431!4d36.8238465!16s%2Fg%2F11fs6tmm_c?entry=ttu&g_ep=EgoyMDI2MDEyOC4wIKXMDSoASAFQAw%3D%3D"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="footer-map-link"
+                                    >
+                                        Old Mutual Building, First Floor, Suite 105
+                                    </a>
                                 </div>
                             </li>
                             <li className="contact-item">

@@ -56,13 +56,6 @@ const CATEGORIES = [
   }
 ];
 
-// ... (functions remain same)
-
-// ... inside JSX ...
-
-
-
-
 async function getFeaturedProducts() {
   await dbConnect();
   const featuredProducts = await Product.find({ isFeatured: true, status: 'published' })
@@ -266,7 +259,7 @@ export default async function Home() {
               marginBottom: '4px',
               textTransform: 'uppercase'
             }}>
-              Premium <span className="text-accent">Accessories</span>
+              Premium <span className="text-accent">Electronics & Accessories</span>
             </h1>
             <p style={{ color: 'var(--muted-foreground)', fontSize: '1.1rem', fontWeight: 500 }}>
               Shop by Category
@@ -343,7 +336,7 @@ export default async function Home() {
               </div>
               <p style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>Limited time deals on your favorite tech.</p>
               <div style={{ marginTop: 'var(--spacing-sm)' }}>
-                <Link href="/search?q=deal" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View More Special Offers</Link>
+                <Link href="/special-offers" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View More Special Offers</Link>
               </div>
             </div>
 

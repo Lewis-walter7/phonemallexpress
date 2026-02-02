@@ -144,6 +144,13 @@ const categories = [
             { name: 'Airfryers', slug: 'kitchen?type=airfryers' },
             { name: 'Blenders', slug: 'kitchen?type=blenders' },
             { name: 'Electric Kettles', slug: 'kitchen?type=kettles' },
+            { name: 'Microwaves', slug: 'kitchen?type=microwaves' },
+            { name: 'Refrigerators', slug: 'kitchen?type=refrigerators' },
+            { name: 'Pressure Cooker', slug: 'kitchen?type=pressure-cooker' },
+            { name: 'Dishwasher', slug: 'kitchen?type=dishwasher' },
+            { name: 'Food Processor', slug: 'kitchen?type=food-processor' },
+            { name: 'Kitchen Machines', slug: 'kitchen?type=kitchen-machines' },
+            { name: 'Kitchen weighing scales', slug: 'kitchen?type=kitchen-weighing-scales' },
         ]
     },
     {
@@ -249,7 +256,7 @@ const Navbar = () => {
                     {/* CENTER: Logo (Mobile) or Search (Desktop) */}
                     <div className="navbar-center">
                         <Link href="/" className="logo mobile-only">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={140} height={40} className="logo-image" style={{ height: 'auto' }} priority />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" style={{ height: 'auto' }} priority />
                         </Link>
 
                         <form onSubmit={handleSearch} className="search-form desktop-only">
@@ -305,7 +312,7 @@ const Navbar = () => {
                             { name: 'Mobile Accessories', href: '/products/accessories' },
                             { name: 'Audio', href: '/products/audio' },
                             { name: 'Gaming', href: '/products/gaming' },
-                            { name: 'Laptops', href: '/products/laptops' },
+                            { name: 'Computers', href: '/products/computers' },
                             { name: "Storage", href: "/products/storage" },
                             { name: 'Tablets', href: '/products/tablets' },
                             { name: 'Content Creator Kit', href: '/search?q=Content+Creator' }
@@ -346,7 +353,7 @@ const Navbar = () => {
                 <div className="drawer-header">
                     <div className="drawer-top-actions">
                         <Link href="/" className="drawer-logo" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Image src="/logo.png" alt="Phone Mall Express" width={140} height={36} className="logo-image" style={{ height: 'auto' }} />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" style={{ height: 'auto' }} />
                         </Link>
                         <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
                             <X size={24} />

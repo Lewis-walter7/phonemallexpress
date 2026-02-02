@@ -136,6 +136,20 @@
     color: var(--accent);
 }
 
+.footer-map-link {
+    display: block;
+    color: var(--muted-foreground) !important;
+    text-decoration: underline dotted !important;
+    text-underline-offset: 4px;
+    font-weight: 400 !important;
+    margin-top: 4px;
+    transition: color 0.2s ease;
+}
+
+.footer-map-link:hover {
+    color: var(--accent) !important;
+}
+
 /* Bottom Bar */
 .footer-bottom {
     margin-top: 3rem;

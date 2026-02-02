@@ -8,9 +8,9 @@ const BANNERS = [
     {
         id: 1,
         image: '/banners/allaccessoriesbanner.png',
-        title: 'All Accessories',
-        link: '/products/all',
-        buttonText: 'Shop Now'
+        title: 'Exclusive Deals',
+        link: '/special-offers',
+        buttonText: 'View Offers'
     },
     {
         id: 2,
@@ -31,6 +31,27 @@ const BANNERS = [
         image: '/banners/iphonewarranty.png',
         title: 'iPhone Warranty',
         link: '/products/phones/iphone',
+        buttonText: 'Shop Now'
+    },
+    {
+        id: 5,
+        image: '/banners/samsungbanner.png',
+        title: 'Samsung Galaxy S25',
+        link: '/search?q=z%20fold7',
+        buttonText: 'Shop Now'
+    },
+    {
+        id: 6,
+        image: '/banners/iphonebanner.png',
+        title: 'iPhone 17 Pro Max',
+        link: '/search?q=Apple',
+        buttonText: 'Shop Now'
+    },
+    {
+        id: 7,
+        image: '/banners/pixelbanner.png',
+        title: 'Pixel 8 Pro',
+        link: '/products/phones?brand=pixell',
         buttonText: 'Shop Now'
     }
 ];
@@ -70,7 +91,7 @@ export default function HomeBanners() {
                 >
                     {BANNERS.map((banner) => (
                         <div key={banner.id} className="carousel-slide">
-                            <div className="banner-card carousel-card">
+                            <Link href={banner.link} className="banner-card carousel-card" style={{ display: 'block', height: '100%' }}>
                                 <div className="banner-image-container">
                                     <Image
                                         src={banner.image}
@@ -82,11 +103,11 @@ export default function HomeBanners() {
                                     />
                                 </div>
                                 <div className="banner-overlay carousel-overlay">
-                                    <Link href={banner.link} className="banner-btn">
+                                    <span className="banner-btn">
                                         {banner.buttonText}
-                                    </Link>
+                                    </span>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                 </div>

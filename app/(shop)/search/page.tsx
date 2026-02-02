@@ -70,7 +70,7 @@ function SearchContent() {
             ) : products.length > 0 ? (
                 <>
 
-                    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 'var(--spacing-md)' }}>
+                    <div className="grid product-grid-search" style={{ gap: 'var(--spacing-md)' }}>
                         {products.map((product: any) => (
                             <ProductCard key={product._id} product={product} />
                         ))}
