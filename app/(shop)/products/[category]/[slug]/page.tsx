@@ -16,9 +16,8 @@ import './ProductPage.css';
 interface PageProps {
     params: Promise<{ category: string; slug: string }>;
 }
-
 export async function generateMetadata({ params }: PageProps) {
-    const { slug } = await params;
+    const { category, slug } = await params;
     await connectDB();
     const product = await Product.findOne({ slug }).lean();
 
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
     return generateSEOMetadata({
         title: product.seo?.title || product.name,
         description: product.seo?.description || product.description,
-        path: `/products/${slug}`,
+        path: `/products/${category}/${slug}`,
         image: product.images?.[0]?.url || product.imageUrl,
     });
 }
@@ -147,7 +146,12 @@ const ProductPage = async ({ params }: PageProps) => {
                 "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
                 "merchantReturnDays": 14,
                 "returnMethod": "https://schema.org/ReturnByMail",
-                "returnFees": "https://schema.org/ReturnShippingFees"
+                "returnFees": "https://schema.org/ReturnShippingFees",
+                "returnShippingFeesAmount": {
+                    "@type": "MonetaryAmount",
+                    "value": 0,
+                    "currency": "KES"
+                }
             },
             "priceValidUntil": `${new Date().getFullYear()}-12-31`
         }

@@ -30,9 +30,7 @@ export const metadata: Metadata = {
     "JBL speakers Kenya", "Anker chargers Kenya", "Power banks Kenya",
     "Smart home gadgets Kenya", "Laptop accessories Nairobi", "Gaming headsets Kenya"
   ],
-  alternates: {
-    canonical: '/',
-  },
+
   authors: [{ name: "PhoneMallExpress™" }],
   creator: "PhoneMallExpress™",
   publisher: "PhoneMallExpress™",

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
     return generateSEOMetadata({
         title: category.name,
         description: category.description || `Browse our wide selection of ${category.name} accessories.`,
-        path: `/accessories/${slug}`,
+        path: `/products/${slug}`,
         image: category.image,
     });
 }
