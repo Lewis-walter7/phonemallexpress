@@ -16,7 +16,7 @@ const categorySubcategoryMap: Record<string, string[]> = {
     'Tablets': ['Apple iPad', 'Samsung Tablets', 'Tecno Tablets', 'Redmi Tablets', 'Xiaomi Tablets'],
     'Audio': ['Buds', 'Earphones', 'Headphones', 'Soundbar', 'Speakers'],
     'Gaming': ['Gaming Consoles', 'PlayStation Games', 'Gaming Controller', 'Gaming Headsets'],
-    'Computers': ['Laptops', 'Desktop Computers', 'iMacs', 'Macbooks', 'Servers'],
+    'Computers': ['Laptops', 'Desktop Computers', 'Monitors', 'iMacs', 'Macbooks', 'Servers'],
     'Refrigerators': ['Side by side', 'Single door', 'Double door'],
     'Washing Machines': ['Top load', 'Front load'],
     'Kitchen ware': ['Cookers', 'Airfryers', 'Blenders', 'Electric kettles'],

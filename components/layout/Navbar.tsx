@@ -105,6 +105,8 @@ const categories = [
             { name: 'Monitors', slug: 'computing?type=monitor' },
             { name: 'Printers', slug: 'computing?type=printer' },
             { name: 'Servers', slug: 'computing?type=servers' },
+            { name: 'iMacs', slug: 'computing?type=imac' },
+            { name: 'Macbooks', slug: 'computing?type=macbook' },
         ]
     },
     {

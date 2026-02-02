@@ -18,7 +18,7 @@ const CATEGORY_SUBCATEGORIES: Record<string, string[]> = {
     'Wearables': ['Smartwatch', 'Smart Bands', 'Smart Ring'],
     'Accessories': ['Samsung Accessories', 'Apple Accessories', 'Chargers & Adapters', 'Powerbanks', 'Cables', 'Screen Protectors', 'Phone Covers', 'Media Streamers', 'Handheld Gimbals', 'Modems', 'Mouse'],
     'Storage': ['Flash Drives', 'Hard Disks', 'Memory Cards', 'SSDs'],
-    'Computers': ['Laptops', 'Desktop Computers', 'iMacs', 'Macbooks', 'Servers'],
+    'Computers': ['Laptops', 'Desktop Computers', 'Monitors', 'iMacs', 'Macbooks', 'Servers'],
     'Refrigerators': ['Side by side', 'Single door', 'Double door'],
     'Washing Machines': ['Top load', 'Front load'],
     'Kitchen ware': ['Cookers', 'Airfryers', 'Blenders', 'Electric kettles'],

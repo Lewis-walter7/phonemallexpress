@@ -9,21 +9,21 @@ const BANNERS = [
         id: 1,
         image: '/banners/allaccessoriesbanner.png',
         title: 'All Accessories',
-        link: '/products',
+        link: '/products/all',
         buttonText: 'Shop Now'
     },
     {
         id: 2,
         image: '/banners/financingbanner.png',
         title: 'Financing Available',
-        link: '/search?q=financing',
+        link: '/financing',
         buttonText: 'Learn More'
     },
     {
         id: 3,
         image: '/banners/freechargerbanner.png',
         title: 'Free Charger',
-        link: '/search?q=charger',
+        link: '/products/charger',
         buttonText: 'Shop Now'
     },
     {
