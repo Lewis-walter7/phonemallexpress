@@ -262,7 +262,7 @@ const Navbar = () => {
                         <form onSubmit={handleSearch} className="search-form desktop-only">
                             <input
                                 type="text"
-                                placeholder="Search accessories..."
+                                placeholder="Search for products..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="search-input"
@@ -300,6 +300,22 @@ const Navbar = () => {
                             <span className="action-label desktop-only">Cart</span>
                         </Link>
                     </div>
+                </div>
+
+                {/* MOBILE SEARCH BAR (Visible only on mobile/tablet) */}
+                <div className="mobile-search-container mobile-only">
+                    <form onSubmit={handleSearch} className="search-form-mobile">
+                        <input
+                            type="text"
+                            placeholder="Search for products..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input-mobile"
+                        />
+                        <button type="submit" className="search-submit-btn-mobile">
+                            <Search size={18} />
+                        </button>
+                    </form>
                 </div>
 
                 {/* SUB NAVBAR (Desktop) */}
