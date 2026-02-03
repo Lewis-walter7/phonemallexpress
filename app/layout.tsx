@@ -72,6 +72,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    other: {
+      "msvalidate.01": "F80FEDEA69035F955BF8F70DE8737393",
+    },
+  },
 };
 
 import { Providers } from "@/components/providers/Providers";
