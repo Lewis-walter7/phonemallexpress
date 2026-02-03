@@ -146,12 +146,7 @@ const ProductPage = async ({ params }: PageProps) => {
                 "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
                 "merchantReturnDays": 14,
                 "returnMethod": "https://schema.org/ReturnByMail",
-                "returnFees": "https://schema.org/ReturnShippingFees",
-                "returnShippingFeesAmount": {
-                    "@type": "MonetaryAmount",
-                    "value": 0,
-                    "currency": "KES"
-                }
+                "returnFees": "https://schema.org/FreeReturn"
             },
             "priceValidUntil": `${new Date().getFullYear()}-12-31`
         }

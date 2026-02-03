@@ -31,7 +31,7 @@ export default function WishlistPage() {
                 <Heart size={64} style={{ color: 'var(--border)', marginBottom: 'var(--spacing-md)' }} />
                 <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 800, marginBottom: 'var(--spacing-sm)' }}>Your Wishlist is Empty</h1>
                 <p style={{ color: 'var(--muted-foreground)', marginBottom: 'var(--spacing-lg)' }}>Save items you love so you can easily find them later.</p>
-                <Link href="/accessories" className="btn btn-primary">
+                <Link href="/products/all" className="btn btn-primary">
                     Start Shopping
                 </Link>
             </div>
@@ -49,7 +49,7 @@ export default function WishlistPage() {
             <div className="wishlist-grid">
                 {wishlist.map((item) => (
                     <div key={item.id} className="product-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-                        <Link href={`/accessories/${item.category?.toLowerCase() || 'products'}/${item.slug}`} className="product-image-link">
+                        <Link href={`/products/${item.category?.toLowerCase() || 'products'}/${item.slug}`} className="product-image-link">
                             <div className="product-image-container" style={{ position: 'relative', aspectRatio: '1/1', overflow: 'hidden', backgroundColor: 'var(--input)' }}>
                                 {item.image ? (
                                     <Image
@@ -67,7 +67,7 @@ export default function WishlistPage() {
                         </Link>
 
                         <div className="product-info">
-                            <Link href={`/accessories/${item.category?.toLowerCase() || 'products'}/${item.slug}`}>
+                            <Link href={`/products/${item.category?.toLowerCase() || 'products'}/${item.slug}`}>
                                 <h3 className="product-name">{item.name}</h3>
                             </Link>
 

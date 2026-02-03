@@ -325,7 +325,7 @@ const Navbar = () => {
                             { name: 'Samsung', href: '/search?q=Samsung' },
                             { name: 'Apple', href: '/search?q=Apple' },
                             { name: 'Smartphones', href: '/products/phones' },
-                            { name: 'Mobile Accessories', href: '/products/accessories' },
+                            { name: 'Mobile Accessories', href: '/products/all' },
                             { name: 'Audio', href: '/products/audio' },
                             { name: 'Gaming', href: '/products/gaming' },
                             { name: 'Computers', href: '/products/computers' },
@@ -455,10 +455,6 @@ const Navbar = () => {
                             <hr className="drawer-divider" />
                             <Link href="/about" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
                                 About Us
-                                <ChevronRight size={18} />
-                            </Link>
-                            <Link href="/contact" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
-                                Contact Us
                                 <ChevronRight size={18} />
                             </Link>
                         </nav>

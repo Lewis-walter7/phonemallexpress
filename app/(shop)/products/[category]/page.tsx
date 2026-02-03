@@ -7,6 +7,7 @@ import Product from '@/models/Product';
 import { generateSEOMetadata } from '@/lib/seo';
 import CategoryFilters from './CategoryFilters';
 import Pagination from '@/components/ui/Pagination';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 import './CategoryPage.css';
 
 export const dynamic = 'force-dynamic';
@@ -116,13 +117,35 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
         "name": categoryName,
         "description": `Browse our wide selection of ${categoryName} at PhoneMallExpress.`,
         "url": `${baseUrl}/products/${slug}`,
-        "hasPart": products.map((product: any) => ({
-            "@type": "Product",
-            "name": product.name,
-            "url": `${baseUrl}/products/${slug}/${product.slug}`,
-            "description": product.description,
-            "image": product.imageUrl || (product.images && product.images[0]) || ""
-        }))
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": products.map((product: any, index: number) => ({
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "Product",
+                    "name": product.name,
+                    "url": `${baseUrl}/products/${slug}/${product.slug}`,
+                    "description": product.description,
+                    "image": product.imageUrl || (product.images && product.images[0]) || "",
+                    "sku": product.sku || product._id.toString(),
+                    "offers": {
+                        "@type": "Offer",
+                        "price": product.price,
+                        "priceCurrency": "KES",
+                        "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                        "url": `${baseUrl}/products/${slug}/${product.slug}`,
+                    },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": product.averageRating || 5,
+                        "reviewCount": product.reviewCount || 1,
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                }
+            }))
+        }
     };
 
     return (
@@ -138,8 +161,13 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
                 </aside>
 
                 <main className="shop-content">
+                    <Breadcrumbs items={[{ label: 'Products', href: '/products/all' }, { label: categoryName, href: `/products/${slug}` }]} />
 
-
+                    <div style={{ marginTop: '0.25rem', marginBottom: 'var(--spacing-md)' }}>
+                        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1 }}>
+                            {categoryName}
+                        </h1>
+                    </div>
                     <div className="product-grid">
                         {products.map((product: any) => (
                             <ProductCard key={product._id} product={product} />

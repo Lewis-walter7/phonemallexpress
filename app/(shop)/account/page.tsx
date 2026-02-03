@@ -106,7 +106,7 @@ export default function AccountPage() {
                     <p style={{ color: 'var(--muted-foreground)', marginBottom: 'var(--spacing-md)' }}>
                         You can still shop normally! All orders are tracked via your email address.
                     </p>
-                    <Link href="/accessories" className="btn btn-primary">
+                    <Link href="/products/all" className="btn btn-primary">
                         Start Shopping
                     </Link>
                 </div>

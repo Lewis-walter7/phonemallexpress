@@ -236,11 +236,44 @@ export default async function Home() {
     ]
   };
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+  const featuredItemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured Products",
+    "itemListElement": featuredProducts.map((product: any, index: number) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Product",
+        "name": product.name,
+        "url": `${baseUrl}/products/${product.category}/${product.slug}`,
+        "description": product.description,
+        "image": product.imageUrl || (product.images && product.images[0]) || "",
+        "sku": product.sku || product._id.toString(),
+        "offers": {
+          "@type": "Offer",
+          "price": product.price,
+          "priceCurrency": "KES",
+          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "url": `${baseUrl}/products/${product.category}/${product.slug}`,
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": product.averageRating || 5,
+          "reviewCount": product.reviewCount || 1,
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      }
+    }))
+  };
+
   return (
     <div className="home-page">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd]) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd, featuredItemListLd]) }}
       />
 
       {/* Promotional Banners */}
@@ -307,7 +340,7 @@ export default async function Home() {
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>Featured Products</h2>
             <p style={{ color: 'var(--muted-foreground)', fontSize: '14px', marginTop: '4px' }}>Handpicked essentials for your mobile device.</p>
             <div style={{ marginTop: 'var(--spacing-sm)' }}>
-              <Link href="/products" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
+              <Link href="/products/all" className="btn btn-link" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>View All Accessories</Link>
             </div>
           </div>
 

@@ -89,7 +89,7 @@ function SearchContent() {
                     <p style={{ marginBottom: '1rem', fontSize: 'var(--font-size-sm)' }}>
                         We couldn't find any products matching "{query}"
                     </p>
-                    <Link href="/accessories" className="btn btn-primary">
+                    <Link href="/products/all" className="btn btn-primary">
                         Browse All Products
                     </Link>
                 </div>

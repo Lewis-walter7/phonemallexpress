@@ -49,7 +49,6 @@ const Footer = () => {
                         <ul className="footer-links-list">
                             <li><Link href="/about">About Us</Link></li>
                             <li><Link href="/bulk-quote">Bulk Purchase (RSQ)</Link></li>
-                            <li><Link href="/contact">Contact</Link></li>
                             <li><Link href="/faq">FAQ</Link></li>
                             <li><Link href="/shipping">Shipping Policy</Link></li>
                             <li><Link href="/privacy">Privacy Policy</Link></li>
