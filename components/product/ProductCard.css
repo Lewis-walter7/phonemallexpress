@@ -60,8 +60,8 @@
 }
 
 .dot {
-    width: 5px;
-    height: 5px;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
     background-color: var(--muted-foreground);
     opacity: 0.5;
