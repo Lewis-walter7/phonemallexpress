@@ -369,7 +369,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                                     fontSize: '14px'
                                 }}
                             >
-                                {v.name} {v.price > 0 ? `(+ KSh ${v.price.toLocaleString()})` : ''}
+                                {v.name}
                             </button>
                         ))}
                     </div>
