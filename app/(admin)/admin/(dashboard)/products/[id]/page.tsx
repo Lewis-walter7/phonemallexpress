@@ -975,7 +975,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                             {/* Storage Variants Table */}
                             {variantTypes.storage && (
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
-                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Storage Variants</label>
+                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Storage Variants (Base Prices)</label>
                                     {storageVariants.map((v, i) => (
                                         <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. 128GB)" value={v.name} onChange={(e) => {

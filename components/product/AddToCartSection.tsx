@@ -82,7 +82,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
         let warrantyPrice = 0;
         let simAddon = 0;
 
-        // 1. Storage Price
+        // 1. Storage Price (Base Price if variants exist)
         if (selectedStorage) {
             storagePrice = (selectedStorage.salePrice > 0 ? selectedStorage.salePrice : selectedStorage.price) || 0;
         } else if (selectedVariant) {
@@ -90,24 +90,22 @@ export default function AddToCartSection({ product, variants, storageVariants, w
             storagePrice = (selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.price) || 0;
         }
 
-        // 2. Warranty Price
+        // 2. Warranty Price (Add-on)
         if (selectedWarranty) {
             warrantyPrice = (selectedWarranty.salePrice > 0 ? selectedWarranty.salePrice : selectedWarranty.price) || 0;
         }
 
-        // 3. SIM Add-on (Always an addition)
+        // 3. SIM Add-on
         if (selectedSim) {
             simAddon = (selectedSim.salePrice > 0 ? selectedSim.salePrice : selectedSim.price) || 0;
         }
 
-        // Main Logic: Take the higher of Storage, Warranty. 
-        // If both are 0 (not selected or 0 price), fall back to basePrice.
-        const variantBase = Math.max(storagePrice, warrantyPrice);
+        // New Logic: Storage is base, warranty and SIM are add-ons
+        // If storage is selected, use it as base. Otherwise fall back to product base price.
+        let finalPrice = storagePrice > 0 ? storagePrice : basePrice;
 
-        let finalPrice = variantBase > 0 ? variantBase : basePrice;
-
-        // Always add SIM on top
-        finalPrice += simAddon;
+        // Add warranty and SIM as add-ons on top
+        finalPrice += warrantyPrice + simAddon;
 
         return finalPrice;
     };
