@@ -284,8 +284,10 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                                         textDecoration: !isAvailableForConnectivity ? 'line-through' : 'none'
                                     }}
                                 >
-                                    {v.name} - KSh {(v.salePrice || v.price).toLocaleString()}
-                                    {!isAvailableForConnectivity && <span style={{ fontSize: '10px', marginLeft: '4px' }}>(N/A)</span>}
+                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>
+                                        {v.name} - KSh {(v.salePrice || v.price).toLocaleString()}
+                                        {v.stock <= 0 && <span style={{ fontSize: '12px', marginLeft: '5px', color: '#ff4444' }}>(Out of Stock)</span>}
+                                    </span>
                                 </button>
                             )
                         })}
