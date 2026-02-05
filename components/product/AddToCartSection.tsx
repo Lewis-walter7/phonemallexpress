@@ -132,18 +132,18 @@ export default function AddToCartSection({ product, variants, storageVariants, w
 
         // 2. Warranty Price (Add-on)
         if (selectedWarranty) {
-            warrantyPrice = (selectedWarranty.salePrice > 0 ? selectedWarranty.salePrice : selectedWarranty.price) || 0;
+            warrantyPrice = selectedWarranty.price || 0;
         }
 
         // 3. SIM Add-on
         if (selectedSim) {
-            simAddon = (selectedSim.salePrice > 0 ? selectedSim.salePrice : selectedSim.price) || 0;
+            simAddon = selectedSim.price || 0;
         }
 
         // 4. Connectivity Add-on (for tablets)
         let connectivityAddon = 0;
         if (selectedConnectivity) {
-            connectivityAddon = (selectedConnectivity.salePrice > 0 ? selectedConnectivity.salePrice : selectedConnectivity.price) || 0;
+            connectivityAddon = selectedConnectivity.price || 0;
         }
 
         // New Logic: Storage is base, warranty, SIM, and connectivity are add-ons
@@ -156,7 +156,46 @@ export default function AddToCartSection({ product, variants, storageVariants, w
         return finalPrice;
     };
 
+    const calculateOriginalPrice = () => {
+        let basePrice = product.price;
+        let storagePrice = 0;
+        let warrantyPrice = 0;
+        let simAddon = 0;
+        let connectivityAddon = 0;
+
+        // 1. Storage Price (use regular price)
+        if (selectedStorage) {
+            storagePrice = selectedStorage.price || 0;
+        } else if (selectedVariant) {
+            storagePrice = selectedVariant.price || 0;
+        }
+
+        // 2. Warranty Price (use regular price)
+        if (selectedWarranty) {
+            warrantyPrice = selectedWarranty.price || 0;
+        }
+
+        // 3. SIM Add-on (use regular price)
+        if (selectedSim) {
+            simAddon = selectedSim.price || 0;
+        }
+
+        // 4. Connectivity Add-on (use regular price)
+        if (selectedConnectivity) {
+            connectivityAddon = selectedConnectivity.price || 0;
+        }
+
+        // Logic: Storage is base. If storage selected, use its price. Else product base.
+        let originalPrice = storagePrice > 0 ? storagePrice : basePrice;
+
+        // Add add-ons
+        originalPrice += warrantyPrice + simAddon + connectivityAddon;
+
+        return originalPrice;
+    };
+
     const currentPrice = calculateCurrentPrice();
+    const originalPrice = calculateOriginalPrice();
 
     const handleQuantityChange = (type: 'inc' | 'dec') => {
         if (type === 'inc') {
@@ -204,9 +243,9 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                     <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--accent)' }}>
                         KSh {currentPrice.toLocaleString()}
                     </span>
-                    {product.price < currentPrice && (
+                    {originalPrice > currentPrice && (
                         <span style={{ fontSize: '16px', color: '#666', textDecoration: 'line-through' }}>
-                            KSh {product.price.toLocaleString()}
+                            KSh {originalPrice.toLocaleString()}
                         </span>
                     )}
                 </div>

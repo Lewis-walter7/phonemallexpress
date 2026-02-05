@@ -1103,15 +1103,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
                                     <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Warranty Variants (Add-on Prices)</label>
                                     {warrantyVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. 1 Year)" value={v.name} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].name = e.target.value; setWarrantyVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].price = e.target.value; setWarrantyVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
-                                                const newV = [...warrantyVariants]; newV[i].salePrice = e.target.value; setWarrantyVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
                                                 const newV = [...warrantyVariants]; newV[i].stock = e.target.value; setWarrantyVariants(newV);
@@ -1133,15 +1130,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
                                     <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>SIM Card Slot Variants (Add-on Prices)</label>
                                     {simVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. Dual SIM)" value={v.name} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].name = e.target.value; setSimVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].price = e.target.value; setSimVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
-                                                const newV = [...simVariants]; newV[i].salePrice = e.target.value; setSimVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
                                                 const newV = [...simVariants]; newV[i].stock = e.target.value; setSimVariants(newV);
@@ -1163,15 +1157,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
                                     <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Connectivity Variants (Add-on Prices)</label>
                                     {connectivityVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
                                             <input placeholder="Name (e.g. WiFi+Cellular)" value={v.name} onChange={(e) => {
                                                 const newV = [...connectivityVariants]; newV[i].name = e.target.value; setConnectivityVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
                                                 const newV = [...connectivityVariants]; newV[i].price = e.target.value; setConnectivityVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
-                                                const newV = [...connectivityVariants]; newV[i].salePrice = e.target.value; setConnectivityVariants(newV);
                                             }} style={{ ...inputStyle, marginTop: 0 }} />
                                             <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
                                                 const newV = [...connectivityVariants]; newV[i].stock = e.target.value; setConnectivityVariants(newV);
