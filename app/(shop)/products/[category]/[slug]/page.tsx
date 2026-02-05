@@ -256,6 +256,7 @@ const ProductPage = async ({ params }: PageProps) => {
                         storageVariants={sanitizedProductData.storageVariants || []}
                         warrantyVariants={sanitizedProductData.warrantyVariants || []}
                         simVariants={sanitizedProductData.simVariants || []}
+                        connectivityVariants={sanitizedProductData.connectivityVariants || []}
                         colors={sanitizedProductData.colors || []}
                     />
                 </div>

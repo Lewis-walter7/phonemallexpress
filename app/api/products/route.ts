@@ -85,6 +85,9 @@ export async function PUT(request: Request) {
             warranty: updateData.warrantyVariants?.length,
             sim: updateData.simVariants?.length
         });
+        if (updateData.storageVariants && updateData.storageVariants.length > 0) {
+            console.log('Checking first storage variant connectivity:', updateData.storageVariants[0].availableForConnectivity);
+        }
 
         if (!_id) {
             return NextResponse.json({ success: false, error: 'Product ID required for update' }, { status: 400 });

@@ -181,11 +181,13 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     const [variantTypes, setVariantTypes] = useState({
         storage: false,
         warranty: false,
-        sim: false
+        sim: false,
+        connectivity: false
     });
-    const [storageVariants, setStorageVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
+    const [storageVariants, setStorageVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean; availableForConnectivity: string[] }[]>([]);
     const [warrantyVariants, setWarrantyVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
     const [simVariants, setSimVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
+    const [connectivityVariants, setConnectivityVariants] = useState<{ name: string; price: string; salePrice: string; stock: string; isDisabled: boolean }[]>([]);
 
     const [variants, setVariants] = useState<{ name: string; price: string; stock: string }[]>([]);
     const [status, setStatus] = useState<'published' | 'draft'>('published');
@@ -211,13 +213,13 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                     setFormData({
                         name: p.name,
                         brand: p.brand || '',
-                        price: p.price,
+                        price: p.price != null ? p.price.toString() : '',
                         minPrice: p.minPrice || '',
                         maxPrice: p.maxPrice || '',
                         category: typeof p.category === 'string' ? p.category : (p.category?.name || 'Phones'),
                         subcategory: p.subcategory || '',
                         description: p.description,
-                        stock: p.stock,
+                        stock: p.stock != null ? p.stock.toString() : '',
                         image: p.imageUrl || p.images?.[0]?.url || '',
                         youtubeVideoUrl: p.youtubeVideoUrl || ''
                     });
@@ -246,7 +248,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                             price: v.price.toString(),
                             salePrice: v.salePrice ? v.salePrice.toString() : '',
                             stock: v.stock.toString(),
-                            isDisabled: v.isDisabled || false
+                            isDisabled: v.isDisabled || false,
+                            availableForConnectivity: v.availableForConnectivity || []
                         })));
                     }
 
@@ -266,6 +269,18 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                         setHasVariants(true);
                         setVariantTypes(prev => ({ ...prev, sim: true }));
                         setSimVariants(p.simVariants.map((v: any) => ({
+                            name: v.name,
+                            price: v.price ? v.price.toString() : '',
+                            salePrice: v.salePrice ? v.salePrice.toString() : '',
+                            stock: v.stock.toString(),
+                            isDisabled: v.isDisabled || false
+                        })));
+                    }
+
+                    if (p.connectivityVariants && p.connectivityVariants.length > 0) {
+                        setHasVariants(true);
+                        setVariantTypes(prev => ({ ...prev, connectivity: true }));
+                        setConnectivityVariants(p.connectivityVariants.map((v: any) => ({
                             name: v.name,
                             price: v.price ? v.price.toString() : '',
                             salePrice: v.salePrice ? v.salePrice.toString() : '',
@@ -354,6 +369,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                     stock: Number(v.stock) || 0
                 })) : [],
                 simVariants: hasVariants && variantTypes.sim ? simVariants.map(v => ({
+                    ...v,
+                    price: Number(v.price) || 0,
+                    salePrice: v.salePrice ? Number(v.salePrice) : null,
+                    stock: Number(v.stock) || 0
+                })) : [],
+                connectivityVariants: hasVariants && variantTypes.connectivity ? connectivityVariants.map(v => ({
                     ...v,
                     price: Number(v.price) || 0,
                     salePrice: v.salePrice ? Number(v.salePrice) : null,
@@ -970,6 +991,12 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                     <input type="checkbox" checked={variantTypes.sim} onChange={(e) => setVariantTypes({ ...variantTypes, sim: e.target.checked })} style={{ accentColor: 'var(--accent)' }} />
                                     SIM Card Slots
                                 </label>
+                                {formData.category === 'Tablets' && (
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: variantTypes.connectivity ? 'var(--accent)' : '#888' }}>
+                                        <input type="checkbox" checked={variantTypes.connectivity} onChange={(e) => setVariantTypes({ ...variantTypes, connectivity: e.target.checked })} style={{ accentColor: 'var(--accent)' }} />
+                                        Connectivity
+                                    </label>
+                                )}
                             </div>
 
                             {/* Storage Variants Table */}
@@ -977,28 +1004,97 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                 <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
                                     <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Storage Variants (Base Prices)</label>
                                     {storageVariants.map((v, i) => (
-                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
-                                            <input placeholder="Name (e.g. 128GB)" value={v.name} onChange={(e) => {
-                                                const newV = [...storageVariants]; newV[i].name = e.target.value; setStorageVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Price" value={v.price} onChange={(e) => {
-                                                const newV = [...storageVariants]; newV[i].price = e.target.value; setStorageVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Sale Price" value={v.salePrice} onChange={(e) => {
-                                                const newV = [...storageVariants]; newV[i].salePrice = e.target.value; setStorageVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
-                                                const newV = [...storageVariants]; newV[i].stock = e.target.value; setStorageVariants(newV);
-                                            }} style={{ ...inputStyle, marginTop: 0 }} />
-                                            <label style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                <input type="checkbox" checked={v.isDisabled} onChange={(e) => {
-                                                    const newV = [...storageVariants]; newV[i].isDisabled = e.target.checked; setStorageVariants(newV);
-                                                }} /> Disabled
-                                            </label>
-                                            <button type="button" onClick={() => setStorageVariants(storageVariants.filter((_, idx) => idx !== i))} style={{ background: '#333', color: '#ff4444', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '5px 8px' }}>×</button>
+                                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px', padding: '10px', background: '#111', borderRadius: '6px' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center' }}>
+                                                {formData.category === 'Phones' ? (
+                                                    <select value={v.name} onChange={(e) => {
+                                                        const newV = [...storageVariants]; newV[i].name = e.target.value; setStorageVariants(newV);
+                                                    }} style={{ ...inputStyle, marginTop: 0 }}>
+                                                        <option value="">Select RAM/Storage</option>
+                                                        <option value="2GB/16GB">2GB/16GB</option>
+                                                        <option value="2GB/32GB">2GB/32GB</option>
+                                                        <option value="3GB/32GB">3GB/32GB</option>
+                                                        <option value="3GB/64GB">3GB/64GB</option>
+                                                        <option value="4GB/32GB">4GB/32GB</option>
+                                                        <option value="4GB/64GB">4GB/64GB</option>
+                                                        <option value="4GB/128GB">4GB/128GB</option>
+                                                        <option value="6GB/64GB">6GB/64GB</option>
+                                                        <option value="6GB/128GB">6GB/128GB</option>
+                                                        <option value="6GB/256GB">6GB/256GB</option>
+                                                        <option value="8GB/128GB">8GB/128GB</option>
+                                                        <option value="8GB/256GB">8GB/256GB</option>
+                                                        <option value="8GB/512GB">8GB/512GB</option>
+                                                        <option value="12GB/256GB">12GB/256GB</option>
+                                                        <option value="12GB/512GB">12GB/512GB</option>
+                                                        <option value="12GB/1TB">12GB/1TB</option>
+                                                        <option value="16GB/512GB">16GB/512GB</option>
+                                                        <option value="16GB/1TB">16GB/1TB</option>
+                                                    </select>
+                                                ) : formData.category === 'Tablets' ? (
+                                                    <select value={v.name} onChange={(e) => {
+                                                        const newV = [...storageVariants]; newV[i].name = e.target.value; setStorageVariants(newV);
+                                                    }} style={{ ...inputStyle, marginTop: 0 }}>
+                                                        <option value="">Select RAM/Storage</option>
+                                                        <option value="3GB/32GB">3GB/32GB</option>
+                                                        <option value="4GB/64GB">4GB/64GB</option>
+                                                        <option value="4GB/128GB">4GB/128GB</option>
+                                                        <option value="6GB/128GB">6GB/128GB</option>
+                                                        <option value="8GB/128GB">8GB/128GB</option>
+                                                        <option value="8GB/256GB">8GB/256GB</option>
+                                                        <option value="8GB/512GB">8GB/512GB</option>
+                                                        <option value="12GB/256GB">12GB/256GB</option>
+                                                        <option value="16GB/512GB">16GB/512GB</option>
+                                                        <option value="16GB/1TB">16GB/1TB</option>
+                                                    </select>
+                                                ) : (
+                                                    <input placeholder="Name (e.g. 128GB)" value={v.name} onChange={(e) => {
+                                                        const newV = [...storageVariants]; newV[i].name = e.target.value; setStorageVariants(newV);
+                                                    }} style={{ ...inputStyle, marginTop: 0 }} />
+                                                )}
+                                                <input type="number" placeholder="Price" value={v.price} onChange={(e) => {
+                                                    const newV = [...storageVariants]; newV[i].price = e.target.value; setStorageVariants(newV);
+                                                }} style={{ ...inputStyle, marginTop: 0 }} />
+                                                <input type="number" placeholder="Sale Price" value={v.salePrice} onChange={(e) => {
+                                                    const newV = [...storageVariants]; newV[i].salePrice = e.target.value; setStorageVariants(newV);
+                                                }} style={{ ...inputStyle, marginTop: 0 }} />
+                                                <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
+                                                    const newV = [...storageVariants]; newV[i].stock = e.target.value; setStorageVariants(newV);
+                                                }} style={{ ...inputStyle, marginTop: 0 }} />
+                                                <label style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <input type="checkbox" checked={v.isDisabled} onChange={(e) => {
+                                                        const newV = [...storageVariants]; newV[i].isDisabled = e.target.checked; setStorageVariants(newV);
+                                                    }} /> Disabled
+                                                </label>
+                                                <button type="button" onClick={() => setStorageVariants(storageVariants.filter((_, idx) => idx !== i))} style={{ background: '#333', color: '#ff4444', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '5px 8px' }}>×</button>
+                                            </div>
+                                            {/* Connectivity Availability (Tablets Only) */}
+                                            {formData.category === 'Tablets' && variantTypes.connectivity && connectivityVariants.length > 0 && (
+                                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.75rem', color: '#aaa', paddingTop: '5px' }}>
+                                                    <span style={{ fontWeight: 'bold', color: '#ccc' }}>Available for:</span>
+                                                    {connectivityVariants.map((conn, connIdx) => (
+                                                        <label key={connIdx} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={v.availableForConnectivity.includes(conn.name)}
+                                                                onChange={(e) => {
+                                                                    const newV = [...storageVariants];
+                                                                    if (e.target.checked) {
+                                                                        newV[i].availableForConnectivity = [...newV[i].availableForConnectivity, conn.name];
+                                                                    } else {
+                                                                        newV[i].availableForConnectivity = newV[i].availableForConnectivity.filter(c => c !== conn.name);
+                                                                    }
+                                                                    setStorageVariants(newV);
+                                                                }}
+                                                            />
+                                                            {conn.name}
+                                                        </label>
+                                                    ))}
+                                                    {v.availableForConnectivity.length === 0 && <span style={{ color: '#888', fontSize: '0.7rem' }}>(Available for all)</span>}
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => setStorageVariants([...storageVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Storage Variant</button>
+                                    <button type="button" onClick={() => setStorageVariants([...storageVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false, availableForConnectivity: [] }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Storage Variant</button>
                                 </div>
                             )}
 
@@ -1059,6 +1155,36 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                                         </div>
                                     ))}
                                     <button type="button" onClick={() => setSimVariants([...simVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add SIM Variant</button>
+                                </div>
+                            )}
+
+                            {/* Connectivity Variants Table (Tablets Only) */}
+                            {formData.category === 'Tablets' && variantTypes.connectivity && (
+                                <div style={{ background: '#1a1a1a', padding: '1rem', borderRadius: '8px' }}>
+                                    <label style={{ color: '#ccc', fontSize: '0.85rem', marginBottom: '1rem', display: 'block', fontWeight: 'bold' }}>Connectivity Variants (Add-on Prices)</label>
+                                    {connectivityVariants.map((v, i) => (
+                                        <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                                            <input placeholder="Name (e.g. WiFi+Cellular)" value={v.name} onChange={(e) => {
+                                                const newV = [...connectivityVariants]; newV[i].name = e.target.value; setConnectivityVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <input type="number" placeholder="Add-on Price" value={v.price} onChange={(e) => {
+                                                const newV = [...connectivityVariants]; newV[i].price = e.target.value; setConnectivityVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <input type="number" placeholder="Sale Price (Optional)" value={v.salePrice} onChange={(e) => {
+                                                const newV = [...connectivityVariants]; newV[i].salePrice = e.target.value; setConnectivityVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => {
+                                                const newV = [...connectivityVariants]; newV[i].stock = e.target.value; setConnectivityVariants(newV);
+                                            }} style={{ ...inputStyle, marginTop: 0 }} />
+                                            <label style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <input type="checkbox" checked={v.isDisabled} onChange={(e) => {
+                                                    const newV = [...connectivityVariants]; newV[i].isDisabled = e.target.checked; setConnectivityVariants(newV);
+                                                }} /> Disabled
+                                            </label>
+                                            <button type="button" onClick={() => setConnectivityVariants(connectivityVariants.filter((_, idx) => idx !== i))} style={{ background: '#333', color: '#ff4444', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '5px 8px' }}>×</button>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setConnectivityVariants([...connectivityVariants, { name: '', price: '', salePrice: '', stock: '', isDisabled: false }])} style={{ background: 'transparent', border: '1px dashed #444', color: '#aaa', padding: '8px', width: '100%', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Connectivity Variant</button>
                                 </div>
                             )}
 

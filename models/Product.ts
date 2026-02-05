@@ -59,7 +59,8 @@ const ProductSchema = new mongoose.Schema({
         price: Number,
         salePrice: Number,
         stock: { type: Number, default: 0 },
-        isDisabled: { type: Boolean, default: false }
+        isDisabled: { type: Boolean, default: false },
+        availableForConnectivity: [String]  // Array of connectivity variant names this storage is available for
     }],
     warrantyVariants: [{
         name: String,
@@ -69,6 +70,13 @@ const ProductSchema = new mongoose.Schema({
         isDisabled: { type: Boolean, default: false }
     }],
     simVariants: [{
+        name: String,
+        price: { type: Number, default: 0 },
+        salePrice: { type: Number, default: null },
+        stock: { type: Number, default: 0 },
+        isDisabled: { type: Boolean, default: false }
+    }],
+    connectivityVariants: [{
         name: String,
         price: { type: Number, default: 0 },
         salePrice: { type: Number, default: null },
@@ -200,5 +208,10 @@ ProductSchema.pre('save', async function () {
         (this as any).maxPrice = basePrice;
     }
 });
+
+// Prevent Mongoose overwrite warning in dev by deleting model if it exists
+if (process.env.NODE_ENV !== 'production' && mongoose.models && mongoose.models.Product) {
+    delete mongoose.models.Product;
+}
 
 export default mongoose.models.Product || mongoose.model('Product', ProductSchema);

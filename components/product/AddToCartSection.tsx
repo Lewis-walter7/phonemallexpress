@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
@@ -29,10 +29,17 @@ interface AddToCartSectionProps {
         stock: number;
         isDisabled: boolean;
     }[];
+    connectivityVariants?: {
+        name: string;
+        price: number;
+        salePrice?: number | null;
+        stock: number;
+        isDisabled: boolean;
+    }[];
     colors?: string[];
 }
 
-export default function AddToCartSection({ product, variants, storageVariants, warrantyVariants, simVariants, colors }: AddToCartSectionProps) {
+export default function AddToCartSection({ product, variants, storageVariants, warrantyVariants, simVariants, connectivityVariants, colors }: AddToCartSectionProps) {
     console.log('ATC Props:', {
         storage: storageVariants?.length,
         warranty: warrantyVariants?.length,
@@ -47,8 +54,12 @@ export default function AddToCartSection({ product, variants, storageVariants, w
     const [selectedStorage, setSelectedStorage] = useState<any>(null);
     const [selectedWarranty, setSelectedWarranty] = useState<any>(null);
     const [selectedSim, setSelectedSim] = useState<any>(null);
+    const [selectedConnectivity, setSelectedConnectivity] = useState<any>(null);
 
-    const [selectedColor, setSelectedColor] = useState<string>("");
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+
+    console.log('Storage Variants:', storageVariants);
+    console.log('Selected Connectivity:', selectedConnectivity);
     const { addToCart } = useCart();
 
     // Initialize selections
@@ -71,10 +82,39 @@ export default function AddToCartSection({ product, variants, storageVariants, w
             if (firstAvailable) setSelectedSim(firstAvailable);
         }
 
+        if (connectivityVariants && connectivityVariants.length > 0) {
+            // Select first available connectivity
+            const firstAvailable = connectivityVariants.find(v => !v.isDisabled);
+            if (firstAvailable) setSelectedConnectivity(firstAvailable);
+        }
+
         if (colors && colors.length > 0) {
             setSelectedColor(colors[0]);
         }
-    }, [storageVariants, warrantyVariants, simVariants, colors]);
+    }, [storageVariants, warrantyVariants, simVariants, connectivityVariants, colors]);
+
+    // Auto-switch storage when connectivity changes if current storage is not available
+    useEffect(() => {
+        if (selectedConnectivity && selectedStorage && storageVariants && storageVariants.length > 0) {
+            const isCurrentStorageAvailable = !selectedStorage.availableForConnectivity ||
+                selectedStorage.availableForConnectivity.length === 0 ||
+                selectedStorage.availableForConnectivity.includes(selectedConnectivity.name);
+
+            if (!isCurrentStorageAvailable) {
+                // Current storage is not available for this connectivity, switch to first available
+                const firstAvailable = storageVariants.find(v =>
+                    !v.isDisabled &&
+                    v.stock > 0 &&
+                    (!v.availableForConnectivity ||
+                        v.availableForConnectivity.length === 0 ||
+                        v.availableForConnectivity.includes(selectedConnectivity.name))
+                );
+                if (firstAvailable) {
+                    setSelectedStorage(firstAvailable);
+                }
+            }
+        }
+    }, [selectedConnectivity, storageVariants]);
 
     const calculateCurrentPrice = () => {
         let basePrice = product.price;
@@ -100,12 +140,18 @@ export default function AddToCartSection({ product, variants, storageVariants, w
             simAddon = (selectedSim.salePrice > 0 ? selectedSim.salePrice : selectedSim.price) || 0;
         }
 
-        // New Logic: Storage is base, warranty and SIM are add-ons
+        // 4. Connectivity Add-on (for tablets)
+        let connectivityAddon = 0;
+        if (selectedConnectivity) {
+            connectivityAddon = (selectedConnectivity.salePrice > 0 ? selectedConnectivity.salePrice : selectedConnectivity.price) || 0;
+        }
+
+        // New Logic: Storage is base, warranty, SIM, and connectivity are add-ons
         // If storage is selected, use it as base. Otherwise fall back to product base price.
         let finalPrice = storagePrice > 0 ? storagePrice : basePrice;
 
-        // Add warranty and SIM as add-ons on top
-        finalPrice += warrantyPrice + simAddon;
+        // Add warranty, SIM, and connectivity as add-ons on top
+        finalPrice += warrantyPrice + simAddon + connectivityAddon;
 
         return finalPrice;
     };
@@ -130,6 +176,7 @@ export default function AddToCartSection({ product, variants, storageVariants, w
             selectedStorage: selectedStorage ? selectedStorage.name : undefined,
             selectedWarranty: selectedWarranty ? selectedWarranty.name : undefined,
             selectedSim: selectedSim ? selectedSim.name : undefined,
+            selectedConnectivity: selectedConnectivity ? selectedConnectivity.name : undefined,
             selectedColor: selectedColor || undefined,
             slug: product.slug,
             category: product.category,
@@ -173,24 +220,36 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                 <div className="variants-section" style={{ marginBottom: '20px' }}>
                     <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Storage</h4>
                     <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {storageVariants.map((v, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setSelectedStorage(v)}
-                                className={`variant-btn ${selectedStorage === v ? 'active' : ''}`}
-                                style={{
-                                    padding: '8px 16px',
-                                    border: selectedStorage === v ? '1px solid var(--accent)' : '1px solid var(--border)',
-                                    borderRadius: '8px',
-                                    background: selectedStorage === v ? 'var(--accent)' : 'transparent',
-                                    color: selectedStorage === v ? '#fff' : 'var(--foreground)',
-                                    cursor: 'pointer',
-                                    fontSize: '14px'
-                                }}
-                            >
-                                {v.name} - KSh {(v.salePrice || v.price).toLocaleString()}
-                            </button>
-                        ))}
+                        {storageVariants.map((v, i) => {
+                            // Check if this storage variant is available for the selected connectivity
+                            const isAvailableForConnectivity = !selectedConnectivity ||
+                                !v.availableForConnectivity ||
+                                v.availableForConnectivity.length === 0 ||
+                                v.availableForConnectivity.includes(selectedConnectivity.name);
+
+                            return (
+                                <button
+                                    key={i}
+                                    onClick={() => isAvailableForConnectivity && setSelectedStorage(v)}
+                                    className={`variant-btn ${selectedStorage === v ? 'active' : ''}`}
+                                    disabled={!isAvailableForConnectivity}
+                                    style={{
+                                        padding: '8px 16px',
+                                        border: selectedStorage === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                        borderRadius: '8px',
+                                        background: selectedStorage === v ? 'var(--accent)' : 'transparent',
+                                        color: selectedStorage === v ? '#fff' : 'var(--foreground)',
+                                        cursor: isAvailableForConnectivity ? 'pointer' : 'not-allowed',
+                                        fontSize: '14px',
+                                        opacity: isAvailableForConnectivity ? 1 : 0.4,
+                                        textDecoration: !isAvailableForConnectivity ? 'line-through' : 'none'
+                                    }}
+                                >
+                                    {v.name} - KSh {(v.salePrice || v.price).toLocaleString()}
+                                    {!isAvailableForConnectivity && <span style={{ fontSize: '10px', marginLeft: '4px' }}>(N/A)</span>}
+                                </button>
+                            )
+                        })}
                     </div>
                 </div>
             )}
@@ -238,6 +297,33 @@ export default function AddToCartSection({ product, variants, storageVariants, w
                                     borderRadius: '8px',
                                     background: selectedSim === v ? 'var(--accent)' : 'transparent',
                                     color: selectedSim === v ? '#fff' : 'var(--foreground)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                {v.name} {v.price > 0 ? `(+ KSh ${v.price.toLocaleString()})` : ''}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Connectivity Variants (Tablets Only) */}
+            {connectivityVariants && connectivityVariants.length > 0 && (
+                <div className="variants-section" style={{ marginBottom: '20px' }}>
+                    <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--muted-foreground)' }}>Connectivity</h4>
+                    <div className="variants-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {connectivityVariants.map((v, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setSelectedConnectivity(v)}
+                                className={`variant-btn ${selectedConnectivity === v ? 'active' : ''}`}
+                                style={{
+                                    padding: '8px 16px',
+                                    border: selectedConnectivity === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    background: selectedConnectivity === v ? 'var(--accent)' : 'transparent',
+                                    color: selectedConnectivity === v ? '#fff' : 'var(--foreground)',
                                     cursor: 'pointer',
                                     fontSize: '14px'
                                 }}
