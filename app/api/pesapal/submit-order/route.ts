@@ -48,20 +48,18 @@ export async function POST(req: NextRequest) {
             status: 'Pending',
             paymentMethod: 'PesaPal',
             paymentStatus: 'Pending',
-            mpesaDetails: {
-                merchantRequestId: orderId
-            }
+            // No mpesaDetails needed for PesaPal, we track via _id
         });
 
         await newOrder.save();
 
         // 3b. Prepare PesaPal Order Data using the DB ID
         const orderData: PesaPalOrder = {
-            id: orderId, // Use the generated orderId from frontend, or newOrder._id.toString()
+            id: newOrder._id.toString(), // CRITICAL: Use MongoDB ID so findById works in callback
             currency: currency || 'KES',
             amount: Number(amount),
             description: description || 'PhoneMall Express Order',
-            callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/pesapal-callback`,
+            callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/pesapal/callback`, // Route through API to handle DB update & redirect
             notification_id: ipnId,
             billing_address: {
                 email_address: email,

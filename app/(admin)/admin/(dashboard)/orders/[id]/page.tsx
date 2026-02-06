@@ -164,13 +164,14 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                                     const res = await fetch(`/api/pesapal/callback?OrderTrackingId=${order.pesapalDetails?.orderTrackingId || ''}&OrderMerchantReference=${order._id}&mode=verify`);
                                     const data = await res.json();
 
-                                    if (data.success && data.paymentStatus) {
-                                        setOrder(prev => prev ? { ...prev, paymentStatus: data.paymentStatus, status: data.status || prev.status } : null);
-                                        setPaymentStatus(data.paymentStatus);
+                                    if (data.success && data.paymentStatus && (data.paymentStatus === 'Completed' || data.paymentStatus === 'COMPLETED')) {
+                                        setOrder(prev => prev ? { ...prev, paymentStatus: 'Completed', status: data.status || 'Processing' } : null);
+                                        setPaymentStatus('Completed');
                                         if (data.status) setStatus(data.status);
-                                        alert(`Payment Verified: ${data.paymentStatus}`);
+                                        alert(`Payment Verified Successfully!`);
                                     } else {
-                                        alert('Verification failed or status unchanged.');
+                                        console.log('Verification Debug:', data);
+                                        alert(`Verification returned: ${data.paymentStatus || 'Unknown'}\nTracking ID: ${order.pesapalDetails?.orderTrackingId || 'MISSING'}\nRaw PesaPal Status: ${data.rawResponse?.payment_status_description || 'N/A'}`);
                                     }
                                 } catch (err) {
                                     alert('Error verifying payment.');
@@ -292,6 +293,12 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                             <span style={{ color: '#888' }}>Method</span>
                             <span style={{ fontWeight: 600, color: order.paymentMethod === 'PesaPal' ? '#3b82f6' : 'white' }}>{order.paymentMethod}</span>
                         </div>
+                        {order.pesapalDetails?.orderTrackingId && (
+                            <div className={styles.paymentRow}>
+                                <span style={{ color: '#888' }}>Tracking ID</span>
+                                <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{order.pesapalDetails.orderTrackingId}</span>
+                            </div>
+                        )}
                         {order.mpesaDetails && (
                             <div className={styles.paymentRow}>
                                 <span style={{ color: '#888' }}>Reference</span>

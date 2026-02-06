@@ -49,7 +49,8 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({
                 success: true,
                 paymentStatus: order?.paymentStatus || paymentStatus,
-                status: order?.status
+                status: order?.status,
+                rawResponse: statusResponse // Debugging info
             });
         }
 
