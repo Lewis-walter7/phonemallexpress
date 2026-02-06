@@ -159,13 +159,27 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                             className={styles.saveBtn}
                             style={{ background: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)' }}
                             onClick={async () => {
-                                const res = await fetch(`/api/pesapal/callback?OrderTrackingId=${order.pesapalDetails?.orderTrackingId || ''}&OrderMerchantReference=${order._id}`);
-                                if (res.redirected) {
-                                    window.location.reload();
+                                setSaving(true);
+                                try {
+                                    const res = await fetch(`/api/pesapal/callback?OrderTrackingId=${order.pesapalDetails?.orderTrackingId || ''}&OrderMerchantReference=${order._id}&mode=verify`);
+                                    const data = await res.json();
+
+                                    if (data.success && data.paymentStatus) {
+                                        setOrder(prev => prev ? { ...prev, paymentStatus: data.paymentStatus, status: data.status || prev.status } : null);
+                                        setPaymentStatus(data.paymentStatus);
+                                        if (data.status) setStatus(data.status);
+                                        alert(`Payment Verified: ${data.paymentStatus}`);
+                                    } else {
+                                        alert('Verification failed or status unchanged.');
+                                    }
+                                } catch (err) {
+                                    alert('Error verifying payment.');
+                                } finally {
+                                    setSaving(false);
                                 }
                             }}
                         >
-                            Verify Payment
+                            {saving ? 'Verifying...' : 'Verify Payment'}
                         </button>
                     )}
                 </div>

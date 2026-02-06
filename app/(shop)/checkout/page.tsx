@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import './Checkout.css';
 
 const SHIPPING_METHODS = [
-    { id: 'cbd-fast', name: 'CBD (Fast Delivery)', price: 150 },
+    { id: 'cbd-fast', name: 'CBD (Fast Delivery)', price: 1 },
     { id: 'near-cbd', name: 'Near Nairobi CBD (Upperhill, Ngara, Westlands) - Immediate Delivery by Rider', price: 250 },
     { id: 'nairobi-estates', name: 'Within Nairobi Estates - Immediate Delivery by Rider', price: 500 },
     { id: 'nairobi-outskirts', name: 'Nairobi Outskirts - Immediate Delivery by Rider', price: 800 },

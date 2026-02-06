@@ -55,7 +55,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     let oldPrice = product.compareAtPrice;
     let discount = null;
 
-    if (product.isOnSpecialOffer && product.salePrice) {
+    if (product.salePrice && product.salePrice > 0 && product.salePrice < product.price) {
         currentPrice = product.salePrice;
         oldPrice = product.price;
         discount = product.discountPercentage || Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
@@ -146,7 +146,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     )}
 
                     {discount && <span className="discount-badge">-{discount}%</span>}
-                    {product.isOnSpecialOffer && <span className="special-offer-badge">SALE</span>}
+                    {(product.isOnSpecialOffer || (product.salePrice && product.salePrice > 0 && product.salePrice < product.price)) && <span className="special-offer-badge">SALE</span>}
 
                     <button
                         className={`wishlist-btn ${inWishlist ? 'active' : ''}`}

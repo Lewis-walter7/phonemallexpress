@@ -165,11 +165,29 @@ ProductSchema.pre('save', async function () {
 
     // 2. Min/Max Price Calculation based on Dynamic Logic
     const basePrice = (this as any).price || 0;
+    const salePrice = (this as any).salePrice || 0;
+
+    // 2b. Auto-Detect Special Offer
+    if (salePrice > 0 && salePrice < basePrice) {
+        (this as any).isOnSpecialOffer = true;
+        (this as any).discountPercentage = Math.round(((basePrice - salePrice) / basePrice) * 100);
+    } else {
+        // If sale price is invalid or removed, perform cleanup only if it was auto-set? 
+        // For safety, if sale price is 0 or >= base, we disable special offer unless variants override it?
+        // Simpler: If main price has no discount, check variants.
+        // But for main product logic:
+        // (this as any).isOnSpecialOffer = false;  <-- Careful, might override manual setting? 
+        // Let's enforce: If NO sale price, set to false.
+        if (salePrice <= 0 || salePrice >= basePrice) {
+            (this as any).isOnSpecialOffer = false;
+            (this as any).discountPercentage = 0;
+        }
+    }
 
     // A. Storage Prices (Base) - Keep Sale Price logic
     const storagePrices = (this as any).storageVariants && (this as any).storageVariants.length > 0
         ? (this as any).storageVariants.filter((v: any) => !v.isDisabled).map((v: any) => (v.salePrice && v.salePrice > 0) ? v.salePrice : (v.price || 0))
-        : [basePrice];
+        : [salePrice > 0 ? salePrice : basePrice]; // Use main sale price if no variants
 
     // B. Warranty Prices (Add-on) - Remove Sale Price logic
     const warrantyPrices = (this as any).warrantyVariants && (this as any).warrantyVariants.length > 0
@@ -203,8 +221,8 @@ ProductSchema.pre('save', async function () {
         (this as any).minPrice = Math.min(...allTotals);
         (this as any).maxPrice = Math.max(...allTotals);
     } else {
-        (this as any).minPrice = basePrice;
-        (this as any).maxPrice = basePrice;
+        (this as any).minPrice = salePrice > 0 ? salePrice : basePrice;
+        (this as any).maxPrice = salePrice > 0 ? salePrice : basePrice;
     }
 });
 

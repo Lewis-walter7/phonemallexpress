@@ -31,14 +31,26 @@ export async function GET(req: NextRequest) {
         const order = await Order.findById(orderMerchantReference);
 
         if (order) {
-            if (paymentStatus === 'Completed') {
+            // Map PesaPal status to our status
+            if (paymentStatus === 'COMPLETED' || paymentStatus === 'Completed') {
                 order.paymentStatus = 'Completed';
-                order.status = 'Processing'; // Paid orders logic
-            } else if (paymentStatus === 'Failed') {
+                order.status = 'Processing';
+            } else if (paymentStatus === 'FAILED' || paymentStatus === 'Failed') {
                 order.paymentStatus = 'Failed';
                 order.status = 'Cancelled';
             }
-            order.save();
+            await order.save();
+        }
+
+        // Check if this is a manual verification request from Admin
+        const isVerification = searchParams.get('mode') === 'verify';
+
+        if (isVerification) {
+            return NextResponse.json({
+                success: true,
+                paymentStatus: order?.paymentStatus || paymentStatus,
+                status: order?.status
+            });
         }
 
         return NextResponse.redirect(new URL(`/order-confirmation?status=${paymentStatus || 'Pending'}&ref=${orderMerchantReference}&tracking=${orderTrackingId}`, req.url));

@@ -248,6 +248,8 @@ const ProductPage = async ({ params }: PageProps) => {
                             _id: product._id.toString(),
                             name: product.name,
                             price: product.price,
+                            salePrice: product.salePrice,
+                            isOnSpecialOffer: product.isOnSpecialOffer,
                             slug: product.slug,
                             category: catName,
                             image: productImages[0]?.url || ''

@@ -9,6 +9,8 @@ interface Product {
     _id: string;
     name: string;
     price: number;
+    salePrice?: number;
+    isOnSpecialOffer?: boolean;
     category: any;
     stock: number;
     images?: Array<{ url: string; alt: string }>;
@@ -246,7 +248,16 @@ export default function AdminProductsPage() {
                                             </td>
                                             <td className={styles.td} style={{ fontWeight: '500' }}>{product.name}</td>
                                             <td className={styles.td} style={{ color: '#888' }}>{catName}</td>
-                                            <td className={styles.td}>KES {product.price.toLocaleString()}</td>
+                                            <td className={styles.td}>
+                                                {(product.salePrice && product.salePrice > 0 && product.salePrice < product.price) ? (
+                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                        <span style={{ fontWeight: 600, color: 'var(--accent)' }}>KES {product.salePrice.toLocaleString()}</span>
+                                                        <span style={{ fontSize: '0.8rem', color: '#888', textDecoration: 'line-through' }}>KES {product.price.toLocaleString()}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span>KES {product.price.toLocaleString()}</span>
+                                                )}
+                                            </td>
                                             <td className={styles.td}>
                                                 <span style={{
                                                     padding: '2px 8px',

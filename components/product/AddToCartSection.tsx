@@ -9,6 +9,8 @@ interface AddToCartSectionProps {
         _id: string;
         name: string;
         price: number;
+        salePrice?: number | null;
+        isOnSpecialOffer?: boolean;
         slug: string;
         category: string;
         image: string;
@@ -118,6 +120,11 @@ export default function AddToCartSection({ product, variants, storageVariants, w
 
     const calculateCurrentPrice = () => {
         let basePrice = product.price;
+        // Check for base product sale
+        if (product.salePrice && product.salePrice > 0 && product.salePrice < product.price) {
+            basePrice = product.salePrice;
+        }
+
         let storagePrice = 0;
         let warrantyPrice = 0;
         let simAddon = 0;
