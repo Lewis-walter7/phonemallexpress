@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ChevronRight, ShieldCheck, Truck, CreditCard, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import './Checkout.css';
 
 const SHIPPING_METHODS = [
@@ -41,10 +42,30 @@ const CheckoutPage = () => {
         city: '',
         phone: '',
         shippingMethod: 'near-cbd',
-        paymentMethod: 'mpesa' // 'mpesa', 'card', 'pesapal'
+        paymentMethod: 'pesapal' // 'pesapal', 'card'
     });
+    const [pesapalUrl, setPesapalUrl] = useState<string | null>(null);
 
-    const handleNext = () => setStep(step + 1);
+    const validateStep1 = () => {
+        const { firstName, lastName, email, address, city, phone } = formData;
+        if (!firstName || !lastName || !email || !address || !city || !phone) {
+            toast.error('Please fill in all required fields');
+            return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error('Please enter a valid email address');
+            return false;
+        }
+        return true;
+    };
+
+    const handleNext = () => {
+        if (step === 1 && !validateStep1()) {
+            return;
+        }
+        setStep(step + 1);
+    };
     const handleBack = () => setStep(step - 1);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,23 +101,31 @@ const CheckoutPage = () => {
                         firstName: formData.firstName,
                         lastName: formData.lastName,
                         phone: formData.phone,
+                        address: formData.address,
+                        city: formData.city,
+                        shippingMethod: selectedShipping?.name || formData.shippingMethod,
+                        items: cart.map(item => ({
+                            productId: item.id,
+                            name: item.name,
+                            price: item.price,
+                            quantity: item.quantity,
+                            variant: item.variant || item.selectedStorage, // Prioritize storage as main variant
+                            color: item.selectedColor
+                        })),
                         description: `Order ${orderId} - ${totalItems} items`
                     })
                 });
 
                 const data = await res.json();
                 if (data.redirect_url) {
-                    window.location.href = data.redirect_url;
+                    setPesapalUrl(data.redirect_url);
+                    // window.location.href = data.redirect_url;
                 } else {
                     console.error('PesaPal Checkout Error:', data);
                     const errorMessage = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
                     alert('PesaPal Error: ' + (errorMessage || 'Failed to initiate payment'));
                     setIsProcessing(false);
                 }
-            } else {
-                // ... Existing handlers for M-Pesa or others
-                alert('Payment method implementation pending for ' + formData.paymentMethod);
-                setIsProcessing(false);
             }
         } catch (error) {
             console.error(error);
@@ -240,36 +269,12 @@ const CheckoutPage = () => {
                             <div className="step-payment">
                                 <h3 className="section-title">Payment Method</h3>
                                 <div className="payment-options">
-                                    <label className="payment-option">
-                                        <input
-                                            type="radio"
-                                            name="payment"
-                                            value="mpesa"
-                                            checked={formData.paymentMethod === 'mpesa'}
-                                            onChange={handleOptionChange}
-                                        />
-                                        <div className="option-info">
-                                            <span className="option-name">M-PESA / Mobile Money</span>
-                                            <span className="option-desc">Pay via Lipa na M-Pesa</span>
-                                        </div>
-                                        <CreditCard size={24} />
-                                    </label>
-                                    <label className="payment-option">
-                                        <input
-                                            type="radio"
-                                            name="payment"
-                                            value="pesapal"
-                                            checked={formData.paymentMethod === 'pesapal'}
-                                            onChange={handleOptionChange}
-                                        />
+                                    <div className="payment-option selected">
                                         <div className="option-info">
                                             <span className="option-name">PesaPal (Card/Mobile)</span>
                                             <span className="option-desc">Secure payment via PesaPal</span>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <span className="font-bold text-blue-500">P</span>
-                                        </div>
-                                    </label>
+                                    </div>
                                 </div>
                                 <div className="step-actions">
                                     <button className="btn btn-link" onClick={handleBack} disabled={isProcessing}>Back to Shipping</button>
@@ -360,6 +365,34 @@ const CheckoutPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* PesaPal Iframe Modal */}
+            {/* PesaPal Iframe Modal */}
+            {pesapalUrl && (
+                <div className="pesapal-modal-overlay">
+                    <div className="pesapal-modal-container">
+                        <div className="pesapal-modal-header">
+                            <h3 className="section-title" style={{ marginBottom: 0 }}>Complete Payment</h3>
+                            <button
+                                onClick={() => {
+                                    setPesapalUrl(null);
+                                    setIsProcessing(false);
+                                }}
+                                className="pesapal-close-btn"
+                            >
+                                &times; Close
+                            </button>
+                        </div>
+                        <div className="pesapal-iframe-wrapper">
+                            <iframe
+                                src={pesapalUrl}
+                                className="pesapal-iframe"
+                                title="PesaPal Payment"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

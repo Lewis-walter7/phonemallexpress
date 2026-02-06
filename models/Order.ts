@@ -19,7 +19,7 @@ export interface IOrder extends Document {
     totalAmount: number;
     currency: string;
     status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-    paymentMethod: 'M-Pesa' | 'Card' | 'Cash';
+    paymentMethod: 'M-Pesa' | 'Card' | 'Cash' | 'PesaPal';
     paymentStatus: 'Pending' | 'Completed' | 'Failed';
     mpesaDetails?: {
         checkoutRequestId?: string;
@@ -27,6 +27,9 @@ export interface IOrder extends Document {
         receiptNumber?: string;
         phoneNumber?: string;
         transactionDate?: Date;
+    };
+    pesapalDetails?: {
+        orderTrackingId?: string;
     };
     createdAt: Date;
     updatedAt: Date;
@@ -60,7 +63,7 @@ const OrderSchema = new Schema<IOrder>(
         },
         paymentMethod: {
             type: String,
-            enum: ['M-Pesa', 'Card', 'Cash'],
+            enum: ['M-Pesa', 'Card', 'Cash', 'PesaPal'],
             required: true,
         },
         paymentStatus: {
@@ -74,6 +77,9 @@ const OrderSchema = new Schema<IOrder>(
             receiptNumber: { type: String },
             phoneNumber: { type: String },
             transactionDate: { type: Date },
+        },
+        pesapalDetails: {
+            orderTrackingId: { type: String },
         },
     },
     { timestamps: true }

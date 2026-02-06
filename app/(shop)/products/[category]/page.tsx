@@ -196,7 +196,13 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
                 </aside>
 
                 <main className="shop-content">
-                    <Breadcrumbs items={[{ label: 'Products', href: '/products/all' }, { label: categoryName, href: `/products/${slug}` }]} />
+                    <Breadcrumbs
+                        items={
+                            slug === 'all'
+                                ? [{ label: 'All Products', href: '/products/all' }]
+                                : [{ label: 'Products', href: '/products/all' }, { label: categoryName, href: `/products/${slug}` }]
+                        }
+                    />
 
                     <div style={{ marginTop: '0.25rem', marginBottom: 'var(--spacing-md)' }}>
                         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1 }}>

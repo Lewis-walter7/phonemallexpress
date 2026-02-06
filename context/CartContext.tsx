@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export interface CartItem {
     id: string;
@@ -12,6 +13,11 @@ export interface CartItem {
     category: string;
     variant?: string;
     color?: string;
+    selectedStorage?: string;
+    selectedWarranty?: string;
+    selectedSim?: string;
+    selectedConnectivity?: string;
+    selectedColor?: string;
 }
 
 interface CartContextType {
@@ -28,6 +34,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const isInitialized = React.useRef(false);
 
     // Load cart from localStorage
     useEffect(() => {
@@ -39,21 +46,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 console.error('Failed to parse cart from localStorage', error);
             }
         }
+        isInitialized.current = true;
     }, []);
 
     // Save cart to localStorage
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cart));
+        if (isInitialized.current) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
     }, [cart]);
 
     const addToCart = (item: CartItem) => {
         setCart((prevCart) => {
             const existingItem = prevCart.find((i) => i.id === item.id);
             if (existingItem) {
+                toast.success(`Updated ${item.name} quantity`);
                 return prevCart.map((i) =>
                     i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
                 );
             }
+            toast.success(`${item.name} added to cart`);
             return [...prevCart, item];
         });
     };

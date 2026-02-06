@@ -295,7 +295,9 @@ const Navbar = () => {
                         <Link href="/checkout" className="action-btn-with-label" aria-label="Cart">
                             <div className="cart-icon-wrapper">
                                 <ShoppingCart size={22} />
-                                <span className="badge">{totalItems}</span>
+                                <span className="badge" suppressHydrationWarning>
+                                    {totalItems}
+                                </span>
                             </div>
                             <span className="action-label desktop-only">Cart</span>
                         </Link>

@@ -443,3 +443,104 @@ input:focus {
     gap: var(--spacing-sm);
     padding: 60px 0;
 }
+
+/* PesaPal Modal */
+.pesapal-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    padding: var(--spacing-sm);
+}
+
+.pesapal-modal-container {
+    background: var(--background);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 900px;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pesapal-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+    background: var(--secondary);
+}
+
+.pesapal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted-foreground);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.pesapal-close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--foreground);
+}
+
+.pesapal-iframe-wrapper {
+    flex: 1;
+    width: 100%;
+    background: #fff;
+    /* Always white for iframe visibility */
+    position: relative;
+}
+
+.pesapal-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+
+/* Static Payment Option (when only one exists) */
+.payment-option.selected {
+    border: 2px solid var(--accent);
+    background-color: var(--secondary);
+    cursor: default;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}

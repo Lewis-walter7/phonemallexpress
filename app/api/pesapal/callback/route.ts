@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pesapal } from '@/lib/pesapal';
+import connectToDB from '@/lib/db';
+import Order from '@/models/Order';
 
 // PesaPal calls this endpoint with: ?OrderTrackingId=...&OrderMerchantReference=...
 export async function GET(req: NextRequest) {
@@ -14,27 +16,32 @@ export async function GET(req: NextRequest) {
 
         console.log(`PesaPal IPN/Callback received for Ref: ${orderMerchantReference}, TrackingId: ${orderTrackingId}`);
 
-        // Ideally, you verify the status here and update your database
+        // 0. Connect to DB
+        await connectToDB();
+
+        // 1. Get Transaction Status from PesaPal
         const token = await pesapal.getAccessToken();
-        const status = await pesapal.getTransactionStatus(token, orderTrackingId);
+        const statusResponse = await pesapal.getTransactionStatus(token, orderTrackingId);
 
-        console.log('Payment Status:', status);
+        console.log('Payment Status Response:', statusResponse);
+        const paymentStatus = statusResponse?.payment_status_description;
 
-        // Redirect user to success/failed page on frontend
-        // Determine redirect destination based on status
-        // status example: { payment_status_description: 'Completed', ... }
+        // 2. Find and Update Order
+        // orderMerchantReference refers to our MongoDB _id
+        const order = await Order.findById(orderMerchantReference);
 
-        // Return a response to PesaPal (IPN expects 200)
-        // If this is a browser redirect (callback_url), we should redirect using NextResponse.redirect()
-        // If this is IPN (server-to-server), we return JSON/Text.
+        if (order) {
+            if (paymentStatus === 'Completed') {
+                order.paymentStatus = 'Completed';
+                order.status = 'Processing'; // Paid orders logic
+            } else if (paymentStatus === 'Failed') {
+                order.paymentStatus = 'Failed';
+                order.status = 'Cancelled';
+            }
+            order.save();
+        }
 
-        // Since we used the same URL for both IPN and Callback in the config, we need to handle both.
-        // PesaPal usually does GET for callback (browser redirect) and GET/POST for IPN using notification_id.
-        // Wait, standard PesaPal v3 flow redirects browser to callback_url. IPN is separate.
-
-        // Let's assume this is the User Redirect path for now.
-
-        return NextResponse.redirect(new URL(`/order-confirmation?status=${status?.payment_status_description || 'Pending'}&ref=${orderMerchantReference}`, req.url));
+        return NextResponse.redirect(new URL(`/order-confirmation?status=${paymentStatus || 'Pending'}&ref=${orderMerchantReference}&tracking=${orderTrackingId}`, req.url));
 
     } catch (error) {
         console.error('PesaPal Callback Error:', error);

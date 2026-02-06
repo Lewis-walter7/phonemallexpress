@@ -1,42 +1,88 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pesapal, PesaPalOrder } from '@/lib/pesapal';
+import connectToDB from '@/lib/db';
+import Order from '@/models/Order';
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { orderId, amount, currency, email, firstName, lastName, phone, description } = body;
+        const { orderId, amount, currency, email, firstName, lastName, phone, address, city, items, description } = body;
 
         if (!orderId || !amount || !email) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // Validate items
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return NextResponse.json({ error: 'Order must have at least one item' }, { status: 400 });
+        }
+
+        // 0. Connect to DB
+        await connectToDB();
+
         // 1. Authenticate with PesaPal
         const token = await pesapal.getAccessToken();
 
         // 2. Register IPN (Optional per intent, but good practice. We'll use the env callback URL)
-        // If you only want to rely on the redirect callback, you can skip this or register it once globally.
-        // For robustness, we register it here on the fly (PesaPal returns existing IPN ID if URL matches).
         const ipnId = await pesapal.registerIPN(token, process.env.PESAPAL_CALLBACK_URL || 'http://localhost:3000/api/pesapal/callback');
 
-        // 3. Prepare Order Data
+        // 3. Create Order in Database first to get a permanent ID (or use generated ID)
+        const newOrder = new Order({
+            customer: {
+                name: `${firstName} ${lastName}`,
+                email,
+                phone,
+                address: address || 'N/A',
+                city: city || 'N/A',
+            },
+            items: items.map((item: any) => ({
+                productId: item.productId,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                variant: item.variant,
+                color: item.color
+            })),
+            totalAmount: Number(amount),
+            currency: currency || 'KES',
+            status: 'Pending',
+            paymentMethod: 'PesaPal',
+            paymentStatus: 'Pending',
+            mpesaDetails: {
+                merchantRequestId: orderId
+            }
+        });
+
+        await newOrder.save();
+
+        // 3b. Prepare PesaPal Order Data using the DB ID
         const orderData: PesaPalOrder = {
-            id: orderId, // This should be unique
+            id: orderId, // Use the generated orderId from frontend, or newOrder._id.toString()
             currency: currency || 'KES',
             amount: Number(amount),
             description: description || 'PhoneMall Express Order',
-            callback_url: process.env.PESAPAL_CALLBACK_URL || 'http://localhost:3000/api/pesapal/callback',
+            callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/pesapal-callback`,
             notification_id: ipnId,
             billing_address: {
                 email_address: email,
                 first_name: firstName,
                 last_name: lastName,
                 phone_number: phone,
-                country_code: 'KE', // Default to KE for now
+                country_code: 'KE',
             },
         };
 
+        // Order saved above.
+
         // 4. Submit Order
         const result = await pesapal.submitOrder(token, orderData);
+
+        // Update order with PesaPal Tracking ID?
+        // result usually contains { order_tracking_id, ... }
+        if (result.order_tracking_id) {
+            newOrder.pesapalDetails = { orderTrackingId: result.order_tracking_id };
+            await newOrder.save();
+        }
 
         return NextResponse.json(result);
     } catch (error: any) {
