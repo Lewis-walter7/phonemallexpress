@@ -57,15 +57,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [cart]);
 
     const addToCart = (item: CartItem) => {
+        const existingItem = cart.find((i) => i.id === item.id);
+        if (existingItem) {
+            toast.success(`Updated ${item.name} quantity`);
+        } else {
+            toast.success(`${item.name} added to cart`);
+        }
+
         setCart((prevCart) => {
-            const existingItem = prevCart.find((i) => i.id === item.id);
-            if (existingItem) {
-                toast.success(`Updated ${item.name} quantity`);
+            const existing = prevCart.find((i) => i.id === item.id);
+            if (existing) {
                 return prevCart.map((i) =>
                     i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
                 );
             }
-            toast.success(`${item.name} added to cart`);
             return [...prevCart, item];
         });
     };
