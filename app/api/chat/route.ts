@@ -2,18 +2,53 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
+// Removed 'ollama' import to use fetch for better control
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OLLAMA_API_KEY = process.env.OLLAMA_API_KEY;
+// Ensure host doesn't have trailing slash for cleaner concatenation
+const OLLAMA_HOST = (process.env.OLLAMA_HOST || 'https://ollama.com').replace(/\/$/, '');
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+
+// Helper to ensure roles alternate: user -> assistant -> user...
+function normalizeMessages(messages: any[]) {
+    if (!messages || messages.length === 0) return [];
+
+    const normalized: any[] = [];
+    let lastRole: string | null = null;
+
+    for (const msg of messages) {
+        const role = msg.role;
+        const content = msg.content;
+
+        if (role === 'system') continue; // Skip system messages from client, we add our own
+
+        if (role === lastRole) {
+            // Merge consecutive messages of the same role
+            normalized[normalized.length - 1].content += `\n\n${content}`;
+        } else {
+            normalized.push({ role, content });
+            lastRole = role;
+        }
+    }
+
+    // Ensure the conversation starts with a 'user' message (after the system prompt)
+    // If the first message is 'assistant', remove it.
+    if (normalized.length > 0 && normalized[0].role === 'assistant') {
+        normalized.shift();
+    }
+
+    return normalized;
+}
 
 export async function POST(req: Request) {
-    if (!OPENAI_API_KEY) {
-        return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 });
+    if (!OLLAMA_API_KEY) {
+        return NextResponse.json({ error: 'Ollama API key not configured' }, { status: 500 });
     }
 
     let messages;
     try {
         const body = await req.json();
-        messages = body.messages;
+        messages = body.messages || [];
     } catch (e) {
         return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
@@ -36,7 +71,7 @@ export async function POST(req: Request) {
 
     if (!isGreeting && currentUsage >= 6) {
         return NextResponse.json({
-            error: 'You have reached your daily limit of 6 messages. Please contasct us on WhatsApp for unlimited support.'
+            error: 'You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support.'
         }, { status: 429 });
     }
 
@@ -104,28 +139,60 @@ export async function POST(req: Request) {
             Your goal is to help customers find the right tech gadget or appliance.`
         };
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Normalize History
+        const history = normalizeMessages(messages);
+
+        // Final sanity check: if history is empty (e.g. user sent only system messages?), fallback
+        if (history.length === 0) {
+            // Should verify at least one user message?
+            // But if we're here, messages was parsed.
+            // If normalize removed everything, let's allow it to proceed with just system prompt?
+            // Ollama will error if no user message? The error said "roles must alternate", implying system -> user -> assistant.
+            // If history is empty, we just send system message?
+        }
+
+        const payload = {
+            model: OLLAMA_MODEL,
+            messages: [systemMessage, ...history],
+            stream: false
+        };
+
+        // Use fetch with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
+        const response = await fetch(`${OLLAMA_HOST}/api/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
+                'Authorization': `Bearer ${OLLAMA_API_KEY}`
             },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [systemMessage, ...messages],
-                temperature: 0.5,
-                max_tokens: 150
-            })
+            body: JSON.stringify(payload),
+            signal: controller.signal
         });
 
-        const data = await response.json();
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
-            throw new Error(data.error?.message || 'Failed to fetch from OpenAI');
+            const errorText = await response.text();
+            throw new Error(`Ollama API Error (${response.status}): ${errorText}`);
         }
 
+        const data: any = await response.json();
+
         // Return success response with updated cookie ONLY if not a greeting
-        const res = NextResponse.json(data);
+        // Ollama response format: { model, created_at, message: { role, content }, done }
+        const adaptedResponse = {
+            choices: [
+                {
+                    message: {
+                        content: data.message?.content || ""
+                    }
+                }
+            ]
+        };
+
+        const res = NextResponse.json(adaptedResponse);
 
         if (!isGreeting) {
             res.cookies.set(usageKey, (currentUsage + 1).toString(), {
