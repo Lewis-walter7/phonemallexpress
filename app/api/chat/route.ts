@@ -117,6 +117,11 @@ export async function POST(req: Request) {
             
             ${productContext}
             
+            Key Business Information:
+            - LOCATION: Old Mutual Building, First Floor, Suite 105, Nairobi CBD.
+            - CONTACT: Call or WhatsApp +254718948929.
+            - WEBSITE: phonemallexpress.com (Online retailer, but we have a pickup location).
+            
             STRICT RULES:
             1. SCOPE: You are authorized to discuss the following product categories found in our menu:
                - Smartphones & Tablets (iPhone, Samsung, Tecno, Infinix, Xiaomi, iPad, etc.)
@@ -136,7 +141,7 @@ export async function POST(req: Request) {
             4. Be friendly and helpful.
             5. PRICES: If you have context data, quote the exact KES price. If not, ask the user to check the website or contact support.
             
-            Your goal is to help customers find the right tech gadget or appliance.`
+            Your goal is to help customers find the right tech gadget, schedule a repair, or find our shop.`
         };
 
         // Normalize History
