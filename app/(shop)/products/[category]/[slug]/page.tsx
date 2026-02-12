@@ -206,6 +206,25 @@ const ProductPage = async ({ params }: PageProps) => {
         "worstRating": "1"
     };
 
+    // Add Video Schema if exists
+    if (product.youtubeVideoUrl) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+        const match = product.youtubeVideoUrl.match(regExp);
+        const videoId = (match && match[2].length === 11) ? match[2] : null;
+
+        if (videoId) {
+            (jsonLd as any).subjectOf = {
+                "@type": "VideoObject",
+                "name": `Video for ${product.name}`,
+                "description": product.description || `Watch the video review/overview for ${product.name}.`,
+                "thumbnailUrl": `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                "uploadDate": product.createdAt ? new Date(product.createdAt).toISOString() : new Date().toISOString(),
+                "embedUrl": `https://www.youtube.com/embed/${videoId}`,
+                "contentUrl": product.youtubeVideoUrl
+            };
+        }
+    }
+
     if (reviews.length > 0) {
         (jsonLd as any).review = reviews.map(r => ({
             "@type": "Review",

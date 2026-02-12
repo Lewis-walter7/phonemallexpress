@@ -21,6 +21,10 @@ const TradeInDeviceSchema = new mongoose.Schema({
         type: String, // Smartphone, Tablet, Watch, Laptop
         required: [true, 'Please provide category'],
     },
+    subCategory: {
+        type: String,
+        required: false
+    },
     image: {
         type: String,
         required: [true, 'Please provide device image URL']
@@ -32,12 +36,6 @@ const TradeInDeviceSchema = new mongoose.Schema({
     storageOptions: [{
         type: String
     }],
-    priceList: [{
-        excellent: { type: Number, default: 0 },
-        good: { type: Number, default: 0 },
-        fair: { type: Number, default: 0 },
-        broken: { type: Number, default: 0 }
-    }]
 }, { timestamps: true });
 
 // Auto-generate slug from name before saving

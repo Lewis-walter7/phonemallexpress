@@ -12,6 +12,7 @@ interface TradeInDevice {
     image: string;
     maxCredit: number;
     storageOptions: string[];
+    subCategory?: string;
 }
 
 export default function TradeInDevicesPage() {
@@ -25,6 +26,7 @@ export default function TradeInDevicesPage() {
         name: '',
         brand: 'Apple',
         category: 'Smartphone',
+        subCategory: '',
         image: '',
         maxCredit: 0,
         storageOptions: '' // Comma separated for input
@@ -106,6 +108,7 @@ export default function TradeInDevicesPage() {
             name: device.name,
             brand: device.brand,
             category: device.category,
+            subCategory: device.subCategory || '',
             image: device.image,
             maxCredit: device.maxCredit,
             storageOptions: device.storageOptions?.join(', ') || ''
@@ -124,6 +127,7 @@ export default function TradeInDevicesPage() {
             name: '',
             brand: 'Apple',
             category: 'Smartphone',
+            subCategory: '',
             image: '',
             maxCredit: 0,
             storageOptions: ''
@@ -194,29 +198,58 @@ export default function TradeInDevicesPage() {
                                     required
                                 />
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.label}>Brand</label>
-                                    <select
-                                        className={styles.select}
-                                        value={formData.brand}
-                                        onChange={e => setFormData({ ...formData, brand: e.target.value as any })}
-                                    >
-                                        <option value="Apple">Apple</option>
-                                        <option value="Samsung">Samsung</option>
-                                    </select>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.label}>Category</label>
-                                    <input
-                                        type="text"
-                                        className={styles.input}
-                                        value={formData.category}
-                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                        placeholder="e.g. Smartphone"
-                                        required
-                                    />
-                                </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Brand</label>
+                                <select
+                                    className={styles.select}
+                                    value={formData.brand}
+                                    onChange={e => setFormData({ ...formData, brand: e.target.value as any })}
+                                >
+                                    <option value="Apple">Apple</option>
+                                    <option value="Samsung">Samsung</option>
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Category</label>
+                                <select
+                                    className={styles.select}
+                                    value={formData.category}
+                                    onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                    required
+                                >
+                                    <option value="Smartphone">Smartphone</option>
+                                    <option value="Tablet">Tablet</option>
+                                    <option value="Laptop">Laptop</option>
+                                    <option value="Watch">Watch</option>
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Sub Category</label>
+                                <select
+                                    className={styles.select}
+                                    value={formData.subCategory}
+                                    onChange={e => setFormData({ ...formData, subCategory: e.target.value })}
+                                >
+                                    <option value="">-- None --</option>
+                                    {/* Samsung */}
+                                    <option value="S Series">S Series</option>
+                                    <option value="Z Series">Z Series</option>
+                                    <option value="Note Series">Note Series</option>
+                                    <option value="A Series">A Series</option>
+                                    <option value="Tab S">Tab S</option>
+                                    <option value="Tab A">Tab A</option>
+                                    {/* Apple */}
+                                    <option value="iPhone">iPhone</option>
+                                    <option value="iPad Pro">iPad Pro</option>
+                                    <option value="iPad Air">iPad Air</option>
+                                    <option value="iPad">iPad</option>
+                                    <option value="iPad Mini">iPad Mini</option>
+                                    <option value="MacBook Pro">MacBook Pro</option>
+                                    <option value="MacBook Air">MacBook Air</option>
+                                    <option value="Watch Series">Watch Series</option>
+                                    <option value="Watch Ultra">Watch Ultra</option>
+                                    <option value="Watch SE">Watch SE</option>
+                                </select>
                             </div>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Max Credit (KES)</label>
@@ -255,8 +288,9 @@ export default function TradeInDevicesPage() {
                             </div>
                         </form>
                     </div>
-                </div>
-            )}
-        </div>
+                </div >
+            )
+            }
+        </div >
     );
 }
