@@ -31,15 +31,20 @@ const TradeInDeviceSchema = new mongoose.Schema({
     },
     storageOptions: [{
         type: String
+    }],
+    priceList: [{
+        excellent: { type: Number, default: 0 },
+        good: { type: Number, default: 0 },
+        fair: { type: Number, default: 0 },
+        broken: { type: Number, default: 0 }
     }]
 }, { timestamps: true });
 
 // Auto-generate slug from name before saving
-TradeInDeviceSchema.pre('save', function (next) {
+TradeInDeviceSchema.pre('save', async function () {
     if (this.isModified('name')) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     }
-    next();
 });
 
 export default mongoose.models.TradeInDevice || mongoose.model('TradeInDevice', TradeInDeviceSchema);
