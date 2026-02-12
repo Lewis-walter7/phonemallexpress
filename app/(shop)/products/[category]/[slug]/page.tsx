@@ -19,16 +19,61 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
     const { category, slug } = await params;
     await connectDB();
-    const product = await Product.findOne({ slug }).lean();
+
+    let product = null;
+
+    // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
+    const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
+    if (idMatch) {
+        product = await Product.findById(idMatch[1]).lean();
+    }
+
+    // 2. If not found, try exact slug match
+    if (!product) {
+        product = await Product.findOne({ slug }).lean();
+    }
+
+    // 3. Last resort: if slug IS just an ID
+    if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
+        product = await Product.findById(slug).lean();
+    }
 
     if (!product) return {};
 
-    return generateSEOMetadata({
+    // Determine canonical category slug
+    // Priority: 1. DB Category (slugified), 2. URL Category (if not 'all'), 3. 'all'
+    let canonicalCategory = 'all';
+    if (product.category) {
+        if (typeof product.category === 'string') {
+            canonicalCategory = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        } else if ((product.category as any).slug) {
+            canonicalCategory = (product.category as any).slug;
+        } else if ((product.category as any).name) {
+            canonicalCategory = (product.category as any).name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        }
+    }
+
+    // Ensure we don't have leading/trailing dashes
+    canonicalCategory = canonicalCategory.replace(/^-+|-+$/g, '');
+
+    const metadata = generateSEOMetadata({
         title: product.seo?.title || product.name,
         description: product.seo?.description || product.description,
-        path: `/products/${category}/${slug}`,
+        path: `/products/${canonicalCategory}/${slug}`,
         image: product.images?.[0]?.url || product.imageUrl,
     });
+
+    return {
+        ...metadata,
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+            },
+        },
+    };
 }
 
 const ProductPage = async ({ params }: PageProps) => {

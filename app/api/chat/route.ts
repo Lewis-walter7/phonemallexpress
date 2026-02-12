@@ -69,9 +69,9 @@ export async function POST(req: Request) {
     // Strict match or starts with (e.g. "Hi there") - but aim to catch short greetings mostly
     const isGreeting = GREETINGS.some(g => lastUserMessage.toLowerCase() === g || (lastUserMessage.toLowerCase().startsWith(g + '') && lastUserMessage.length < 15));
 
-    if (!isGreeting && currentUsage >= 6) {
+    if (!isGreeting && currentUsage >= 12) {
         return NextResponse.json({
-            error: 'You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support.'
+            error: 'You have reached your daily limit of 12 messages. Please contact us on WhatsApp for unlimited support.'
         }, { status: 429 });
     }
 

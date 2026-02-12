@@ -96,7 +96,7 @@ export default function Chatbot() {
             if (!response.ok) {
                 // If rate limited, show a system-like message but dont verify user here
                 if (response.status === 429) {
-                    setMessages(prev => [...prev, { role: 'assistant', content: "⚠️ You have reached your daily limit of 6 messages. Please contact us on WhatsApp for unlimited support." }]);
+                    setMessages(prev => [...prev, { role: 'assistant', content: "⚠️ You have reached your daily limit of 12 messages. Please contact us on WhatsApp for unlimited support." }]);
                 } else {
                     throw new Error(data.error || 'Failed to connect');
                 }
@@ -168,7 +168,7 @@ export default function Chatbot() {
                             justifyContent: 'space-between',
                             animation: 'fadeIn 0.3s ease-in-out'
                         }}>
-                            <span>Free usage: You have up to 6 message requests per day.</span>
+                            <span>Free usage: You have up to 12 message requests per day.</span>
                             <button
                                 onClick={() => {
                                     setShowLimitWarning(false);
