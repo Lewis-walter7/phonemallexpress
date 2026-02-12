@@ -242,6 +242,7 @@ const Navbar = () => {
                                     ))}
 
                                     <hr className="menu-divider" />
+                                    <Link href="/trade-in" className="menu-item-link">Trade In Program</Link>
                                     <Link href="/repairs" className="menu-item-link">Repairs & Services</Link>
                                     <Link href="/about" className="menu-item-link">About Us</Link>
                                 </div>
@@ -333,6 +334,7 @@ const Navbar = () => {
                             { name: 'Computers', href: '/products/computers' },
                             { name: "Storage", href: "/products/storage" },
                             { name: 'Tablets', href: '/products/tablets' },
+                            { name: 'Trade In', href: '/trade-in' },
                             { name: 'Content Creator Kit', href: '/search?q=Content+Creator' }
                         ].map((link) => {
                             const isActive = () => {
@@ -455,6 +457,10 @@ const Navbar = () => {
                                 <ChevronRight size={18} />
                             </Link>
                             <hr className="drawer-divider" />
+                            <Link href="/trade-in" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
+                                Trade In
+                                <ChevronRight size={18} />
+                            </Link>
                             <Link href="/about" className="mobile-nav-link-item" onClick={() => setIsMobileMenuOpen(false)}>
                                 About Us
                                 <ChevronRight size={18} />

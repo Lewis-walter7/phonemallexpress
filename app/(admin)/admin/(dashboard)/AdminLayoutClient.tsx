@@ -77,6 +77,11 @@ export default function AdminLayoutClient({
                     <Link href="/admin/orders" className={styles.link} onClick={() => setIsSidebarOpen(false)}>🚚 Orders</Link>
                     <Link href="/admin/quotes" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📋 Bulk Quotes</Link>
 
+                    <div className={styles.divider} style={{ height: '1px', background: '#333', margin: '10px 0' }}></div>
+                    <span style={{ fontSize: '0.75rem', color: '#666', padding: '0 1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Trade-In</span>
+                    <Link href="/admin/trade-in/devices" className={styles.link} onClick={() => setIsSidebarOpen(false)}>📱 Devices</Link>
+                    <Link href="/admin/trade-in/requests" className={styles.link} onClick={() => setIsSidebarOpen(false)}>🔄 Requests</Link>
+
                     <div className={styles.footer}>
                         <Link href="/" className={styles.link} style={{ fontSize: '0.85rem', color: '#888' }}>
                             ↪ Back to Shop
