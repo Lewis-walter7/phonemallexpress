@@ -12,7 +12,7 @@ const MobileSearch = () => {
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            router.push(`/products/all?search=${encodeURIComponent(searchQuery)}`);
+            router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
         }
     };
 

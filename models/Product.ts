@@ -231,4 +231,21 @@ if (process.env.NODE_ENV !== 'production' && mongoose.models && mongoose.models.
     delete mongoose.models.Product;
 }
 
+// Text Index for Search Optimization
+ProductSchema.index({
+    name: 'text',
+    description: 'text',
+    brand: 'text',
+    category: 'text',
+    'specifications.Processor': 'text', // Example of indexing nested fields
+}, {
+    weights: {
+        name: 10,
+        brand: 5,
+        category: 3,
+        description: 1
+    },
+    name: 'TextIndex'
+});
+
 export default mongoose.models.Product || mongoose.model('Product', ProductSchema);

@@ -136,9 +136,9 @@ const ProductPage = async ({ params }: PageProps) => {
 
     console.log(productImages);
     const originalPrice = product.compareAtPrice || product.salePrice;
-    const discountPercentage = product.discountPercentage || (originalPrice && originalPrice > product.price
-        ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
-        : null);
+    // const discountPercentage = product.discountPercentage || (originalPrice && originalPrice > product.price
+    //     ? Math.round(((originalPrice - product.price) / originalPrice) * 100)
+    //     : null);
 
     const catName = typeof product.category === 'string' ? product.category : ((product.category as any)?.name || 'Category');
     const brandName = typeof product.brand === 'string' ? product.brand : ((product.brand as any)?.name || 'Brand');
