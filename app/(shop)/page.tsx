@@ -12,7 +12,7 @@ import './Home.css';
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
     title: "PhoneMallExpress™ | Premium Electronics and Accessories",
-    description: "High-quality phone cases, fast chargers, audio gear, and smart watches. Ultra-fast shipping and premium quality accessories for every device.",
+    description: "Sale & repair of smartphones, laptops, CCTV systems, TVs, soundbars, fridges, washing machines, cookers, sound systems, kitchenware, and all home & office appliances — ultra-fast shipping, expert technicians, genuine parts, and premium electronics.",
     path: '/',
   });
 }
