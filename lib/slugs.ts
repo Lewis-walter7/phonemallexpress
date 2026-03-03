@@ -2,12 +2,8 @@ export function slugify(text: string): string {
     return text
         .toString()
         .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')     // Replace spaces with -
-        .replace(/[^\w-]+/g, '')  // Remove all non-word chars
-        .replace(/--+/g, '-')     // Replace multiple - with single -
-        .replace(/^-+/, '')       // Trim - from start of text
-        .replace(/-+$/, '');      // Trim - from end of text
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 }
 
 export function getCanonicalCategorySlug(category: any): string {
@@ -30,7 +26,7 @@ export function getCanonicalCategorySlug(category: any): string {
 
 export function getProductCanonicalPath(product: any, category?: any): string {
     const catSlug = getCanonicalCategorySlug(category || product.category);
-    const prodSlug = product.slug || `${slugify(product.name)}-${product._id}`;
+    const prodSlug = product.slug || slugify(product.name);
 
     return `/products/${catSlug}/${prodSlug}`;
 }
