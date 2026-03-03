@@ -14,6 +14,10 @@ export interface IOrder extends Document {
         price: number;
         quantity: number;
         variant?: string;
+        selectedStorage?: string;
+        selectedWarranty?: string;
+        selectedSim?: string;
+        selectedConnectivity?: string;
         color?: string;
     }>;
     totalAmount: number;
@@ -51,6 +55,10 @@ const OrderSchema = new Schema<IOrder>(
                 price: { type: Number, required: true },
                 quantity: { type: Number, required: true },
                 variant: { type: String },
+                selectedStorage: { type: String },
+                selectedWarranty: { type: String },
+                selectedSim: { type: String },
+                selectedConnectivity: { type: String },
                 color: { type: String },
             },
         ],
