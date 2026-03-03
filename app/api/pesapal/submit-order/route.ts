@@ -41,6 +41,10 @@ export async function POST(req: NextRequest) {
                 price: item.price,
                 quantity: item.quantity,
                 variant: item.variant,
+                selectedStorage: item.selectedStorage,
+                selectedWarranty: item.selectedWarranty,
+                selectedSim: item.selectedSim,
+                selectedConnectivity: item.selectedConnectivity,
                 color: item.color
             })),
             totalAmount: Number(amount),
