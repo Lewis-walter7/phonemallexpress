@@ -182,12 +182,12 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "PhoneMallExpress™",
-    "url": "https://phonemallexpress.com",
+    "url": "https://www.phonemallexpress.com",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://phonemallexpress.com/search?q={search_term_string}"
+        "urlTemplate": "https://www.phonemallexpress.com/search?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }
@@ -197,9 +197,9 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "ElectronicsStore",
     "name": "PhoneMallExpress™",
-    "url": "https://phonemallexpress.com",
-    "logo": "https://phonemallexpress.com/logo.png",
-    "image": "https://phonemallexpress.com/og-image.jpg",
+    "url": "https://www.phonemallexpress.com",
+    "logo": "https://www.phonemallexpress.com/logo.png",
+    "image": "https://www.phonemallexpress.com/og-image.jpg",
     "priceRange": "$$",
     "sameAs": [
       "https://www.facebook.com/PhonemallExpress",
@@ -236,7 +236,7 @@ export default async function Home() {
     ]
   };
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
   const featuredItemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",

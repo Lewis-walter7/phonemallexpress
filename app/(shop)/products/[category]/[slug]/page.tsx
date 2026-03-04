@@ -138,7 +138,7 @@ const ProductPage = async ({ params }: PageProps) => {
     const catName = typeof product.category === 'string' ? product.category : ((product.category as any)?.name || 'Category');
     const brandName = typeof product.brand === 'string' ? product.brand : ((product.brand as any)?.name || 'Brand');
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
