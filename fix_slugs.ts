@@ -8,8 +8,9 @@ async function fix() {
     console.log(`Checking ${products.length} products...`);
 
     for (const prod of products) {
-        // Trigger the pre-save hook which now appends the ID
+        // Force slug regeneration by setting it to undefined
         console.log(`Updating slug for: ${prod.name}`);
+        (prod as any).slug = undefined;
         await prod.save();
         console.log(`New slug: ${prod.slug}`);
     }

@@ -153,13 +153,27 @@ const ProductSchema = new mongoose.Schema({
 ProductSchema.pre('save', async function () {
     // 1. Slug generation
     if (!this.slug || this.isModified('name')) {
-        let slug = this.name.toLowerCase()
+        const baseSlug = this.name.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
 
-        if (this._id) {
-            slug = `${slug}-${this._id}`;
+        let slug = baseSlug;
+        let counter = 1;
+        const ProductModel = this.constructor as mongoose.Model<any>;
+
+        // Loop to ensure slug is unique
+        while (true) {
+            const existingProduct = await ProductModel.findOne({
+                slug,
+                _id: { $ne: this._id }
+            });
+
+            if (!existingProduct) break;
+
+            counter++;
+            slug = `${baseSlug}-${counter}`;
         }
+
         this.slug = slug;
     }
 

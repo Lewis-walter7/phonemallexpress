@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Image from 'next/image';
 import { ShoppingCart } from 'lucide-react';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
@@ -19,18 +19,17 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
     const { category, slug } = await params;
     await connectDB();
-
     let product = null;
 
-    // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
-    const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
-    if (idMatch) {
-        product = await Product.findById(idMatch[1]).lean();
-    }
+    // 1. Try exact slug match
+    product = await Product.findOne({ slug }).lean();
 
-    // 2. If not found, try exact slug match
+    // 2. If not found, try to extract ObjectId from SEO slug (legacy "product-name-ID")
     if (!product) {
-        product = await Product.findOne({ slug }).lean();
+        const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
+        if (idMatch) {
+            product = await Product.findById(idMatch[1]).lean();
+        }
     }
 
     // 3. Last resort: if slug IS just an ID
@@ -81,24 +80,38 @@ const ProductPage = async ({ params }: PageProps) => {
     await connectDB();
 
     let product = null;
-    console.log('--- PRODUCT SCHEMA PATHS ---');
-    console.log(Object.keys(Product.schema.paths));
-    console.log('----------------------------');
 
-    // 1. Try to extract ObjectId from SEO slug (e.g. "product-name-ID")
-    const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
-    if (idMatch) {
-        product = await Product.findById(idMatch[1]).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
-    }
+    // 1. Try exact slug match (SEO friendly way)
+    product = await Product.findOne({ slug }).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
 
-    // 2. If not found, try exact slug match (legacy)
+    // 2. If not found, handle legacy formats with permanent redirect
     if (!product) {
-        product = await Product.findOne({ slug }).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
-    }
+        // A. Extract ObjectId from SEO slug (e.g. "product-name-ID")
+        const idMatch = slug.match(/-([0-9a-fA-F]{24})$/);
+        if (idMatch) {
+            product = await Product.findById(idMatch[1]).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
+        }
 
-    // 3. Last resort: if slug IS just an ID
-    if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
-        product = await Product.findById(slug).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
+        // B. Last resort: if slug IS just an ID
+        if (!product && slug.match(/^[0-9a-fA-F]{24}$/)) {
+            product = await Product.findById(slug).populate({ path: 'frequentlyBoughtTogether', strictPopulate: false }).lean();
+        }
+
+        // If found via legacy format, redirect to clean URL
+        if (product && product.slug && product.slug !== slug) {
+            let canonicalCategory = 'all';
+            if (product.category) {
+                if (typeof product.category === 'string') {
+                    canonicalCategory = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                } else if ((product.category as any).slug) {
+                    canonicalCategory = (product.category as any).slug;
+                } else if ((product.category as any).name) {
+                    canonicalCategory = (product.category as any).name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                }
+            }
+            canonicalCategory = canonicalCategory.replace(/^-+|-+$/g, '');
+            permanentRedirect(`/products/${canonicalCategory}/${product.slug}`);
+        }
     }
 
     if (!product) {

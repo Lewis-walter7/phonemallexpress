@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // Fallback for missing slugs (generate one on the fly if needed, though mostly relying on DB)
         let prodSlug = prod.slug;
         if (!prodSlug && prod.name) {
-            prodSlug = prod.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') + '-' + prod._id;
+            prodSlug = prod.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
         }
 
         // Fallback for missing category
