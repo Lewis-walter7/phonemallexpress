@@ -15,7 +15,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://phonemallexpress.com'),
+  metadataBase: new URL('https://www.phonemallexpress.com'),
   title: {
     default: "PhoneMallExpress™ | Premium Electronics and Accessories",
     template: "%s | PhoneMallExpress™"
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://phonemallexpress.com",
+    url: "https://www.phonemallexpress.com",
     siteName: "PhoneMallExpress™",
     title: "PhoneMallExpress™ | Premium Electronics and Accessories",
     description: "Premium Electronics and Accessories delivered with speed and quality. Elevate your mobile experience.",

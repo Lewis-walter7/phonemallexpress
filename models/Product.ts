@@ -159,6 +159,7 @@ ProductSchema.pre('save', async function () {
 
         let slug = baseSlug;
         let counter = 1;
+<<<<<<< HEAD
         const ProductModel = this.constructor as mongoose.Model<any>;
 
         // Loop to ensure slug is unique
@@ -172,6 +173,16 @@ ProductSchema.pre('save', async function () {
 
             counter++;
             slug = `${baseSlug}-${counter}`;
+=======
+
+        // Ensure slug is unique
+        const ProductModel = this.constructor as mongoose.Model<any>;
+        let slugExists = await ProductModel.findOne({ slug, _id: { $ne: this._id } });
+
+        while (slugExists) {
+            slug = `${baseSlug}-${counter++}`;
+            slugExists = await ProductModel.findOne({ slug, _id: { $ne: this._id } });
+>>>>>>> 91db3b2edd30155e2a3249c60473642889099ca2
         }
 
         this.slug = slug;

@@ -6,6 +6,7 @@ import connectDB from '@/lib/db';
 import Product from '@/models/Product';
 import Review from '@/models/Review';
 import { generateSEOMetadata } from '@/lib/seo';
+import { getProductCanonicalPath } from '@/lib/slugs';
 import ProductGallery from '@/components/product/ProductGallery';
 import AddToCartSection from '@/components/product/AddToCartSection';
 import ProductCard from '@/components/product/ProductCard';
@@ -39,26 +40,12 @@ export async function generateMetadata({ params }: PageProps) {
 
     if (!product) return {};
 
-    // Determine canonical category slug
-    // Priority: 1. DB Category (slugified), 2. URL Category (if not 'all'), 3. 'all'
-    let canonicalCategory = 'all';
-    if (product.category) {
-        if (typeof product.category === 'string') {
-            canonicalCategory = product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        } else if ((product.category as any).slug) {
-            canonicalCategory = (product.category as any).slug;
-        } else if ((product.category as any).name) {
-            canonicalCategory = (product.category as any).name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        }
-    }
-
-    // Ensure we don't have leading/trailing dashes
-    canonicalCategory = canonicalCategory.replace(/^-+|-+$/g, '');
+    const canonicalPath = getProductCanonicalPath(product);
 
     const metadata = generateSEOMetadata({
         title: product.seo?.title || product.name,
         description: product.seo?.description || product.description,
-        path: `/products/${canonicalCategory}/${slug}`,
+        path: canonicalPath,
         image: product.images?.[0]?.url || product.imageUrl,
     });
 
@@ -118,6 +105,14 @@ const ProductPage = async ({ params }: PageProps) => {
         notFound();
     }
 
+    // Check for canonical URL
+    const canonicalPath = getProductCanonicalPath(product);
+    const currentPath = `/products/${catSlug}/${slug}`;
+
+    if (currentPath !== canonicalPath) {
+        permanentRedirect(canonicalPath);
+    }
+
     // Related Products - same category but not this product
     const relatedProducts = await Product.find({
         category: product.category,
@@ -156,7 +151,7 @@ const ProductPage = async ({ params }: PageProps) => {
     const catName = typeof product.category === 'string' ? product.category : ((product.category as any)?.name || 'Category');
     const brandName = typeof product.brand === 'string' ? product.brand : ((product.brand as any)?.name || 'Brand');
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",

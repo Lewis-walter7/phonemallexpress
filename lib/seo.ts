@@ -15,7 +15,7 @@ export function generateSEOMetadata({
     image = '/og-image.jpg',
     type = 'website'
 }: SEOProps): Metadata {
-    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com'}${path}`;
+    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com'}${path}`;
 
     return {
         title,
