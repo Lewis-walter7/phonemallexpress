@@ -109,7 +109,11 @@ const CheckoutPage = () => {
                             name: item.name,
                             price: item.price,
                             quantity: item.quantity,
-                            variant: item.variant || item.selectedStorage, // Prioritize storage as main variant
+                            variant: item.variant || item.selectedStorage,
+                            selectedStorage: item.selectedStorage,
+                            selectedWarranty: item.selectedWarranty,
+                            selectedSim: item.selectedSim,
+                            selectedConnectivity: item.selectedConnectivity,
                             color: item.selectedColor
                         })),
                         description: `Order ${orderId} - ${totalItems} items`

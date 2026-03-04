@@ -184,11 +184,6 @@ ProductSchema.pre('save', async function () {
         }
     }
 
-    // A. Storage Prices (Base) - Keep Sale Price logic
-    const storagePrices = (this as any).storageVariants && (this as any).storageVariants.length > 0
-        ? (this as any).storageVariants.filter((v: any) => !v.isDisabled).map((v: any) => (v.salePrice && v.salePrice > 0) ? v.salePrice : (v.price || 0))
-        : [salePrice > 0 ? salePrice : basePrice]; // Use main sale price if no variants
-
     // B. Warranty Prices (Add-on) - Remove Sale Price logic
     const warrantyPrices = (this as any).warrantyVariants && (this as any).warrantyVariants.length > 0
         ? (this as any).warrantyVariants.filter((v: any) => !v.isDisabled).map((v: any) => v.price || 0)
@@ -199,19 +194,35 @@ ProductSchema.pre('save', async function () {
         ? (this as any).simVariants.filter((v: any) => !v.isDisabled).map((v: any) => v.price || 0)
         : [0];
 
-    // D. Connectivity Prices (Add-on) - Remove Sale Price logic
-    const connectivityPrices = (this as any).connectivityVariants && (this as any).connectivityVariants.length > 0
-        ? (this as any).connectivityVariants.filter((v: any) => !v.isDisabled).map((v: any) => v.price || 0)
-        : [0];
-
     // Calculate all possible final totals
     // Formula: Storage (Base) + Warranty + SIM + Connectivity
+    // Note: connectivityPrices is usually for add-on price if any.
+    // If no connectivity variants, we have [0].
+
+    const connectivityVariantNames = (this as any).connectivityVariants && (this as any).connectivityVariants.length > 0
+        ? (this as any).connectivityVariants.filter((v: any) => !v.isDisabled).map((v: any) => v.name)
+        : [null];
+
     const allTotals: number[] = [];
-    storagePrices.forEach((s: number) => {
-        warrantyPrices.forEach((w: number) => {
-            simPrices.forEach((sim: number) => {
-                connectivityPrices.forEach((c: number) => {
-                    allTotals.push(s + w + sim + c);
+
+    // Iterate through connectivity first, as storage is constrained by it
+    connectivityVariantNames.forEach((connName: string | null) => {
+        const connPrice = connName
+            ? ((this as any).connectivityVariants.find((v: any) => v.name === connName)?.price || 0)
+            : 0;
+
+        // Filter storage variants based on current connectivity
+        const validStoragePrices = (this as any).storageVariants && (this as any).storageVariants.length > 0
+            ? (this as any).storageVariants
+                .filter((v: any) => !v.isDisabled)
+                .filter((v: any) => !connName || !v.availableForConnectivity || v.availableForConnectivity.length === 0 || v.availableForConnectivity.includes(connName))
+                .map((v: any) => (v.salePrice && v.salePrice > 0) ? v.salePrice : (v.price || 0))
+            : [salePrice > 0 ? salePrice : basePrice];
+
+        validStoragePrices.forEach((s: number) => {
+            warrantyPrices.forEach((w: number) => {
+                simPrices.forEach((sim: number) => {
+                    allTotals.push(s + w + sim + connPrice);
                 });
             });
         });
