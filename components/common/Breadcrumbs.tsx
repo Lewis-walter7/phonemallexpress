@@ -12,7 +12,7 @@ interface BreadcrumbsProps {
 }
 
 const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
 
     const jsonLd = {
         "@context": "https://schema.org",

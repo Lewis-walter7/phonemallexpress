@@ -4,7 +4,7 @@ import Category from '@/models/Category';
 import Product from '@/models/Product';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const BASE_URL = 'https://phonemallexpress.com';
+    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
 
     await connectDB();
 

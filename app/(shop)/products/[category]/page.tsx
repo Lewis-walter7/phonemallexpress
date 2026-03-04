@@ -110,7 +110,7 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
 
     const { products, totalPages, totalCount } = await getCategoryProducts(slug, search, brand, type, currentPage, limit);
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://phonemallexpress.com';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
