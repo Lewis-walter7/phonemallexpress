@@ -122,6 +122,27 @@ const categories = [
         ]
     },
     {
+        name: 'Scanners',
+        slug: 'scanners',
+        subItems: [
+            { name: 'Flatbed', slug: 'scanners?type=flatbed' },
+            { name: 'Portable', slug: 'scanners?type=portable' },
+            { name: 'Document', slug: 'scanners?type=document' },
+            { name: 'Barcode', slug: 'scanners?type=barcode' },
+        ]
+    },
+    {
+        name: 'Printers',
+        slug: 'printers',
+        subItems: [
+            { name: 'Inkjet', slug: 'printers?type=inkjet' },
+            { name: 'Laser', slug: 'printers?type=laser' },
+            { name: 'All-in-One', slug: 'printers?type=all-in-one' },
+            { name: 'Thermal', slug: 'printers?type=thermal' },
+            { name: 'Dot Matrix', slug: 'printers?type=dot-matrix' },
+        ]
+    },
+    {
         name: 'TVs',
         slug: 'tvs',
         subItems: [
@@ -230,7 +251,6 @@ const Navbar = () => {
                                 </button>
 
                                 <div className="dropdown-menu-content">
-                                    <Link href="/products" className="menu-item-link">All Accessories</Link>
 
                                     {categories.map((cat) => (
                                         <div key={cat.slug} className="menu-item-with-sub">
