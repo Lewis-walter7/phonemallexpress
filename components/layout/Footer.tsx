@@ -15,7 +15,7 @@ const Footer = () => {
                             <Image src="/logo.png" alt="Phone Mall Express" width={180} height={70} style={{ height: 'auto' }} />
                         </Link>
                         <p className="footer-desc">
-                            Premium phone accessories delivered with speed and quality. Elevate your mobile experience with our curated collection.
+                            Premium electronics and accessories delivered with speed and quality. Elevate your experience with our collection.
                         </p>
                         <div className="social-links">
                             <a href="https://www.facebook.com/PhonemallExpress?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook">

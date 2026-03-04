@@ -110,6 +110,18 @@ const categories = [
         ]
     },
     {
+        name: 'Projectors',
+        slug: 'projectors',
+        subItems: [
+            { name: 'Home Theater', slug: 'projectors?type=home-theater' },
+            { name: 'Portable', slug: 'projectors?type=portable' },
+            { name: 'Business', slug: 'projectors?type=business' },
+            { name: '4K', slug: 'projectors?type=4k' },
+            { name: 'Mini/LED', slug: 'projectors?type=mini-led' },
+            { name: 'Accessories', slug: 'projectors?type=accessories' },
+        ]
+    },
+    {
         name: 'TVs',
         slug: 'tvs',
         subItems: [

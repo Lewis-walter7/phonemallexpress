@@ -19,6 +19,7 @@ const categorySubcategoryMap: Record<string, string[]> = {
     'Computers': ['Laptops', 'Desktop Computers', 'Monitors', 'iMacs', 'Macbooks', 'Servers'],
     'Refrigerators': ['Side by side', 'Single door', 'Double door'],
     'Washing Machines': ['Top load', 'Front load'],
+    'Projectors': ['Home Theater', 'Portable', 'Business', '4K', 'Mini/LED', 'Accessories'],
     'Kitchen ware': ['Cookers',
         'Airfryers',
         'Blenders',
