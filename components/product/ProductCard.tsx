@@ -73,13 +73,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
     const inWishlist = isInWishlist(product._id);
 
-<<<<<<< HEAD
-    const seoSlug = product.slug || product.name.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-=======
-    const seoSlug = product.slug || `${slugify(product.name)}-${product._id}`;
->>>>>>> 91db3b2edd30155e2a3249c60473642889099ca2
+    const seoSlug = product.slug || slugify(product.name);
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
