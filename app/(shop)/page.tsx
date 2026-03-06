@@ -6,6 +6,7 @@ import Product from "@/models/Product";
 import ProductCard from "@/components/product/ProductCard";
 import LazyRSQPopup from "@/components/common/LazyRSQPopup";
 import HomeBanners from "@/components/home/HomeBanners";
+import Testimonials from "@/components/home/Testimonials";
 import { generateSEOMetadata } from '@/lib/seo';
 import './Home.css';
 
@@ -344,7 +345,7 @@ export default async function Home() {
                     width={100}
                     height={100}
                     className="mobi-card-image"
-                    style={{ objectFit: 'contain', height: 'auto' }}
+                    style={{ objectFit: 'contain' }}
                   />
                 </div>
                 <div className="mobi-card-content">
@@ -431,6 +432,9 @@ export default async function Home() {
 
       {/* Pocket Friendly */}
       {renderProductSection("Smart Savings", "Top tech that won't break the bank.", "/search?sort=price_asc", pocketFriendly)}
+
+      {/* Testimonials */}
+      <Testimonials />
 
       {/* Partners Section */}
       <section className="section-gz" style={{ borderTop: '1px solid var(--border)', backgroundColor: 'var(--secondary)' }}>

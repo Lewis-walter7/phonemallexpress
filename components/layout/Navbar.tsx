@@ -282,14 +282,14 @@ const Navbar = () => {
                         </div>
 
                         <Link href="/" className="logo desktop-only">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={60} height={20} className="logo-image" style={{ height: 'auto' }} priority />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={60} height={20} className="logo-image" priority />
                         </Link>
                     </div>
 
                     {/* CENTER: Logo (Mobile) or Search (Desktop) */}
                     <div className="navbar-center">
                         <Link href="/" className="logo mobile-only">
-                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" style={{ height: 'auto' }} priority />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" priority />
                         </Link>
 
                         <form onSubmit={handleSearch} className="search-form desktop-only">
@@ -405,7 +405,7 @@ const Navbar = () => {
                 <div className="drawer-header">
                     <div className="drawer-top-actions">
                         <Link href="/" className="drawer-logo" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" style={{ height: 'auto' }} />
+                            <Image src="/logo.png" alt="Phone Mall Express" width={70} height={20} className="logo-image" />
                         </Link>
                         <button className="close-btn" onClick={() => setIsMobileMenuOpen(false)}>
                             <X size={24} />

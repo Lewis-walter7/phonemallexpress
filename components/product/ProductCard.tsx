@@ -22,9 +22,10 @@ interface ProductCardProps {
         discountPercentage?: number;
         imageUrl?: string;
         images?: { url: string; alt: string }[];
-        minPrice?: number;
         maxPrice?: number;
+        minPrice?: number;
         category: string | { name: string; slug: string };
+        stock?: number;
     };
 }
 
@@ -171,6 +172,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 <Link href={`/products/${catSlug}/${seoSlug}`}>
                     <h3 className="product-name">{product.name}</h3>
                 </Link>
+
+                <div className="product-stock-status">
+                    {product.stock !== undefined && product.stock > 0 ? (
+                        <span className="stock-badge in-stock">
+                            <span className="stock-dot"></span> In Stock
+                        </span>
+                    ) : (
+                        <span className="stock-badge out-of-stock">
+                            <span className="stock-dot"></span> Out of Stock
+                        </span>
+                    )}
+                </div>
 
                 <div className="product-footer-row">
                     <div className="product-price-container">
