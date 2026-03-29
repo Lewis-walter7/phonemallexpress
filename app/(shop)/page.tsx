@@ -12,8 +12,8 @@ import './Home.css';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generateSEOMetadata({
-    title: "PhoneMallExpress™ | Premium Electronics and Accessories",
-    description: "Sale & repair of smartphones, laptops, CCTV systems, TVs, soundbars, fridges, washing machines, cookers, sound systems, kitchenware, and all home & office appliances — ultra-fast shipping, expert technicians, genuine parts, and premium electronics.",
+    title: "Premium Electronics, Repairs & Trade-ins in Nairobi",
+    description: "Shop smartphones, laptops, audio, CCTV, TVs, fridges & more at PhoneMallExpress. Expert repairs, device trade-ins, and ultra-fast delivery across Kenya. Genuine parts, top brands, best prices.",
     path: '/',
   });
 }
@@ -57,82 +57,58 @@ const CATEGORIES = [
   }
 ];
 
+// Shared projection — only fetch fields ProductCard actually needs
+const CARD_FIELDS = { name: 1, slug: 1, price: 1, salePrice: 1, compareAtPrice: 1, discountPercentage: 1, isOnSpecialOffer: 1, imageUrl: 1, images: 1, brand: 1, category: 1, stock: 1, averageRating: 1, reviewCount: 1, isFeatured: 1, _id: 1 };
+
 async function getFeaturedProducts() {
   await dbConnect();
-  const featuredProducts = await Product.find({ isFeatured: true, status: 'published' })
-    .limit(12)
-    .lean();
-  return JSON.parse(JSON.stringify(featuredProducts));
+  const products = await Product.find({ isFeatured: true, status: 'published' }, CARD_FIELDS)
+    .limit(12).lean();
+  return JSON.parse(JSON.stringify(products));
 }
 
 async function getSpecialOffers() {
   await dbConnect();
-  const specialOffers = await Product.find({
+  const products = await Product.find({
     status: 'published',
-    $or: [
-      { isOnSpecialOffer: true },
-      { compareAtPrice: { $gt: 0 } }
-    ]
-  })
-    .limit(12)
-    .sort({ discountPercentage: -1 })
-    .lean();
-  return JSON.parse(JSON.stringify(specialOffers));
+    $or: [{ isOnSpecialOffer: true }, { compareAtPrice: { $gt: 0 } }]
+  }, CARD_FIELDS)
+    .limit(6).sort({ discountPercentage: -1 }).lean();
+  return JSON.parse(JSON.stringify(products));
 }
 
 async function getAppleProducts() {
   await dbConnect();
-  const products = await Product.find({
-    status: 'published',
-    brand: { $regex: 'Apple', $options: 'i' }
-  })
-    .limit(10)
-    .lean();
+  const products = await Product.find({ status: 'published', brand: { $regex: 'Apple', $options: 'i' } }, CARD_FIELDS)
+    .limit(6).lean();
   return JSON.parse(JSON.stringify(products));
 }
 
 async function getSamsungProducts() {
   await dbConnect();
-  const products = await Product.find({
-    status: 'published',
-    brand: { $regex: 'Samsung', $options: 'i' }
-  })
-    .limit(10)
-    .lean();
+  const products = await Product.find({ status: 'published', brand: { $regex: 'Samsung', $options: 'i' } }, CARD_FIELDS)
+    .limit(6).lean();
   return JSON.parse(JSON.stringify(products));
 }
 
 async function getGamingProducts() {
   await dbConnect();
-  const products = await Product.find({
-    status: 'published',
-    category: 'gaming'
-  })
-    .limit(10)
-    .lean();
+  const products = await Product.find({ status: 'published', category: 'gaming' }, CARD_FIELDS)
+    .limit(6).lean();
   return JSON.parse(JSON.stringify(products));
 }
 
 async function getFlashSales() {
   await dbConnect();
-  const products = await Product.find({
-    status: 'published',
-    isOnSpecialOffer: true
-  })
-    .limit(10)
-    .sort({ discountPercentage: -1 })
-    .lean();
+  const products = await Product.find({ status: 'published', isOnSpecialOffer: true }, CARD_FIELDS)
+    .limit(6).sort({ discountPercentage: -1 }).lean();
   return JSON.parse(JSON.stringify(products));
 }
 
 async function getPocketFriendlyProducts() {
   await dbConnect();
-  const products = await Product.find({
-    status: 'published'
-  })
-    .limit(10)
-    .sort({ price: 1 })
-    .lean();
+  const products = await Product.find({ status: 'published' }, CARD_FIELDS)
+    .limit(6).sort({ price: 1 }).lean();
   return JSON.parse(JSON.stringify(products));
 }
 
@@ -238,78 +214,24 @@ export default async function Home() {
   };
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.phonemallexpress.com';
-  const featuredItemListLd = {
+  // Lean ItemList — verbose shipping/return policies belong on individual product pages
+  const featuredItemListLd = featuredProducts.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "Featured Products",
     "itemListElement": featuredProducts.map((product: any, index: number) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "item": {
-        "@type": "Product",
-        "name": product.name,
-        "url": `${baseUrl}/products/${product.category}/${product.slug}`,
-        "description": product.description,
-        "image": product.imageUrl || (product.images && product.images[0]) || "",
-        "sku": product.sku || product._id.toString(),
-        "offers": {
-          "@type": "Offer",
-          "price": product.price,
-          "priceCurrency": "KES",
-          "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-          "url": `${baseUrl}/products/${product.category}/${product.slug}`,
-          "hasMerchantReturnPolicy": {
-            "@type": "MerchantReturnPolicy",
-            "applicableCountry": "KE",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-            "merchantReturnDays": 14,
-            "returnMethod": "https://schema.org/ReturnByMail",
-            "returnFees": "https://schema.org/FreeReturn"
-          },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingRate": {
-              "@type": "MonetaryAmount",
-              "value": "0",
-              "currency": "KES"
-            },
-            "shippingDestination": {
-              "@type": "DefinedRegion",
-              "addressCountry": "KE"
-            },
-            "deliveryTime": {
-              "@type": "ShippingDeliveryTime",
-              "handlingTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 1,
-                "maxValue": 2,
-                "unitCode": "DAY"
-              },
-              "transitTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 1,
-                "maxValue": 3,
-                "unitCode": "DAY"
-              }
-            }
-          }
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": product.averageRating || 5,
-          "reviewCount": product.reviewCount || 1,
-          "bestRating": "5",
-          "worstRating": "1"
-        }
-      }
+      "url": `${baseUrl}/products/${product.category}/${product.slug}`,
+      "name": product.name,
     }))
-  };
+  } : null;
 
   return (
     <div className="home-page">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd, featuredItemListLd]) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, orgJsonLd, featuredItemListLd].filter(Boolean)) }}
       />
 
       {/* Promotional Banners */}
