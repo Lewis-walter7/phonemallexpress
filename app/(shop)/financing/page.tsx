@@ -1,10 +1,13 @@
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 
-export const metadata: Metadata = {
-    title: 'Financing & Lipa Mdogo Mdogo | PhoneMallExpress™',
-    description: 'Learn about our flexible financing options including Lipa Mdogo Mdogo. Get your favorite smartphone today and pay in easy installments.',
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Financing & Lipa Mdogo Mdogo',
+        description: 'Own your dream device today with flexible payment plans. PhoneMallExpress offers Lipa Mdogo Mdogo financing for Samsung and iPhone in Kenya — small deposit, easy installments.',
+        path: '/financing',
+    });
+}
 
 export default function FinancingPage() {
     return (

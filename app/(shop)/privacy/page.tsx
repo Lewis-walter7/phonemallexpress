@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
-export const metadata: Metadata = {
-    title: 'Privacy Policy',
-    description: 'Our privacy policy explains how we collect and protect your data at PhoneMallExpress.',
-    alternates: {
-        canonical: '/privacy',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Privacy Policy',
+        description: 'Our privacy policy explains how PhoneMallExpress collects, uses, and protects your personal data including purchase information and account details.',
+        path: '/privacy',
+    });
+}
 
 export default function PrivacyPage() {
     return (

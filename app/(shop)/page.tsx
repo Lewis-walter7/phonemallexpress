@@ -440,13 +440,12 @@ export default async function Home() {
       <section className="section-gz" style={{ borderTop: '1px solid var(--border)', backgroundColor: 'var(--secondary)' }}>
         <div className="container">
           <div className="text-center" style={{ marginBottom: 'var(--spacing-lg)' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               Our Official Partners
-            </h2>
+            </p>
           </div>
           <div className="partners-marquee">
             <div className="marquee-track">
-              {/* Duplicated for seamless loop */}
               {[
                 'Doshi Group of Companies', 'Cocacola', 'Ministry of Health', 'Ministry of Defence', 'NSSF',
                 'Engie', 'FAO', 'UNHCR', 'UNOPS', 'IOM',
@@ -455,34 +454,22 @@ export default async function Home() {
                 'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
                 'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO',
                 'University of Eldoret', 'University of Kabianga', 'University of Nairobi',
-                'Jomo Kenyatta University of Agriculture & Technology (JKUAT)', 'Karatina University',
-                'Kenyatta University', 'Meru University of Science and Technology', 'Moi University',
-                'Multi Media University', 'Chuka University', 'Dedan Kimathi University of Technology',
-                'Egerton University', 'KCA University', 'Kenya Methodist University', 'Mount Kenya University',
-                // Duplicated for marquee
-                'Doshi Group of Companies', 'Cocacola', 'Ministry of Health', 'Ministry of Defence', 'NSSF',
-                'Engie', 'FAO', 'UNHCR', 'UNOPS', 'IOM',
-                'WORLD VISION', 'UNDP', 'UN-women', 'UNICEF', 'UNESCO',
-                'WHO', 'ICTP', 'IAEA', 'ILO', 'UNIDO',
-                'Redington', 'Cameras Africa', 'Reddot', 'Anisuma', 'Epson', 'HP',
-                'Apple', 'Samsung', 'Huawei', 'Tecno', 'Infinix', 'Nothing', 'HMD', 'OPPO',
-                'University of Eldoret', 'University of Kabianga', 'University of Nairobi',
-                'Jomo Kenyatta University of Agriculture & Technology (JKUAT)', 'Karatina University',
-                'Kenyatta University', 'Meru University of Science and Technology', 'Moi University',
-                'Multi Media University', 'Chuka University', 'Dedan Kimathi University of Technology',
-                'Egerton University', 'KCA University', 'Kenya Methodist University', 'Mount Kenya University'
+                'JKUAT', 'Karatina University',
+                'Kenyatta University', 'Meru University', 'Moi University',
+                'Multi Media University', 'KCA University', 'Mount Kenya University',
               ].map((brand, i) => (
-                <h3 key={i} style={{
+                <span key={i} style={{
                   fontSize: '24px',
                   fontWeight: 900,
                   fontFamily: 'var(--font-display)',
                   color: 'var(--foreground)',
-                  margin: 0,
+                  margin: '0 48px 0 0',
                   opacity: 0.5,
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  display: 'inline-block',
                 }}>
                   {brand}
-                </h3>
+                </span>
               ))}
             </div>
           </div>

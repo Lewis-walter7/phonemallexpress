@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
-export const metadata: Metadata = {
-    title: 'About Us',
-    description: 'Learn more about PhoneMallExpress - redefining the mobile experience with premium accessories and service since 2018.',
-    alternates: {
-        canonical: '/about',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'About Us',
+        description: "Learn about PhoneMallExpress — Nairobi's trusted electronics store since 2018. Expert team, genuine products, repair services, and ultra-fast delivery across Kenya.",
+        path: '/about',
+    });
+}
 
 export default function AboutPage() {
     return (

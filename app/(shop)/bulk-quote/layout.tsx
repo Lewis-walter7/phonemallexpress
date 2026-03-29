@@ -1,12 +1,12 @@
-import { Metadata } from "next";
+import { generateSEOMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'Bulk Purchase Requests',
-    description: 'Request a custom quote for bulk orders of electronics and accessories for your organization or office.',
-    alternates: {
-        canonical: '/bulk-quote',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Bulk Purchase Requests',
+        description: 'Need to equip your office or organization? Get a competitive custom quote for bulk orders of phones, computers, laptops, and accessories in Kenya. Serving corporates, NGOs, universities, and government institutions.',
+        path: '/bulk-quote',
+    });
+}
 
 export default function BulkQuoteLayout({
     children,

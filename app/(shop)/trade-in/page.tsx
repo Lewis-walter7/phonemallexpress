@@ -3,16 +3,15 @@ import TradeInDevice from '@/models/TradeInDevice';
 import TradeInWizard from './TradeInWizard';
 import TradeInFAQ from './TradeInFAQ';
 import styles from './trade-in.module.css';
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'Trade In Your Old Device - Phone Mall Express',
-    description: 'Get the best trade-in value for your iPhone, Samsung, iPad, or Mac. Upgrade to the latest device today.',
-    openGraph: {
-        title: 'Trade In & Upgrade - Phone Mall Express',
-        description: 'Instant credit for your old device. Check your trade-in value now.',
-    }
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Trade In Your Old Device',
+        description: 'Get the best trade-in value for your iPhone, Samsung, iPad, or MacBook in Kenya. Instant credit applied towards your new purchase. Fast, secure, and eco-friendly.',
+        path: '/trade-in',
+    });
+}
 
 export const revalidate = 3600;
 
@@ -32,6 +31,23 @@ export default async function TradeInPage() {
 
     return (
         <div className={styles.container}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "Service",
+                    "name": "Device Trade-In Program",
+                    "provider": {
+                        "@type": "ElectronicsStore",
+                        "name": "PhoneMallExpress",
+                        "url": "https://www.phonemallexpress.com"
+                    },
+                    "description": "Trade in your old iPhone, Samsung, iPad or MacBook for instant credit towards a new device.",
+                    "areaServed": { "@type": "Country", "name": "Kenya" },
+                    "serviceType": "Electronics Trade-In",
+                    "url": "https://www.phonemallexpress.com/trade-in"
+                }) }}
+            />
             <div className={styles.hero}>
                 <h1 className={styles.heroTitle}>Apple & Samsung Trade-in Program</h1>
                 <p className={styles.heroSubtitle}>

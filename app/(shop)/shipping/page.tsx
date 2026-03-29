@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
-export const metadata: Metadata = {
-    title: 'Shipping Policy',
-    description: 'Learn about our shipping rates, processing times, and delivery estimates at PhoneMallExpress.',
-    alternates: {
-        canonical: '/shipping',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Shipping Policy',
+        description: 'Learn about PhoneMallExpress shipping rates and delivery times. Same-day delivery in Nairobi CBD, 1-2 days upcountry. Free in-store pickup at our Old Mutual Building branch.',
+        path: '/shipping',
+    });
+}
 
 export default function ShippingPage() {
     return (

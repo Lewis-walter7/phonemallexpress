@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
+import { generateSEOMetadata } from '@/lib/seo';
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 
-export const metadata: Metadata = {
-    title: 'FAQ',
-    description: 'Find answers to common questions about shipping, returns, payments, and security at PhoneMallExpress.',
-    alternates: {
-        canonical: '/faq',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Frequently Asked Questions',
+        description: 'Find answers to common questions about shipping, returns, M-Pesa payments, order tracking, and security at PhoneMallExpress Kenya.',
+        path: '/faq',
+    });
+}
 
 const faqs = [
     {

@@ -69,11 +69,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/privacy',
         '/bulk-quote',
         '/repairs',
+        '/trade-in',
+        '/financing',
+        '/compare',
+        '/special-offers',
     ].map((route) => ({
         url: `${BASE_URL}${route}`,
         lastModified: new Date(),
         changeFrequency: 'monthly' as const,
-        priority: route === '' ? 1 : 0.5,
+        priority: route === '' ? 1 : route === '/special-offers' ? 0.9 : 0.6,
     }));
 
     return [

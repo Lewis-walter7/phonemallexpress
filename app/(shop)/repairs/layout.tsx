@@ -1,12 +1,12 @@
-import { Metadata } from "next";
+import { generateSEOMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'Professional Device Repairs',
-    description: 'Expert repair services for smartphones, tablets, and laptops. Screen replacement, battery swaps, and hardware fixes with warranty.',
-    alternates: {
-        canonical: '/repairs',
-    },
-};
+export async function generateMetadata() {
+    return generateSEOMetadata({
+        title: 'Professional Device Repairs',
+        description: 'Expert repair services for smartphones, tablets, laptops, and more in Nairobi. Screen replacement, battery swaps, and hardware fixes with warranty. Fast turnaround at PhoneMallExpress.',
+        path: '/repairs',
+    });
+}
 
 export default function RepairsLayout({
     children,
@@ -15,3 +15,4 @@ export default function RepairsLayout({
 }) {
     return <>{children}</>;
 }
+
