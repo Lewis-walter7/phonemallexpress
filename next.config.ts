@@ -12,6 +12,13 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // Force all non-www traffic to www — eliminates duplicate canonical issues in Google Search Console
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'phonemallexpress.com' }],
+        destination: 'https://www.phonemallexpress.com/:path*',
+        permanent: true,
+      },
       {
         source: '/products',
         destination: '/products/all',
