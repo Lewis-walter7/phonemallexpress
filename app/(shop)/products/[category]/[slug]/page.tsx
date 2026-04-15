@@ -214,21 +214,26 @@ const ProductPage = async ({ params }: PageProps) => {
         "worstRating": "1"
     };
 
-    // Add Video Schema if exists
+    // Build standalone VideoObject — must be top-level, not nested inside Product
+    // Google's "Video isn't on a watch page" fires when VideoObject is nested as subjectOf
+    let videoJsonLd: object | null = null;
     if (product.youtubeVideoUrl) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
         const match = product.youtubeVideoUrl.match(regExp);
         const videoId = (match && match[2].length === 11) ? match[2] : null;
 
         if (videoId) {
-            (jsonLd as any).subjectOf = {
+            videoJsonLd = {
+                "@context": "https://schema.org",
                 "@type": "VideoObject",
-                "name": `Video for ${product.name}`,
-                "description": product.description || `Watch the video review/overview for ${product.name}.`,
+                "name": `${product.name} — Product Video`,
+                "description": product.description || `Watch the video review and overview for ${product.name} at PhoneMallExpress.`,
                 "thumbnailUrl": `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
                 "uploadDate": product.createdAt ? new Date(product.createdAt).toISOString() : new Date().toISOString(),
                 "embedUrl": `https://www.youtube.com/embed/${videoId}`,
-                "contentUrl": product.youtubeVideoUrl
+                "contentUrl": product.youtubeVideoUrl,
+                // url = the canonical page where this video lives (required to satisfy watch-page check)
+                "url": `${baseUrl}/products/${catSlug}/${slug}`,
             };
         }
     }
@@ -279,6 +284,12 @@ const ProductPage = async ({ params }: PageProps) => {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+            {videoJsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+                />
+            )}
 
             <Breadcrumbs items={[
                 { label: catName, href: `/products/${catSlug}` },
