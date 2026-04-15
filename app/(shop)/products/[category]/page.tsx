@@ -129,6 +129,8 @@ const CategoryPage = async ({ params, searchParams }: PageProps) => {
                     "description": product.description,
                     "image": product.imageUrl || (product.images && product.images[0]) || "",
                     "sku": product.sku || product._id.toString(),
+                    ...(product.sku ? { "mpn": product.sku } : {}),
+                    ...(product.brand ? { "brand": { "@type": "Brand", "name": product.brand } } : {}),
                     "offers": {
                         "@type": "Offer",
                         "price": product.price,

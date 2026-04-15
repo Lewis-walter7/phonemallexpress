@@ -159,6 +159,7 @@ const ProductPage = async ({ params }: PageProps) => {
         "image": productImages.map((img: any) => img.url),
         "description": product.description,
         "sku": product.sku,
+        ...(product.sku ? { "mpn": product.sku } : {}),
         "brand": { "@type": "Brand", "name": brandName },
         "offers": {
             "@type": "Offer",
